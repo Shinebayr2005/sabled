@@ -1,0 +1,55 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node Modules
+node_modules/
+
+# Build Output
+dist/
+
+# Dependency directories
+.env
+
+# Temporary files
+*.tmp
+*.temp
+
+# System files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# TypeScript
+*.tsbuildinfo
+
+# npm
+package-lock.json
+yarn.lock
+
+# Coverage reports
+coverage/
+
+# Test files
+jest.config.js
+__tests__/
+__mocks__/
+*.test.js
+*.test.ts
+*.test.tsx
+
+# Editor backups
+*.swp
+*.swo
+*.bak
+*.orig
+
+# Git
+.git/
+
+# Misc
+*.tgz
