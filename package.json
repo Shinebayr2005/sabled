@@ -1,0 +1,54 @@
+{
+  "name": "sabled",
+  "version": "1.0.1",
+  "description": "sable design",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "style": "./dist/index.css",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/index.css": "./dist/index.css",
+    "./dist": "./dist/index.mjs"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
+    "build": "npm run build:css && rollup -c --bundleConfigAsCjs"
+  },
+  "keywords": [
+    "sabled",
+    "sable ui",
+    "sable design"
+  ],
+  "author": "SHINEE",
+  "license": "MIT",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "postcss-cli": "^11.0.0",
+    "tailwindcss": "^3.4.17"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "rollup": "^4.30.1",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "rollup-plugin-visualizer": "^5.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  }
+}
