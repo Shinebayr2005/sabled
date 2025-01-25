@@ -13,6 +13,7 @@ const getContainer = (position: string) => {
     container.id = containerId;
     container.style.position = "fixed";
     container.style.zIndex = "9999";
+    container.style.transition = "all 0.3s";
     container.style.cssText += getPositionStyle(position);
     document.body.appendChild(container);
   }
@@ -58,6 +59,7 @@ const message = (
   const id = ++messageId;
 
   const wrapper = document.createElement("div");
+  wrapper.style.transition = "all 0.3s";
   wrapper.id = `message-${id}`;
   container.appendChild(wrapper);
 
