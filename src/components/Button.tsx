@@ -7,7 +7,7 @@ type ButtonSize = "small" | "medium" | "large";
 type BorderRadius = "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "full";
 
 interface ButtonProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   variant?: ButtonVariant;
   color?: ButtonColor;
   size?: ButtonSize;
