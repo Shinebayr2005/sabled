@@ -1,4 +1,3 @@
-import React from "react";
 import "../styles/main.css"; // Import the bundled Tailwind styles
 
 const MyComponent = () => {

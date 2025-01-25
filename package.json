@@ -1,6 +1,6 @@
 {
   "name": "sabled",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "description": "sable design",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -21,7 +21,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
-    "build": "npm run build:css && rollup -c --bundleConfigAsCjs"
+    "build": "npm run build:css && rollup -c --bundleConfigAsCjs",
+    "upgrade": "npx npm-check-updates -u && npm i --force && npm run build"
   },
   "keywords": [
     "sabled",
@@ -43,7 +44,7 @@
   "devDependencies": {
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
-    "rollup": "^4.30.1",
+    "rollup": "^4.31.0",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "rollup-plugin-visualizer": "^5.14.0",
@@ -51,7 +52,7 @@
     "typescript": "^5.7.3"
   },
   "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }

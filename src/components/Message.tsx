@@ -1,0 +1,90 @@
+import React, { useEffect, useState } from "react";
+
+type MessageProps = {
+  id: number;
+  text: string;
+  description?: string;
+  type: "success" | "error" | "info" | "warning";
+  duration?: number; // In milliseconds
+  onClose: () => void;
+  closable?: boolean;
+  size?: "small" | "medium" | "large"; // New size prop
+};
+
+const Message: React.FC<MessageProps> = ({
+  text,
+  description,
+  type,
+  duration = 3000,
+  onClose,
+  closable = true,
+  size = "medium", // Default size
+}) => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), 10); // Delay for fade-in
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(false); // Fade-out
+      setTimeout(onClose, 300); // Cleanup after fade-out animation
+    }, duration);
+
+    return () => clearTimeout(timer);
+  }, [duration, onClose]);
+
+  const getTypeStyle = () => {
+    switch (type) {
+      case "success":
+        return "bg-green-100 text-green-900 border-green-500";
+      case "error":
+        return "bg-red-100 text-red-900 border-red-500";
+      case "info":
+        return "bg-blue-100 text-blue-900 border-blue-500";
+      case "warning":
+        return "bg-yellow-100 text-yellow-900 border-yellow-500";
+      default:
+        return "bg-gray-100 text-gray-900 border-gray-500";
+    }
+  };
+
+  const getSizeStyle = () => {
+    switch (size) {
+      case "small":
+        return "text-sm p-2"; // Smaller font and padding
+      case "large":
+        return "text-lg p-4"; // Larger font and padding
+      case "medium":
+      default:
+        return "text-base p-3"; // Default medium size
+    }
+  };
+
+  return (
+    <div
+      className={`mb-2 rounded-lg border-l-4 shadow-md transform transition-all duration-300 ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+      } ${getTypeStyle()} ${getSizeStyle()}`}
+    >
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="font-bold">{text}</p>
+          {description && <p className="text-sm">{description}</p>}
+        </div>
+        {closable && (
+          <button
+            className="ml-4 text-gray-600 hover:text-gray-900"
+            onClick={() => setVisible(false)}
+          >
+            ✕
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Message;

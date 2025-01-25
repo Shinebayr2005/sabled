@@ -1,4 +1,8 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false, // Ensure the build emits output files
+    "emitDeclarationOnly": false // Emit full builds (not just declaration files)
+  },
   "exclude": ["example", "node_modules", "dist"]
 }

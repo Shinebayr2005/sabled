@@ -1,0 +1,146 @@
+import ReactDOM from "react-dom/client";
+import React from "react";
+import Message from "../components/Message";
+
+let messageId = 0;
+
+const getContainer = (position: string) => {
+  const containerId = `message-container-${position}`;
+  let container = document.getElementById(containerId);
+
+  if (!container) {
+    container = document.createElement("div");
+    container.id = containerId;
+    container.style.position = "fixed";
+    container.style.zIndex = "9999";
+    container.style.cssText += getPositionStyle(position);
+    document.body.appendChild(container);
+  }
+
+  return container;
+};
+
+const getPositionStyle = (position: string) => {
+  switch (position) {
+    case "top-right":
+      return "top: 1rem; right: 1rem;";
+    case "top-left":
+      return "top: 1rem; left: 1rem;";
+    case "bottom-right":
+      return "bottom: 1rem; right: 1rem;";
+    case "bottom-left":
+      return "bottom: 1rem; left: 1rem;";
+    case "top":
+      return "top: 1rem; left: 50%; transform: translateX(-50%);";
+    case "bottom":
+      return "bottom: 1rem; left: 50%; transform: translateX(-50%);";
+    default:
+      return "top: 1rem; right: 1rem;";
+  }
+};
+
+const message = (
+  text: string,
+  description?: string,
+  type: "success" | "error" | "info" | "warning" = "info",
+  duration: number = 3000,
+  position:
+    | "top-right"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-left"
+    | "top"
+    | "bottom" = "top-right",
+  closable: boolean = true,
+  size: "small" | "medium" | "large" = "medium" // Add size parameter
+) => {
+  const container = getContainer(position);
+  const id = ++messageId;
+
+  const wrapper = document.createElement("div");
+  wrapper.id = `message-${id}`;
+  container.appendChild(wrapper);
+
+  const root = ReactDOM.createRoot(wrapper);
+
+  const cleanup = () => {
+    root.unmount();
+    container.removeChild(wrapper);
+  };
+
+  root.render(
+    <Message
+      id={id}
+      text={text}
+      description={description}
+      type={type}
+      duration={duration}
+      onClose={cleanup}
+      closable={closable}
+      size={size} // Pass size to the Message component
+    />
+  );
+
+  if (duration > 0) {
+    setTimeout(cleanup, duration + 300);
+  }
+};
+
+// Static methods with size support
+message.success = (
+  text: string,
+  description?: string,
+  duration: number = 3000,
+  position?:
+    | "top-right"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-left"
+    | "top"
+    | "bottom",
+  size?: "small" | "medium" | "large"
+) => message(text, description, "success", duration, position, true, size);
+
+message.error = (
+  text: string,
+  description?: string,
+  duration: number = 3000,
+  position?:
+    | "top-right"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-left"
+    | "top"
+    | "bottom",
+  size?: "small" | "medium" | "large"
+) => message(text, description, "error", duration, position, true, size);
+
+message.info = (
+  text: string,
+  description?: string,
+  duration: number = 3000,
+  position?:
+    | "top-right"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-left"
+    | "top"
+    | "bottom",
+  size?: "small" | "medium" | "large"
+) => message(text, description, "info", duration, position, true, size);
+
+message.warning = (
+  text: string,
+  description?: string,
+  duration: number = 3000,
+  position?:
+    | "top-right"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-left"
+    | "top"
+    | "bottom",
+  size?: "small" | "medium" | "large"
+) => message(text, description, "warning", duration, position, true, size);
+
+export default message;

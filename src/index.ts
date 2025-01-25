@@ -18,3 +18,4 @@ function injectStyles() {
 
 export { default as MyComponent } from './components/MyComponent';
 export { default as Button } from './components/Button';
+export { default as Message } from './utils/Message';

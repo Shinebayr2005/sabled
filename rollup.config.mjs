@@ -10,10 +10,12 @@ export default {
       file: "dist/index.js",
       format: "cjs",
       exports: "named",
+      sourcemap: true, 
     },
     {
       file: "dist/index.mjs",
       format: "es",
+      sourcemap: true, 
     },
   ],
   plugins: [
