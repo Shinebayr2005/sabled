@@ -23,7 +23,7 @@
     "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
     "build": "npm run build:css && rollup -c --bundleConfigAsCjs",
     "upgrade": "npx npm-check-updates -u && npm i --force && npm run build",
-    "deploy": "npm run build && git add . && git commit -m 'patch update' && git push origin main && npm version patch && npm publish"
+    "deploy": "npm version patch && npm publish"
   },
   "keywords": [
     "sabled",
