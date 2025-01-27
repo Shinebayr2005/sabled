@@ -54,12 +54,12 @@ const Message: React.FC<MessageProps> = ({
   const getSizeStyle = () => {
     switch (size) {
       case "small":
-        return "text-sm p-2"; // Smaller font and padding
+        return "text-xs p-2"; // Smaller font and padding
       case "large":
-        return "text-lg p-4"; // Larger font and padding
+        return "text-base p-4"; // Larger font and padding
       case "medium":
       default:
-        return "text-base p-3"; // Default medium size
+        return "text-sm p-3"; // Default medium size
     }
   };
 

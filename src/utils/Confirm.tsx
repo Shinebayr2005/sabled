@@ -18,6 +18,10 @@ const confirm = ({
   cancelText?: string;
 }) => {
   // Create a wrapper div for the dialog
+  if (typeof document === "undefined") {
+    return;
+  }
+
   const wrapper = document.createElement("div");
   document.body.appendChild(wrapper);
 

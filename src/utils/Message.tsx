@@ -5,6 +5,10 @@ import Message from "../components/Message";
 let messageId = 0;
 
 const getContainer = (position: string) => {
+  if (typeof document === "undefined") {
+    return;
+  }
+
   const containerId = `message-container-${position}`;
   let container = document.getElementById(containerId);
 
@@ -58,9 +62,18 @@ const message = (
   const container = getContainer(position);
   const id = ++messageId;
 
+  if (!document) {
+    return;
+  }
+
   const wrapper = document.createElement("div");
   wrapper.style.transition = "all 0.3s";
   wrapper.id = `message-${id}`;
+
+  if (!container) {
+    return;
+  }
+
   container.appendChild(wrapper);
 
   const root = ReactDOM.createRoot(wrapper);
