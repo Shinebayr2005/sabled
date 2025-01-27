@@ -10,10 +10,10 @@ const confirm = ({
   confirmText = "Confirm",
   cancelText = "Cancel",
 }: {
-  title: string;
-  content: string;
-  onConfirm: () => void;
-  onCancel: () => void;
+  title?: string;
+  content?: string;
+  onConfirm?: () => void;
+  onCancel?: () => void;
   confirmText?: string;
   cancelText?: string;
 }) => {
@@ -35,12 +35,16 @@ const confirm = ({
 
   // Handle confirm and cancel actions
   const handleConfirm = () => {
-    onConfirm();
+    if (onConfirm) {
+      onConfirm();
+    }
     cleanup();
   };
 
   const handleCancel = () => {
-    onCancel();
+    if (onCancel) {
+      onCancel();
+    }
     cleanup();
   };
 

@@ -44,21 +44,29 @@ const getPositionStyle = (position: string) => {
   }
 };
 
-const message = (
-  text: string,
-  description?: string,
-  type: "success" | "error" | "info" | "warning" = "info",
-  duration: number = 3000,
-  position:
+const message = ({
+  text,
+  description,
+  type = "info",
+  duration = 3000,
+  position = "top",
+  closable = true,
+  size = "medium",
+}: {
+  text: string;
+  description?: string;
+  type?: "success" | "error" | "info" | "warning";
+  duration?: number;
+  position?:
     | "top-right"
     | "top-left"
     | "bottom-right"
     | "bottom-left"
     | "top"
-    | "bottom" = "top-right",
-  closable: boolean = true,
-  size: "small" | "medium" | "large" = "medium" // Add size parameter
-) => {
+    | "bottom";
+  closable?: boolean;
+  size?: "small" | "medium" | "large";
+}) => {
   const container = getContainer(position);
   const id = ++messageId;
 
@@ -114,7 +122,16 @@ message.success = (
     | "top"
     | "bottom",
   size?: "small" | "medium" | "large"
-) => message(text, description, "success", duration, position, true, size);
+) =>
+  message({
+    text,
+    description,
+    type: "success",
+    duration,
+    position,
+    closable: true,
+    size,
+  });
 
 message.error = (
   text: string,
@@ -128,7 +145,16 @@ message.error = (
     | "top"
     | "bottom",
   size?: "small" | "medium" | "large"
-) => message(text, description, "error", duration, position, true, size);
+) =>
+  message({
+    text,
+    description,
+    type: "error",
+    duration,
+    position,
+    closable: true,
+    size,
+  });
 
 message.info = (
   text: string,
@@ -142,7 +168,16 @@ message.info = (
     | "top"
     | "bottom",
   size?: "small" | "medium" | "large"
-) => message(text, description, "info", duration, position, true, size);
+) =>
+  message({
+    text,
+    description,
+    type: "info",
+    duration,
+    position,
+    closable: true,
+    size,
+  });
 
 message.warning = (
   text: string,
@@ -156,6 +191,15 @@ message.warning = (
     | "top"
     | "bottom",
   size?: "small" | "medium" | "large"
-) => message(text, description, "warning", duration, position, true, size);
+) =>
+  message({
+    text,
+    description,
+    type: "warning",
+    duration,
+    position,
+    closable: true,
+    size,
+  });
 
 export default message;

@@ -97,12 +97,12 @@ const Button: React.FC<ButtonProps> = ({
       link: "text-blue-500 hover:underline",
     },
     primary: {
-      solid: "bg-blue-500 text-white hover:bg-blue-600",
-      outlined: "border border-blue-500 text-blue-500 hover:bg-blue-50",
+      solid: "bg-primary text-white hover:bg-opacity-90",
+      outlined: "border border-primary text-primary hover:bg-opacity-90",
       dashed:
-        "border border-dashed border-blue-500 text-blue-500 hover:bg-blue-50",
-      text: "text-blue-500 hover:bg-blue-50",
-      link: "text-blue-500 hover:underline",
+        "border border-dashed border-primary text-primary hover:bg-opacity-90",
+      text: "text-primary hover:bg-opacity-90",
+      link: "text-primary hover:underline",
     },
     danger: {
       solid: "bg-red-500 text-white hover:bg-red-600",

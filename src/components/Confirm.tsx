@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import Button from "./Button";
 
 type ConfirmProps = {
-  title: string;
-  content: string;
-  onConfirm: () => void;
-  onCancel: () => void;
+  title?: string;
+  content?: string;
+  onConfirm?: () => void;
+  onCancel?: () => void;
   confirmText?: string;
   cancelText?: string;
 };
@@ -25,12 +25,14 @@ const Confirm: React.FC<ConfirmProps> = ({
     setVisible(true);
   }, []);
 
-  const handleClose = (action: () => void) => {
+  const handleClose = (action?: () => void) => {
     // Trigger fade-out animation
     setVisible(false);
 
     // Execute the action after the animation ends
-    setTimeout(action, 300); // Match the transition duration
+    setTimeout(() => {
+      if (action) action();
+    }, 300); // Match the transition duration
   };
 
   return (
@@ -47,9 +49,11 @@ const Confirm: React.FC<ConfirmProps> = ({
         <h3 className="text-lg font-bold mb-4">{title}</h3>
         <p className="text-gray-700 mb-6">{content}</p>
         <div className="flex justify-end space-x-4">
-          <Button onClick={() => handleClose(onCancel)}>{cancelText}</Button>
+          <Button onClick={() => handleClose(onCancel || (() => {}))}>
+            {cancelText}
+          </Button>
           <Button
-            onClick={() => handleClose(onConfirm)}
+            onClick={() => handleClose(onConfirm || (() => {}))}
             variant="solid"
             color="primary"
           >
