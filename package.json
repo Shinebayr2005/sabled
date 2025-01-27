@@ -1,6 +1,6 @@
 {
   "name": "sabled",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "sable design",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
