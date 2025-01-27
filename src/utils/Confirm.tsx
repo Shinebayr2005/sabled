@@ -30,6 +30,10 @@ const confirm = ({
 
   const cleanup = () => {
     root.unmount();
+    
+    if (typeof document === "undefined") {
+      return;
+    }
     document.body.removeChild(wrapper);
   };
 
