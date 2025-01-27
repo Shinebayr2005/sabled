@@ -35,12 +35,6 @@ module.exports = {
           text: "#374151",
           hover: "#d1d5db",
         },
-        primary: {
-          solid: "#3b82f6",
-          outlined: "#e0f2fe",
-          text: "#ffffff",
-          hover: "#2563eb",
-        },
         danger: {
           solid: "#ef4444",
           outlined: "#fee2e2",
