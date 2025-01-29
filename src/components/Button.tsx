@@ -35,56 +35,42 @@ const Button: React.FC<ButtonProps> = ({
   type = "button",
   style,
   borderRadius = "md",
-  ...props
 }) => {
   const [ripples, setRipples] = useState<
     { x: number; y: number; size: number; color: string }[]
   >([]);
 
-  // Dynamic Ripple Color based on Variant and Color
   const getRippleColor = () => {
-    switch (variant) {
-      case "solid":
-        return color === "default"
-          ? "rgba(160, 160, 160, 0.4)"
-          : "rgba(255, 255, 255, 0.5)";
-      case "outlined":
-      case "dashed":
-      case "text":
-      case "link":
-        switch (color) {
-          case "primary":
-            return "bg-primary";
-          case "danger":
-            return "rgba(239, 68, 68, 0.3)";
-          case "success":
-            return "rgba(34, 197, 94, 0.3)";
-          default:
-            return "rgba(0, 0, 0, 0.2)";
-        }
-      default:
-        return "rgba(0, 0, 0, 0.2)";
+    if (variant === "solid") {
+      return color === "default"
+        ? "rgba(160, 160, 160, 0.4)"
+        : "rgba(255, 255, 255, 0.5)";
     }
+    return (
+      {
+        primary: "rgba(59, 130, 246, 0.3)",
+        danger: "rgba(239, 68, 68, 0.3)",
+        success: "rgba(34, 197, 94, 0.3)",
+        default: "rgba(0, 0, 0, 0.2)",
+      }[color] || "rgba(0, 0, 0, 0.2)"
+    );
   };
 
-  // Handle Ripple Effect
-  const createRipple = (event: MouseEvent<HTMLElement>) => {
+  const createRipple = (event: MouseEvent<HTMLButtonElement>) => {
     const button = event.currentTarget;
-    if (!button) return;
-
     const rect = button.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height) * 2; // Larger ripple for effect
+    const size = Math.max(rect.width, rect.height) * 1.5;
     const x = event.clientX - rect.left - size / 2;
     const y = event.clientY - rect.top - size / 2;
-
     const rippleColor = getRippleColor();
 
-    setRipples([{ x, y, size, color: rippleColor }]);
+    setRipples(prev => {
+      return [...prev, { x, y, size, color: rippleColor }];
+    });
 
-    // Cleanup ripple after animation
     setTimeout(() => {
       setRipples((prev) => prev.slice(1));
-    }, 600);
+    }, 500);
   };
 
   const colorClasses = {
@@ -97,12 +83,12 @@ const Button: React.FC<ButtonProps> = ({
       link: "text-blue-500 hover:underline",
     },
     primary: {
-      solid: `bg-primary text-primary hover:bg-primary`,
-      outlined: `border border-primary text-primary hover:bg-primary`,
+      solid: "bg-primary text-white hover:bg-primary/80",
+      outlined: "border border-primary text-primary hover:bg-primary/10",
       dashed:
-        `border border-dashed border-primary text-primary hover:bg-primary`,
-      text: `text-primary hover:bg-primary`,
-      link: `text-primary hover:underline`,
+        "border border-dashed border-primary text-primary hover:bg-primary/10",
+      text: "text-primary hover:bg-primary/10",
+      link: "text-primary hover:underline",
     },
     danger: {
       solid: "bg-red-500 text-white hover:bg-red-600",
@@ -123,7 +109,7 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const sizeClasses = {
-    small: "px-2 py-1 text-sm",
+    small: "px-3 py-1 text-sm",
     medium: "px-4 py-2 text-base",
     large: "px-6 py-3 text-lg",
   };
@@ -139,29 +125,22 @@ const Button: React.FC<ButtonProps> = ({
     full: "rounded-full",
   };
 
-  const colorClass = colorClasses[color][variant] || "";
-  const sizeClass = sizeClasses[size] || "";
-  const borderRadiusClass = borderRadiusClasses[borderRadius] || "";
-
   return (
-    <div className={` overflow-hidden inline-block`}>
+    <div className="relative inline-block overflow-hidden">
       <button
         type={type}
         disabled={disabled || loading}
         style={style}
-        className={`
-          relative inline-flex items-center justify-center font-medium transition-all duration-200 ease-in-out overflow-hidden
-          ${sizeClass} 
-          ${colorClass} 
-          ${borderRadiusClass}
-          ${disabled && "opacity-50 cursor-not-allowed"}
+        className={`relative inline-flex items-center justify-center font-medium transition-all duration-200 ease-in-out overflow-hidden
+          ${sizeClasses[size]} 
+          ${colorClasses[color][variant]} 
+          ${borderRadiusClasses[borderRadius]}
+          ${disabled ? "opacity-50 cursor-not-allowed" : ""}
           ${className}
         `}
-        onClick={(e) => {
-          if (!disabled) {
-            createRipple(e);
-            onClick && onClick(e);
-          }
+        onClick={(event) => {
+          createRipple(event);
+          if (onClick) onClick(event);
         }}
       >
         {loading && <span className="loader mr-2"></span>}
@@ -169,17 +148,17 @@ const Button: React.FC<ButtonProps> = ({
         <span>{children}</span>
         {iconRight && <span className="ml-2">{iconRight}</span>}
 
-        {/* Ripple Effect */}
         {ripples.map((ripple, index) => (
           <span
             key={index}
-            className="absolute rounded-full animate-ripple"
+            className="absolute rounded-full ripple"
             style={{
               top: ripple.y,
               left: ripple.x,
               width: ripple.size,
               height: ripple.size,
               backgroundColor: ripple.color,
+              pointerEvents: "none",
             }}
           />
         ))}

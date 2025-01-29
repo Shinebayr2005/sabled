@@ -1,6 +1,5 @@
 import ReactDOM from "react-dom/client";
 import Confirm from "../components/Confirm";
-import React from "react";
 
 const confirm = ({
   title,
