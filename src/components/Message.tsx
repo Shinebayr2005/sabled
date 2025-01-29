@@ -71,8 +71,8 @@ const Message: React.FC<MessageProps> = ({
     >
       <div className="flex justify-between items-start">
         <div>
-          <p className="font-bold">{text}</p>
-          {description && <p className="text-sm">{description}</p>}
+          <span className="font-bold">{text}</span>
+          {description && <span className="text-sm">{description}</span>}
         </div>
         {closable && (
           <button
