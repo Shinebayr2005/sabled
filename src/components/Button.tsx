@@ -1,5 +1,4 @@
 import React, { useState, MouseEvent } from "react";
-import "../styles/main.css";
 
 type ButtonVariant = "solid" | "outlined" | "dashed" | "text" | "link";
 type ButtonColor = "default" | "primary" | "danger" | "success";
@@ -36,6 +35,7 @@ const Button: React.FC<ButtonProps> = ({
   type = "button",
   style,
   borderRadius = "md",
+  ...props
 }) => {
   const [ripples, setRipples] = useState<
     { x: number; y: number; size: number; color: string }[]
@@ -54,7 +54,7 @@ const Button: React.FC<ButtonProps> = ({
       case "link":
         switch (color) {
           case "primary":
-            return "rgba(59, 130, 246, 0.3)";
+            return "bg-primary";
           case "danger":
             return "rgba(239, 68, 68, 0.3)";
           case "success":
@@ -97,12 +97,12 @@ const Button: React.FC<ButtonProps> = ({
       link: "text-blue-500 hover:underline",
     },
     primary: {
-      solid: "bg-primary text-white hover:bg-opacity-90",
-      outlined: "border border-primary text-primary hover:bg-opacity-90",
+      solid: `bg-primary text-primary hover:bg-primary`,
+      outlined: `border border-primary text-primary hover:bg-primary`,
       dashed:
-        "border border-dashed border-primary text-primary hover:bg-opacity-90",
-      text: "text-primary hover:bg-opacity-90",
-      link: "text-primary hover:underline",
+        `border border-dashed border-primary text-primary hover:bg-primary`,
+      text: `text-primary hover:bg-primary`,
+      link: `text-primary hover:underline`,
     },
     danger: {
       solid: "bg-red-500 text-white hover:bg-red-600",
@@ -139,12 +139,12 @@ const Button: React.FC<ButtonProps> = ({
     full: "rounded-full",
   };
 
-  const colorClass = colorClasses[color]?.[variant] || "";
+  const colorClass = colorClasses[color][variant] || "";
   const sizeClass = sizeClasses[size] || "";
   const borderRadiusClass = borderRadiusClasses[borderRadius] || "";
 
   return (
-    <div className={`${className} overflow-hidden inline-block`}>
+    <div className={` overflow-hidden inline-block`}>
       <button
         type={type}
         disabled={disabled || loading}
@@ -155,6 +155,7 @@ const Button: React.FC<ButtonProps> = ({
           ${colorClass} 
           ${borderRadiusClass}
           ${disabled && "opacity-50 cursor-not-allowed"}
+          ${className}
         `}
         onClick={(e) => {
           if (!disabled) {

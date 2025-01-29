@@ -1,55 +1,48 @@
 {
   "name": "sabled",
-  "version": "1.0.13",
-  "description": "sable design",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "exports": {
-    ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "style": "./dist/index.css",
-      "types": "./dist/index.d.ts"
-    },
-    "./dist/index.css": "./dist/index.css",
-    "./dist": "./dist/index.mjs"
-  },
+  "version": "1.0.14",
+  "description": "A customizable button library using React, TailwindCSS, and TypeScript",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
-    "build": "npm run build:css && rollup -c --bundleConfigAsCjs",
-    "upgrade": "npx npm-check-updates -u && npm i --force && npm run build",
-    "deploy": "npm version patch && npm publish"
+    "build": "rollup -c --bundleConfigAsCjs",
+    "prepare": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.1.0",
+    "@rollup/plugin-node-resolve": "^15.3.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^8.5.0",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "rollup": "^3.29.5",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-terser": "^7.0.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
   },
   "keywords": [
-    "sabled",
-    "sable ui",
-    "sable design"
+    "react",
+    "tailwindcss",
+    "typescript",
+    "button",
+    "ui-library",
+    "sabled"
   ],
   "author": "SHINEE",
   "license": "MIT",
-  "types": "dist/index.d.ts",
   "dependencies": {
-    "@rollup/plugin-commonjs": "^28.0.2",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-typescript": "^12.1.2",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.5.1",
-    "postcss-cli": "^11.0.0",
-    "tailwindcss": "^3.4.17"
-  },
-  "devDependencies": {
-    "@types/react": "^19.0.0-rc-65e06cb7-20241218",
-    "@types/react-dom": "^19.0.0-rc-65e06cb7-20241218",
-    "rollup": "^4.31.0",
-    "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-typescript2": "^0.36.0",
-    "rollup-plugin-visualizer": "^5.14.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tslib": "^2.8.1"
   }
 }

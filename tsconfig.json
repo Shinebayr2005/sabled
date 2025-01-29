@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
-    "sourceMap": true,
-    "strict": true,
+    "target": "ES5",
     "module": "ESNext",
-    "moduleResolution": "Node",
-    "target": "ESNext",
     "jsx": "react-jsx",
-    "declaration": true,
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "emitDeclarationOnly": true
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "importHelpers": true,
+    "outDir": "dist"
   },
   "include": ["src/**/*"]
 }

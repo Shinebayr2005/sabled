@@ -1,13 +1,10 @@
 import ReactDOM from "react-dom/client";
-import React from "react";
 import Message from "../components/Message";
 
 let messageId = 0;
 
 const getContainer = (position: string) => {
-  if (typeof document === "undefined") {
-    return;
-  }
+  if (typeof document === "undefined") return;
 
   const containerId = `message-container-${position}`;
   let container = document.getElementById(containerId);
@@ -26,22 +23,16 @@ const getContainer = (position: string) => {
 };
 
 const getPositionStyle = (position: string) => {
-  switch (position) {
-    case "top-right":
-      return "top: 1rem; right: 1rem;";
-    case "top-left":
-      return "top: 1rem; left: 1rem;";
-    case "bottom-right":
-      return "bottom: 1rem; right: 1rem;";
-    case "bottom-left":
-      return "bottom: 1rem; left: 1rem;";
-    case "top":
-      return "top: 1rem; left: 50%; transform: translateX(-50%);";
-    case "bottom":
-      return "bottom: 1rem; left: 50%; transform: translateX(-50%);";
-    default:
-      return "top: 1rem; right: 1rem;";
-  }
+  const positions: Record<string, string> = {
+    "top-right": "top: 1rem; right: 1rem;",
+    "top-left": "top: 1rem; left: 1rem;",
+    "bottom-right": "bottom: 1rem; right: 1rem;",
+    "bottom-left": "bottom: 1rem; left: 1rem;",
+    top: "top: 1rem; left: 50%; transform: translateX(-50%);",
+    bottom: "bottom: 1rem; left: 50%; transform: translateX(-50%);",
+  };
+
+  return positions[position] || positions["top-right"];
 };
 
 const message = ({
@@ -70,18 +61,11 @@ const message = ({
   const container = getContainer(position);
   const id = ++messageId;
 
-  if (!document) {
-    return;
-  }
+  if (!document || !container) return;
 
   const wrapper = document.createElement("div");
   wrapper.style.transition = "all 0.3s";
   wrapper.id = `message-${id}`;
-
-  if (!container) {
-    return;
-  }
-
   container.appendChild(wrapper);
 
   const root = ReactDOM.createRoot(wrapper);
@@ -100,7 +84,7 @@ const message = ({
       duration={duration}
       onClose={cleanup}
       closable={closable}
-      size={size} // Pass size to the Message component
+      size={size}
     />
   );
 
@@ -109,97 +93,42 @@ const message = ({
   }
 };
 
-// Static methods with size support
-message.success = (
-  text: string,
-  description?: string,
-  duration: number = 3000,
-  position?:
-    | "top-right"
-    | "top-left"
-    | "bottom-right"
-    | "bottom-left"
-    | "top"
-    | "bottom",
-  size?: "small" | "medium" | "large"
-) =>
-  message({
+// **Refactored static methods**
+const createMessage =
+  (type: "success" | "error" | "info" | "warning") =>
+  ({
     text,
     description,
-    type: "success",
-    duration,
+    duration = 3000,
     position,
-    closable: true,
     size,
-  });
+  }: {
+    text: string;
+    description?: string;
+    duration?: number;
+    position?:
+      | "top-right"
+      | "top-left"
+      | "bottom-right"
+      | "bottom-left"
+      | "top"
+      | "bottom";
+    size?: "small" | "medium" | "large";
+  }) =>
+    message({
+      text,
+      description,
+      type,
+      duration,
+      position,
+      closable: true,
+      size,
+    });
 
-message.error = (
-  text: string,
-  description?: string,
-  duration: number = 3000,
-  position?:
-    | "top-right"
-    | "top-left"
-    | "bottom-right"
-    | "bottom-left"
-    | "top"
-    | "bottom",
-  size?: "small" | "medium" | "large"
-) =>
-  message({
-    text,
-    description,
-    type: "error",
-    duration,
-    position,
-    closable: true,
-    size,
-  });
-
-message.info = (
-  text: string,
-  description?: string,
-  duration: number = 3000,
-  position?:
-    | "top-right"
-    | "top-left"
-    | "bottom-right"
-    | "bottom-left"
-    | "top"
-    | "bottom",
-  size?: "small" | "medium" | "large"
-) =>
-  message({
-    text,
-    description,
-    type: "info",
-    duration,
-    position,
-    closable: true,
-    size,
-  });
-
-message.warning = (
-  text: string,
-  description?: string,
-  duration: number = 3000,
-  position?:
-    | "top-right"
-    | "top-left"
-    | "bottom-right"
-    | "bottom-left"
-    | "top"
-    | "bottom",
-  size?: "small" | "medium" | "large"
-) =>
-  message({
-    text,
-    description,
-    type: "warning",
-    duration,
-    position,
-    closable: true,
-    size,
-  });
+// Assign static methods dynamically
+message.success = createMessage("success");
+message.error = createMessage("error");
+message.info = createMessage("info");
+message.warning = createMessage("warning");
 
 export default message;
