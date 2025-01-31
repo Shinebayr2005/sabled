@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 type MessageProps = {
   id: number;
-  text: string;
+  text?: string;
   description?: string;
   type: "success" | "error" | "info" | "warning";
   duration?: number; // In milliseconds
@@ -70,7 +70,7 @@ const Message: React.FC<MessageProps> = ({
       } ${getTypeStyle()} ${getSizeStyle()}`}
     >
       <div className="flex justify-between items-start">
-        <div>
+        <div className="flex flex-col">
           <span className="font-bold">{text}</span>
           {description && <span className="text-sm">{description}</span>}
         </div>

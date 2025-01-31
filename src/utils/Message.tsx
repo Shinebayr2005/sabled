@@ -15,8 +15,10 @@ const getContainer = (position: string) => {
     container.style.position = "fixed";
     container.style.zIndex = "9999";
     container.style.transition = "all 0.3s";
-    container.style.cssText += getPositionStyle(position);
+    container.style.cssText += getPositionStyle(position) + " !important;";
+
     document.body.appendChild(container);
+    container.offsetHeight;
   }
 
   return container;
@@ -44,7 +46,7 @@ const message = ({
   closable = true,
   size = "medium",
 }: {
-  text: string;
+  text?: string;
   description?: string;
   type?: "success" | "error" | "info" | "warning";
   duration?: number;
@@ -59,6 +61,7 @@ const message = ({
   size?: "small" | "medium" | "large";
 }) => {
   const container = getContainer(position);
+
   const id = ++messageId;
 
   if (!document || !container) return;
@@ -103,7 +106,7 @@ const createMessage =
     position,
     size,
   }: {
-    text: string;
+    text?: string;
     description?: string;
     duration?: number;
     position?:
