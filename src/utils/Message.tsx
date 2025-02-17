@@ -88,6 +88,7 @@ const message = ({
       onClose={cleanup}
       closable={closable}
       size={size}
+      position={position}
     />
   );
 

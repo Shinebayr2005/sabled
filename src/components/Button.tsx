@@ -70,7 +70,7 @@ const Button: React.FC<ButtonProps> = ({
 
     setTimeout(() => {
       setRipples((prev) => prev.slice(1));
-    }, 500);
+    }, 1000);
   };
 
   const colorClasses = {

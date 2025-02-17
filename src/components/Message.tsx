@@ -9,6 +9,15 @@ type MessageProps = {
   onClose: () => void;
   closable?: boolean;
   size?: "small" | "medium" | "large"; // New size prop
+  className?: string;
+  style?: React.CSSProperties;
+  position?:
+    | "top-right"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-left"
+    | "top"
+    | "bottom";
 };
 
 const Message: React.FC<MessageProps> = ({
@@ -19,6 +28,9 @@ const Message: React.FC<MessageProps> = ({
   onClose,
   closable = true,
   size = "medium", // Default size
+  className = "",
+  style,
+  position = "top",
 }) => {
   const [visible, setVisible] = useState(false);
 
@@ -65,9 +77,22 @@ const Message: React.FC<MessageProps> = ({
 
   return (
     <div
-      className={`mb-2 rounded-lg border-l-4 shadow-md transform transition-all duration-300 ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+      className={`${className} mb-2 rounded-lg border-l-4 shadow-md transform transition-all duration-300 ${
+        visible
+          ? "opacity-100 translate-y-0 translate-x-0"
+          : position === "top"
+          ? "opacity-0 -translate-y-2"
+          : position === "bottom"
+          ? "opacity-0 translate-y-2"
+          : position === "top-left"
+          ? "opacity-0 -translate-y-2 -translate-x-2"
+          : position === "top-right"
+          ? "opacity-0 -translate-y-2 translate-x-2"
+          : position === "bottom-left"
+          ? "opacity-0 translate-y-2 -translate-x-2"
+          : "opacity-0 translate-y-2 translate-x-2"
       } ${getTypeStyle()} ${getSizeStyle()}`}
+      style={style}
     >
       <div className="flex justify-between items-start">
         <div className="flex flex-col">
