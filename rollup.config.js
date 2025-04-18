@@ -3,7 +3,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import postcss from "rollup-plugin-postcss";
-import external from 'rollup-plugin-peer-deps-external';
+import external from "rollup-plugin-peer-deps-external";
 
 export default {
   input: "src/index.ts",
@@ -24,10 +24,10 @@ export default {
     postcss({
       // extract: "styles.css",
       inject: true,
-      plugins: [require("tailwindcss"), require("autoprefixer")],
+      plugins: [require("@tailwindcss/postcss"), require("autoprefixer")],
     }),
     terser(),
-    external()
+    external(),
   ],
-  external: ["react", "react-dom", "tslib","taiwlindcss"], // Ensure React and other dependencies are external
+  external: ["react", "react-dom", "tslib"], // Ensure React and other dependencies are external
 };
