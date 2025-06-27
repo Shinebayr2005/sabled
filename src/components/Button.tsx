@@ -64,7 +64,7 @@ const Button: React.FC<ButtonProps> = ({
     const y = event.clientY - rect.top - size / 2;
     const rippleColor = getRippleColor();
 
-    setRipples(prev => {
+    setRipples((prev) => {
       return [...prev, { x, y, size, color: rippleColor }];
     });
 
@@ -83,11 +83,11 @@ const Button: React.FC<ButtonProps> = ({
       link: "text-blue-500 hover:underline",
     },
     primary: {
-      solid: "bg-primary text-white hover:bg-primary/80",
-      outlined: "border border-primary text-primary hover:bg-primary/10",
+      solid: "bg-primary text-white hover:bg-primary",
+      outlined: "border border-primary text-primary hover:bg-primary-50",
       dashed:
-        "border border-dashed border-primary text-primary hover:bg-primary/10",
-      text: "text-primary hover:bg-primary/10",
+        "border border-dashed border-primary text-primary hover:bg-primary-50",
+      text: "text-primary hover:bg-primary-50",
       link: "text-primary hover:underline",
     },
     danger: {
