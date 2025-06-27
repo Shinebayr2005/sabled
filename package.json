@@ -1,6 +1,6 @@
 {
   "name": "sabled",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "A customizable button library using React, TailwindCSS, and TypeScript",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
