@@ -26,3 +26,24 @@
     transform: rotate(360deg);
   }
 }
+
+/* Loading spinner for buttons */
+.loader {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Custom component styles */
+@layer components {
+  .sabled-button {
+    @apply relative inline-flex items-center justify-center font-medium transition-all duration-200 ease-in-out overflow-hidden;
+  }
+  
+  .sabled-button:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+}

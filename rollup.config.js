@@ -22,9 +22,10 @@ export default {
     commonjs(),
     typescript(),
     postcss({
-      // extract: "styles.css",
+      extract: false, // Inject CSS into JS for library distribution
       inject: true,
-      plugins: [require("@tailwindcss/postcss"), require("autoprefixer")],
+      minimize: true,
+      plugins: [require("tailwindcss"), require("autoprefixer")],
     }),
     terser(),
     external(),

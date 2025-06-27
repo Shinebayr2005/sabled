@@ -3,6 +3,16 @@ module.exports = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#3b82f6',
+          50: '#eff6ff',
+          100: '#dbeafe',
+          500: '#3b82f6',
+          600: '#2563eb',
+          800: '#1e40af',
+        },
+      },
       animation: {
         ripple: "ripple 0.6s linear",
       },
