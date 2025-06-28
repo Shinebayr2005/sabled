@@ -75,43 +75,51 @@ const Button: React.FC<ButtonProps> = ({
 
   const colorClasses = {
     default: {
-      solid: "bg-gray-200 text-gray-800 hover:bg-gray-300",
-      outlined: "border border-gray-300 text-gray-800 hover:bg-gray-100",
+      solid:
+        "bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400 shadow-sm hover:shadow-md",
+      outlined:
+        "border-2 border-gray-300 text-gray-800 hover:bg-gray-100 hover:border-gray-400 active:bg-gray-200",
       dashed:
-        "border border-dashed border-gray-300 text-gray-800 hover:bg-gray-100",
-      text: "text-gray-800 hover:bg-gray-100",
-      link: "text-blue-500 hover:underline",
+        "border-2 border-dashed border-gray-300 text-gray-800 hover:bg-gray-100 hover:border-gray-400",
+      text: "text-gray-800 hover:bg-gray-100 active:bg-gray-200",
+      link: "text-gray-600 hover:text-gray-800 hover:underline underline-offset-4",
     },
     primary: {
-      solid: "bg-primary text-white hover:bg-primary",
-      outlined: "border border-primary text-primary hover:bg-primary-50",
+      solid:
+        "bg-primary text-white hover:bg-primary-600 active:bg-primary-700 shadow-lg hover:shadow-xl",
+      outlined:
+        "border-2 border-primary text-primary hover:bg-primary-50 hover:border-primary-600 active:bg-primary-100",
       dashed:
-        "border border-dashed border-primary text-primary hover:bg-primary-50",
-      text: "text-primary hover:bg-primary-50",
-      link: "text-primary hover:underline",
+        "border-2 border-dashed border-primary text-primary hover:bg-primary-50 hover:border-primary-600",
+      text: "text-primary hover:bg-primary-50 active:bg-primary-100",
+      link: "text-primary hover:text-primary-600 hover:underline underline-offset-4",
     },
     danger: {
-      solid: "bg-red-500 text-white hover:bg-red-600",
-      outlined: "border border-red-500 text-red-500 hover:bg-red-50",
+      solid:
+        "bg-red-500 text-white hover:bg-red-600 active:bg-red-700 shadow-lg hover:shadow-xl",
+      outlined:
+        "border-2 border-red-500 text-red-500 hover:bg-red-50 hover:border-red-600 active:bg-red-100",
       dashed:
-        "border border-dashed border-red-500 text-red-500 hover:bg-red-50",
-      text: "text-red-500 hover:bg-red-50",
-      link: "text-red-500 hover:underline",
+        "border-2 border-dashed border-red-500 text-red-500 hover:bg-red-50 hover:border-red-600",
+      text: "text-red-500 hover:bg-red-50 active:bg-red-100",
+      link: "text-red-500 hover:text-red-600 hover:underline underline-offset-4",
     },
     success: {
-      solid: "bg-green-500 text-white hover:bg-green-600",
-      outlined: "border border-green-500 text-green-500 hover:bg-green-50",
+      solid:
+        "bg-green-500 text-white hover:bg-green-600 active:bg-green-700 shadow-lg hover:shadow-xl",
+      outlined:
+        "border-2 border-green-500 text-green-500 hover:bg-green-50 hover:border-green-600 active:bg-green-100",
       dashed:
-        "border border-dashed border-green-500 text-green-500 hover:bg-green-50",
-      text: "text-green-500 hover:bg-green-50",
-      link: "text-green-500 hover:underline",
+        "border-2 border-dashed border-green-500 text-green-500 hover:bg-green-50 hover:border-green-600",
+      text: "text-green-500 hover:bg-green-50 active:bg-green-100",
+      link: "text-green-500 hover:text-green-600 hover:underline underline-offset-4",
     },
   };
 
   const sizeClasses = {
-    small: "px-3 py-1 text-sm",
-    medium: "px-4 py-2 text-base",
-    large: "px-6 py-3 text-lg",
+    small: "px-3 py-1.5 text-sm min-h-[32px]",
+    medium: "px-4 py-2.5 text-base min-h-[40px]",
+    large: "px-6 py-3.5 text-lg min-h-[48px]",
   };
 
   const borderRadiusClasses = {
@@ -132,10 +140,12 @@ const Button: React.FC<ButtonProps> = ({
         disabled={disabled || loading}
         style={style}
         className={`relative inline-flex items-center justify-center font-medium transition-all duration-200 ease-in-out overflow-hidden
+          focus:outline-none active:scale-95 transform
           ${sizeClasses[size]} 
           ${colorClasses[color][variant]} 
           ${borderRadiusClasses[borderRadius]}
-          ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+          ${disabled ? "opacity-50 cursor-not-allowed transform-none" : ""}
+          ${loading ? "cursor-wait" : ""}
           ${className}
         `}
         onClick={(event) => {

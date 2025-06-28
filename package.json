@@ -1,7 +1,7 @@
 {
   "name": "sabled",
-  "version": "1.0.21",
-  "description": "A customizable button library using React, TailwindCSS, and TypeScript",
+  "version": "2.1.0",
+  "description": "A modern, comprehensive React UI component library with beautiful designs inspired by Material-UI, Chakra UI, and Ant Design. Built with TailwindCSS and TypeScript for maximum customization and developer experience.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
