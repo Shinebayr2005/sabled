@@ -315,4 +315,4 @@ MIT - Feel free to use in your projects!
 
 ---
 
-**Made with ❤️ by SHINEE** - Building beautiful UIs, one component at a time.
+**Made with ❤️ by SHINEE** - Trying to make great UIs easily.
