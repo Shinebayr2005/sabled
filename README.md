@@ -306,7 +306,7 @@ npm install
 npm run build
 
 # Publish to npm
-npm run deploy
+npm run publish
 ```
 
 ## 📄 License
