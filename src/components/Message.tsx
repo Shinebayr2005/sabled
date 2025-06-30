@@ -55,10 +55,8 @@ const Message: React.FC<MessageProps> = ({
   }, [duration, onClose]);
 
   const getTypeStyle = () => {
-    const baseStyles = bordered 
-      ? "border-2" 
-      : "border-l-4";
-      
+    const baseStyles = bordered ? "border-2" : "border-l-4";
+
     switch (type) {
       case "success":
         return `bg-green-50 text-green-900 border-green-500 ${baseStyles}`;
@@ -89,38 +87,43 @@ const Message: React.FC<MessageProps> = ({
     const roundedMap = {
       none: "rounded-none",
       sm: "rounded-sm",
-      md: "rounded-md", 
+      md: "rounded-md",
       lg: "rounded-lg",
       xl: "rounded-xl",
-      full: "rounded-full"
+      full: "rounded-full",
     };
     return roundedMap[rounded];
   };
 
   const getTypeIcon = () => {
     if (!showIcon) return null;
-    
+
     const iconMap = {
       success: "✓",
-      error: "✕", 
+      error: "✕",
       info: "ℹ",
-      warning: "⚠"
+      warning: "⚠",
     };
-    
+
     const iconColorMap = {
       success: "text-green-600",
       error: "text-red-600",
-      info: "text-primary", 
-      warning: "text-yellow-600"
+      info: "text-primary",
+      warning: "text-yellow-600",
     };
-    
+
     return (
-      <span className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 ${
-        type === "success" ? "bg-green-500" :
-        type === "error" ? "bg-red-500" :
-        type === "info" ? "bg-primary" :
-        "bg-yellow-500"
-      }`}>
+      <span
+        className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3 ${
+          type === "success"
+            ? "bg-green-500"
+            : type === "error"
+            ? "bg-red-500"
+            : type === "info"
+            ? "bg-primary"
+            : "bg-yellow-500"
+        }`}
+      >
         {iconMap[type]}
       </span>
     );
@@ -142,7 +145,7 @@ const Message: React.FC<MessageProps> = ({
           : position === "bottom-left"
           ? "opacity-0 translate-y-2 -translate-x-2"
           : "opacity-0 translate-y-2 translate-x-2"
-      } ${getTypeStyle()} ${getSizeStyle()} ${getRoundedStyle()}`}
+      } ${getTypeStyle()} backdrop-blur-sm ${getSizeStyle()} ${getRoundedStyle()}`}
       style={style}
     >
       <div className="flex items-start justify-between">
@@ -153,7 +156,9 @@ const Message: React.FC<MessageProps> = ({
               <span className="font-semibold leading-tight">{text}</span>
             )}
             {description && (
-              <span className="text-sm opacity-90 mt-1 leading-relaxed">{description}</span>
+              <span className="text-sm opacity-90 mt-1 leading-relaxed">
+                {description}
+              </span>
             )}
           </div>
         </div>

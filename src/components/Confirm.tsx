@@ -16,7 +16,7 @@ export interface ConfirmProps {
   className?: string;
   overlayClassName?: string;
   showIcon?: boolean;
-  type?: 'default' | 'danger' | 'warning' | 'info';
+  type?: "default" | "danger" | "warning" | "info";
   closable?: boolean;
 }
 
@@ -57,14 +57,14 @@ const Confirm: React.FC<ConfirmProps> = ({
 
   const getTypeIcon = () => {
     if (!showIcon) return null;
-    
+
     const iconMap = {
       default: "❓",
       danger: "⚠️",
-      warning: "⚠️", 
-      info: "ℹ️"
+      warning: "⚠️",
+      info: "ℹ️",
     };
-    
+
     return iconMap[type];
   };
 
@@ -73,20 +73,21 @@ const Confirm: React.FC<ConfirmProps> = ({
       default: { confirmColor: "primary" as ButtonColor },
       danger: { confirmColor: "danger" as ButtonColor },
       warning: { confirmColor: "warning" as ButtonColor },
-      info: { confirmColor: "primary" as ButtonColor }
+      info: { confirmColor: "primary" as ButtonColor },
     };
-    
+
     return colorMap[type];
   };
 
   const typeColors = getTypeColors();
-  const finalConfirmColor = confirmColor === "primary" ? typeColors.confirmColor : confirmColor;
+  const finalConfirmColor =
+    confirmColor === "primary" ? typeColors.confirmColor : confirmColor;
 
-  const widthStyle = typeof width === 'number' ? `${width}px` : width;
+  const widthStyle = typeof width === "number" ? `${width}px` : width;
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black/50 z-50 transition-opacity duration-300 ${
+      className={`fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/50 z-50 transition-opacity duration-300 ${
         visible ? "opacity-100" : "opacity-0"
       } ${overlayClassName}`}
     >
@@ -100,31 +101,31 @@ const Confirm: React.FC<ConfirmProps> = ({
           <button
             onClick={() => handleClose(onCancel)}
             className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl leading-none"
-            style={{ position: 'absolute', top: '16px', right: '16px' }}
+            style={{ position: "absolute", top: "16px", right: "16px" }}
           >
             ×
           </button>
         )}
-        
+
         <div className="flex items-start gap-4">
           {showIcon && (
-            <div className="flex-shrink-0 text-2xl mt-1">
-              {getTypeIcon()}
-            </div>
+            <div className="flex-shrink-0 text-2xl mt-1">{getTypeIcon()}</div>
           )}
-          
+
           <div className="flex-1">
             {title && (
-              <h3 className="text-lg font-bold mb-2 text-gray-900 pr-8">{title}</h3>
+              <h3 className="text-lg font-bold mb-2 text-gray-900 pr-8">
+                {title}
+              </h3>
             )}
             {content && (
               <p className="text-gray-700 mb-6 leading-relaxed">{content}</p>
             )}
           </div>
         </div>
-        
+
         <div className="flex justify-end space-x-3 mt-6">
-          <Button 
+          <Button
             onClick={() => handleClose(onCancel || (() => {}))}
             color={cancelColor}
             variant={cancelVariant}
