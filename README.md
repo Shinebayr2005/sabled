@@ -1,16 +1,17 @@
 # 🎨 Sabled UI Library
 
-A modern, comprehensive React component library with beautiful designs inspired by Material-UI, Chakra UI, and Ant Design. Built with TailwindCSS and TypeScript for maximum customization and developer experience.
+A modern, comprehensive React component library focused on practical user interactions. Built with TailwindCSS and TypeScript, featuring the industry's best Confirm dialogs and Message notifications with zero-setup APIs.
 
 ## ✨ Features
 
-- 🎯 **15+ Production-Ready Components** - Buttons, inputs, modals, cards, avatars, and more
-- 🎨 **Modern Design System** - Inspired by leading UI libraries with consistent styling
-- ⚡ **Performance Optimized** - Tree-shakeable with automatic CSS injection
-- 🔧 **Highly Customizable** - Easy theming and component variants
+- 🎯 **15+ Production-Ready Components** - Featuring powerful Confirm dialogs and Message notifications
+- 🚀 **Zero Setup Required** - No providers, context, or configuration needed
+- 💬 **Imperative APIs** - Call Confirm and Message directly from anywhere in your code
+- 🎨 **Modern Design System** - Clean, cohesive components with a focus on usability and consistency
+- ⚡ **Performance Optimized** - Tree-shakeable with minimal bundle size
+- 🔧 **Highly Customizable** - Multiple variants, colors, and sizes for every component
 - 📱 **Responsive Design** - Works beautifully on all screen sizes
 - ♿ **Accessibility First** - ARIA compliant with keyboard navigation
-- 🌙 **Dark Mode Ready** - Built-in support for dark themes
 - 💪 **TypeScript Native** - Full type safety and IntelliSense support
 
 ## 🚀 Installation
@@ -22,155 +23,240 @@ npm install sabled
 ## 🎬 Quick Start
 
 ```tsx
-import { Button, Input, Card, Avatar, Badge, StyleProvider } from 'sabled';
+import { Confirm, Message, Button, Input, Card } from 'sabled';
 
 function App() {
+  const handleDelete = async () => {
+    const confirmed = await Confirm({
+      title: "Delete Item",
+      message: "Are you sure you want to delete this item? This action cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "danger"
+    });
+    
+    if (confirmed) {
+      // Perform delete action
+      Message.success("Item deleted successfully!");
+    }
+  };
+
   return (
-    <StyleProvider>
-      <Card variant="elevated" hoverable>
-        <div className="flex items-center gap-4">
-          <Avatar 
-            src="/avatar.jpg" 
-            fallback="JD" 
-            status="online"
-            badge={<Badge color="primary" size="small">Pro</Badge>}
+    <div className="p-6">
+      <Card variant="bordered" className="p-6">
+        <h2 className="text-xl font-semibold mb-4">User Management</h2>
+        <div className="flex gap-4">
+          <Input 
+            label="Search users" 
+            placeholder="Type to search..."
+            variant="bordered"
           />
-          <div className="flex-1">
-            <Input 
-              label="Search" 
-              placeholder="Type something..."
-              variant="outlined"
-            />
-          </div>
-          <Button variant="solid" color="primary" size="large">
-            Search
+          <Button 
+            variant="bordered" 
+            color="danger" 
+            onClick={handleDelete}
+          >
+            Delete Selected
           </Button>
         </div>
       </Card>
-    </StyleProvider>
+    </div>
   );
 }
 ```
 
 ## 🧩 Components
 
+### � Confirm (Core Feature)
+The most important component - beautiful, promise-based confirmation dialogs that integrate seamlessly into your workflow.
+
+```tsx
+// Simple confirmation
+const confirmed = await Confirm("Are you sure?");
+
+// Advanced confirmation with options
+const result = await Confirm({
+  title: "Delete Account",
+  message: "This will permanently delete your account and all associated data.",
+  confirmText: "Delete Forever",
+  cancelText: "Keep Account",
+  variant: "danger",
+  size: "md"
+});
+
+if (result) {
+  // User confirmed
+}
+```
+
+**Why it's special:**
+- Promise-based API - no state management needed
+- Zero setup - works instantly without providers
+- Beautiful animations and transitions
+- Customizable variants (default, danger, warning, success)
+- Keyboard accessible (Enter/Escape)
+- Auto-focus management
+
+### 📢 Message (Core Feature)
+Essential toast notifications with a clean, imperative API. No providers or context needed.
+
+```tsx
+// Simple messages
+Message.success("Profile updated!");
+Message.error("Failed to save changes");
+Message.warning("Session will expire soon");
+Message.info("New feature available");
+
+// Advanced options
+Message.success("Upload complete", {
+  duration: 5000,
+  showClose: true,
+  position: "top-right"
+});
+
+// Custom content
+Message.custom({
+  title: "Custom Notification",
+  content: <div>Rich HTML content here</div>,
+  variant: "primary",
+  duration: 0 // Persist until closed
+});
+```
+
+**Why it's essential:**
+- Imperative API - call from anywhere in your code
+- No setup required - works out of the box
+- Smart positioning and stacking
+- Auto-dismiss with customizable timing
+- Rich content support
+- Mobile-friendly responsive design
+
 ### 🔘 Button
-Enhanced with ripple effects, loading states, and focus management.
+Modern button component with multiple variants and states.
 
 ```tsx
 <Button 
-  variant="solid" 
+  variant="bordered" 
   color="primary" 
-  size="large"
-  iconLeft={<SearchIcon />}
-  loading
+  size="md"
+  startContent={<SearchIcon />}
+  loading={isLoading}
 >
-  Loading...
+  Search
 </Button>
 ```
 
-**New Features:**
-- Active scale animation
-- Enhanced focus states with ring
-- Better shadow system
-- Improved color variants
+**Features:**
+- Multiple variants (solid, bordered, flat, faded, shadow, ghost)
+- Color themes (default, primary, secondary, success, warning, danger)
+- Loading states with spinners
+- Icon support (start/end content)
+- Full accessibility support
 
 ### 📝 Input & Textarea
-Modern form controls with floating labels and validation states.
+Modern form controls with clean HeroUI-inspired design.
 
 ```tsx
 <Input
   label="Email"
-  variant="outlined"
-  startIcon={<EmailIcon />}
-  error={false}
-  helperText="We'll never share your email"
+  variant="bordered"
+  startContent={<EmailIcon />}
+  isInvalid={hasError}
+  errorMessage="Please enter a valid email"
 />
-```
 
-**New Features:**
-- Enhanced focus animations
-- Better visual feedback
-- Improved accessibility
-- Group hover effects
-
-### 🖼️ Avatar (New!)
-Professional avatar component with status indicators and badges.
-
-```tsx
-<Avatar
-  src="/user.jpg"
-  fallback="JD"
-  size="lg"
-  status="online"
-  badge={<Badge color="primary" size="sm">VIP</Badge>}
+<Textarea
+  label="Comments"
+  variant="bordered"
+  rows={4}
+  maxLength={500}
+  showCharCount
 />
 ```
 
 **Features:**
-- Multiple sizes (xs, sm, md, lg, xl, 2xl)
-- Status indicators (online, offline, away, busy)
-- Badge support
-- Fallback to initials
-- Loading state
+- HeroUI-inspired variants (flat, faded, bordered, underlined)
+- Validation states with error messages
+- Start/end content support
+- Character counting for textarea
+- Full accessibility compliance
 
-### 🎯 Badge
-Enhanced with better typography and hover effects.
+### 🖼️ Avatar
+Clean avatar component with multiple styling options.
 
 ```tsx
-<Badge variant="soft" color="success">
+<Avatar
+  src="/user.jpg"
+  name="John Doe"
+  size="lg"
+  color="primary"
+  isBordered
+/>
+```
+
+**Features:**
+- Automatic initials fallback from name
+- Multiple sizes (sm, md, lg)
+- Color themes and border options
+- Click handlers for interactive use
+- Disabled state support
+
+### 🎯 Badge
+Simple, effective badges for status and labels.
+
+```tsx
+<Badge variant="solid" color="success">
   Active
 </Badge>
 ```
 
-**New Features:**
-- Improved color system
-- Hover scale animation
-- Better shadows
-- Dot variant with pulse animation
+**Features:**
+- Multiple variants (solid, flat, faded, shadow, bordered)
+- Color system integration
+- Size options (sm, md, lg)
+- Content flexibility
 
 ### 🃏 Card
-Redesigned with gradient backgrounds and better hover effects.
+Versatile container component for organizing content.
 
 ```tsx
 <Card 
-  variant="elevated"
-  hoverable
+  variant="bordered"
   header={<h3>Card Title</h3>}
   footer={<Button fullWidth>Action</Button>}
 >
-  Beautiful card content with enhanced styling
+  Card content goes here
 </Card>
 ```
 
-**New Features:**
-- Gradient backgrounds
-- Enhanced hover animations
-- Better border system
-- Improved shadows
+**Features:**
+- Multiple variants (flat, faded, bordered, shadow)
+- Header and footer support
+- Interactive states (hoverable, pressable)
+- Flexible sizing and radius options
 
 ### 🪟 Modal
-Modernized with backdrop blur and smooth animations.
+Clean modal component with backdrop and animations.
 
 ```tsx
 <Modal
   isOpen={isOpen}
   onClose={handleClose}
-  title="Enhanced Modal"
-  size="large"
+  title="Settings"
+  size="md"
 >
-  Now with glassmorphism effects and better animations!
+  Modal content here
 </Modal>
 ```
 
-**New Features:**
-- Backdrop blur effects
-- Glassmorphism design
-- Enhanced animations
-- Better close interactions
+**Features:**
+- Backdrop click to close
+- Keyboard navigation (Escape key)
+- Size variants and positioning
+- Scroll lock when open
 
 ### 📊 Progress
-Redesigned with gradients and shimmer effects.
+Progress indicators for loading states and data visualization.
 
 ```tsx
 <Progress 
@@ -182,94 +268,100 @@ Redesigned with gradients and shimmer effects.
 />
 ```
 
-**New Features:**
-- Gradient progress bars
-- Shimmer loading animation
-- Enhanced circular variant
-- Better color system
+**Features:**
+- Linear and circular variants
+- Color theme integration
+- Value display options
+- Indeterminate states
 
-### 🔄 Spinner (New!)
-Multiple loading animations with customizable styles.
+### 🔄 Spinner
+Loading spinners for async operations.
 
 ```tsx
 <Spinner 
-  variant="dots" 
-  size="lg" 
+  size="md" 
   color="primary"
   label="Loading..."
 />
 ```
 
-**Variants:**
-- `spinner` - Classic spinning circle
-- `dots` - Bouncing dots
-- `pulse` - Pulsing circle
-- `bars` - Animated bars
+**Features:**
+- Multiple size options
+- Color customization
+- Optional labels
+- Accessible screen reader support
 
-### 💬 Tooltip (New!)
-Smart positioning with beautiful animations.
+### 💬 Tooltip
+Contextual information overlays.
 
 ```tsx
-<Tooltip content="This is a helpful tooltip" placement="top">
+<Tooltip content="Helpful information" placement="top">
   <Button>Hover me</Button>
 </Tooltip>
 ```
 
 **Features:**
 - Smart positioning
-- Multiple variants (dark, light, primary)
+- Keyboard navigation
 - Delay customization
-- Keyboard navigation support
+- Multiple placement options
 
 ## 🎨 Design System
 
+### Core Philosophy
+Sabled prioritizes **practical functionality** over flashy effects. Every component is designed to solve real UI problems with clean, accessible interfaces.
+
 ### Color Palette
-- **Primary**: Customizable blue theme
-- **Success**: Green variants
-- **Danger**: Red variants
-- **Warning**: Yellow variants
-- **Info**: Blue info variants
-- **Default**: Neutral grays
+- **Primary**: Customizable brand color theme
+- **Success**: Green variants for positive actions
+- **Danger**: Red variants for destructive actions  
+- **Warning**: Orange variants for caution
+- **Secondary**: Neutral secondary theme
+- **Default**: Clean neutral grays
 
 ### Component Variants
-- **Solid**: Filled backgrounds
-- **Outlined**: Border-only designs
-- **Soft**: Subtle backgrounds
-- **Text**: Minimal styling
+- **Solid**: Filled backgrounds for primary actions
+- **Bordered**: Clean borders for secondary actions
+- **Flat**: Minimal styling for subtle interactions
+- **Faded**: Subtle backgrounds with transparency
+- **Shadow**: Elevated appearance with shadows
 
 ### Size System
-- **xs, sm, md, lg, xl, 2xl**: Consistent sizing across all components
+- **sm, md, lg**: Consistent sizing across all components
+- Responsive design principles
+- Touch-friendly minimum sizes
 
-## 🎯 Enhanced Features
+## 🎯 What Makes Sabled Special
 
-### Modern Animations
-- Smooth transitions with easing
-- Scale and translate effects
-- Loading shimmer animations
-- Pulse and bounce variants
+### 🚀 Zero Configuration
+- No providers or context setup required
+- Components work instantly after installation
+- No theme configuration needed
+- Just import and use
 
-### Focus Management
-- Enhanced focus rings
-- Keyboard navigation
-- Screen reader support
-- ARIA compliance
+### 💬 Imperative APIs
+- `Confirm()` returns a promise - no state management
+- `Message.success()` works from anywhere in your app
+- Clean, predictable APIs that feel natural
+- Async/await friendly patterns
 
-### Visual Polish
-- Glassmorphism effects
-- Gradient backgrounds
-- Enhanced shadows
-- Better typography
+### 🎨 Practical Design
+- HeroUI-inspired modern aesthetics
+- Focus on usability over decoration
+- Consistent behavior across all components
+- Mobile-first responsive design
+
+### ♿ Accessibility Built-in
+- Full keyboard navigation support
+- Screen reader compatibility
+- Focus management and ARIA labels
+- Color contrast compliance
 
 ## 🛠️ Customization
 
-### Primary Color
-```css
-:root {
-  --color-primary: #your-brand-color;
-}
-```
-
 ### TailwindCSS Integration
+Sabled is built with TailwindCSS and integrates seamlessly with your existing setup:
+
 ```js
 // tailwind.config.js
 module.exports = {
@@ -282,12 +374,30 @@ module.exports = {
       colors: {
         primary: {
           DEFAULT: '#3b82f6',
+          50: '#eff6ff',
+          100: '#dbeafe',
           // ... your color palette
         }
       }
     }
   }
 }
+```
+
+### Custom Styling
+All components accept className props and work with your existing CSS:
+
+```tsx
+<Button className="my-custom-button-class">
+  Custom Styled
+</Button>
+
+<Confirm 
+  className="custom-confirm-dialog"
+  title="Custom Confirmation"
+>
+  This dialog can be styled with CSS
+</Confirm>
 ```
 
 ## 📦 Bundle Size

@@ -14,7 +14,26 @@ export { default as Progress } from "./components/Progress";
 export { default as Avatar } from "./components/Avatar";
 export { default as Spinner } from "./components/Spinner";
 export { default as Tooltip } from "./components/Tooltip";
+export { default as Confirm } from "./components/Confirm";
 export { default as StyleProvider } from "./components/StyleProvider";
+
+// Badge types
+export type { BadgeProps, BadgeVariant, BadgeColor, BadgeSize, BadgeRadius, BadgePlacement } from "./components/Badge";
+
+// Button types
+export type { ButtonProps, ButtonVariant, ButtonColor, ButtonSize, ButtonRadius } from "./components/Button";
+
+// Input types
+export type { InputProps, InputVariant, InputColor, InputSize, InputRadius } from "./components/Input";
+
+// Textarea types
+export type { TextareaProps, TextareaVariant, TextareaColor, TextareaSize, TextareaRadius } from "./components/Textarea";
+
+// Card types
+export type { CardProps, CardVariant, CardSize, CardRadius } from "./components/Card";
+
+// Avatar types
+export type { AvatarProps, AvatarSize, AvatarRadius, AvatarColor } from "./components/Avatar";
 
 // Utils
 export { default as message } from "./utils/Message";

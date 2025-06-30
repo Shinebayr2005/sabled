@@ -1,84 +1,179 @@
-import React from 'react';
+import React from "react";
 
-type BadgeVariant = 'solid' | 'outlined' | 'soft';
-type BadgeColor = 'default' | 'primary' | 'danger' | 'success' | 'warning' | 'info';
-type BadgeSize = 'small' | 'medium' | 'large';
+export type BadgeVariant = "solid" | "flat" | "faded" | "shadow" | "bordered";
+export type BadgeColor =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger";
+export type BadgeSize = "sm" | "md" | "lg";
+export type BadgeRadius = "none" | "sm" | "md" | "lg" | "full";
+export type BadgePlacement =
+  | "top-right"
+  | "top-left"
+  | "bottom-right"
+  | "bottom-left";
 
-interface BadgeProps {
-  children: React.ReactNode;
+export interface BadgeProps {
+  children?: React.ReactNode;
   variant?: BadgeVariant;
   color?: BadgeColor;
   size?: BadgeSize;
+  radius?: BadgeRadius;
   className?: string;
-  dot?: boolean;
-  rounded?: boolean;
+  content?: React.ReactNode;
+  showOutline?: boolean;
+  isOneChar?: boolean;
+  isDot?: boolean;
+  placement?: BadgePlacement;
+  isInvisible?: boolean;
+  disableAnimation?: boolean;
 }
 
 const Badge: React.FC<BadgeProps> = ({
   children,
-  variant = 'solid',
-  color = 'default',
-  size = 'medium',
-  className = '',
-  dot = false,
-  rounded = false
+  variant = "solid",
+  color = "default",
+  size = "md",
+  radius = "md",
+  className = "",
+  content,
+  showOutline = false,
+  isOneChar = false,
+  isDot = false,
+  placement = "top-right",
+  isInvisible = false,
+  disableAnimation = false,
 }) => {
   const sizeClasses = {
-    small: dot ? 'w-2 h-2' : 'px-2 py-0.5 text-xs font-semibold',
-    medium: dot ? 'w-3 h-3' : 'px-2.5 py-1 text-sm font-semibold',
-    large: dot ? 'w-4 h-4' : 'px-3 py-1.5 text-base font-semibold'
+    sm: isDot
+      ? "w-2 h-2 min-w-[8px] min-h-[8px]"
+      : "h-5 min-w-[20px] px-1 text-xs",
+    md: isDot
+      ? "w-2.5 h-2.5 min-w-[10px] min-h-[10px]"
+      : "h-6 min-w-[24px] px-1.5 text-sm",
+    lg: isDot
+      ? "w-3 h-3 min-w-[12px] min-h-[12px]"
+      : "h-7 min-w-[28px] px-2 text-sm",
+  };
+
+  const radiusClasses = {
+    none: "rounded-none",
+    sm: "rounded-sm",
+    md: "rounded-md",
+    lg: "rounded-lg",
+    full: "rounded-full",
   };
 
   const colorClasses = {
     default: {
-      solid: 'bg-gray-600 text-white shadow-sm',
-      outlined: 'border border-gray-600 text-gray-600 bg-white shadow-sm',
-      soft: 'bg-gray-100 text-gray-700 border border-gray-200'
+      solid: "bg-gray-600 text-white",
+      flat: "bg-gray-100 text-gray-700",
+      faded: "bg-gray-50 text-gray-600 border border-gray-200",
+      shadow: "bg-gray-600 text-white shadow-lg shadow-gray-500/25",
+      bordered: "bg-transparent text-gray-600 border-2 border-gray-300",
     },
     primary: {
-      solid: 'bg-primary text-white shadow-md',
-      outlined: 'border border-primary text-primary bg-white shadow-sm',
-      soft: 'bg-primary/10 text-primary border border-primary/20'
+      solid: "bg-primary text-white",
+      flat: "bg-primary/10 text-primary",
+      faded: "bg-primary/5 text-primary border border-primary/20",
+      shadow: "bg-primary text-white shadow-lg shadow-primary/25",
+      bordered: "bg-transparent text-primary border-2 border-primary",
     },
-    danger: {
-      solid: 'bg-red-500 text-white shadow-md',
-      outlined: 'border border-red-500 text-red-500 bg-white shadow-sm',
-      soft: 'bg-red-50 text-red-700 border border-red-200'
+    secondary: {
+      solid: "bg-purple-600 text-white",
+      flat: "bg-purple-100 text-purple-700",
+      faded: "bg-purple-50 text-purple-600 border border-purple-200",
+      shadow: "bg-purple-600 text-white shadow-lg shadow-purple-500/25",
+      bordered: "bg-transparent text-purple-600 border-2 border-purple-300",
     },
     success: {
-      solid: 'bg-green-500 text-white shadow-md',
-      outlined: 'border border-green-500 text-green-500 bg-white shadow-sm',
-      soft: 'bg-green-50 text-green-700 border border-green-200'
+      solid: "bg-green-600 text-white",
+      flat: "bg-green-100 text-green-700",
+      faded: "bg-green-50 text-green-600 border border-green-200",
+      shadow: "bg-green-600 text-white shadow-lg shadow-green-500/25",
+      bordered: "bg-transparent text-green-600 border-2 border-green-300",
     },
     warning: {
-      solid: 'bg-yellow-500 text-white shadow-md',
-      outlined: 'border border-yellow-500 text-yellow-600 bg-white shadow-sm',
-      soft: 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+      solid: "bg-yellow-500 text-black",
+      flat: "bg-yellow-100 text-yellow-700",
+      faded: "bg-yellow-50 text-yellow-600 border border-yellow-200",
+      shadow: "bg-yellow-500 text-black shadow-lg shadow-yellow-500/25",
+      bordered: "bg-transparent text-yellow-600 border-2 border-yellow-300",
     },
-    info: {
-      solid: 'bg-blue-500 text-white shadow-md',
-      outlined: 'border border-blue-500 text-blue-500 bg-white shadow-sm',
-      soft: 'bg-blue-50 text-blue-700 border border-blue-200'
-    }
+    danger: {
+      solid: "bg-red-600 text-white",
+      flat: "bg-red-100 text-red-700",
+      faded: "bg-red-50 text-red-600 border border-red-200",
+      shadow: "bg-red-600 text-white shadow-lg shadow-red-500/25",
+      bordered: "bg-transparent text-red-600 border-2 border-red-300",
+    },
   };
 
-  const baseClasses = dot 
-    ? 'inline-block rounded-full animate-pulse' 
-    : 'inline-flex items-center justify-center font-medium transition-all duration-200 hover:scale-105';
+  const placementClasses = {
+    "top-right": "top-0 right-0 translate-x-1/3 -translate-y-1/3",
+    "top-left": "top-0 left-0 -translate-x-1/3 -translate-y-1/3",
+    "bottom-right": "bottom-0 right-0 translate-x-1/3 translate-y-1/3",
+    "bottom-left": "bottom-0 left-0 -translate-x-1/3 translate-y-1/3",
+  };
 
-  const roundedClasses = dot ? '' : (rounded ? 'rounded-full' : 'rounded-md');
+  const baseClasses = isDot
+    ? `inline-block ${radiusClasses.full}`
+    : `inline-flex items-center justify-center font-medium ${radiusClasses[radius]}`;
 
+  const animationClasses = !disableAnimation
+    ? "transition-transform duration-200 hover:scale-105"
+    : "";
+
+  const outlineClasses = showOutline ? "ring-2 ring-white ring-offset-2" : "";
+
+  const badgeContent = content !== undefined ? content : children;
+
+  // If badge is used as wrapper (with children)
+  if (children && content !== undefined) {
+    return (
+      <div className="relative inline-flex z-10">
+        {children}
+        {!isInvisible && (
+          <span
+            className={`
+              absolute
+              ${baseClasses}
+              ${sizeClasses[size]}
+              ${colorClasses[color][variant]}
+              ${placementClasses[placement]}
+              ${animationClasses}
+              ${outlineClasses}
+              ${className}
+              z-10
+            `
+              .replace(/\s+/g, " ")
+              .trim()}
+          >
+            {!isDot && badgeContent}
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  // Standalone badge
   return (
     <span
       className={`
         ${baseClasses}
         ${sizeClasses[size]}
         ${colorClasses[color][variant]}
-        ${roundedClasses}
+        ${animationClasses}
+        ${outlineClasses}
         ${className}
-      `}
+      `
+        .replace(/\s+/g, " ")
+        .trim()}
     >
-      {!dot && children}
+      {!isDot && badgeContent}
     </span>
   );
 };

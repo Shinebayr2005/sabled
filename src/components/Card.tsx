@@ -1,59 +1,100 @@
 import React from 'react';
 
-type CardVariant = 'elevated' | 'outlined' | 'filled';
-type CardSize = 'small' | 'medium' | 'large';
+export type CardVariant = 'flat' | 'faded' | 'bordered' | 'shadow';
+export type CardSize = 'sm' | 'md' | 'lg';
+export type CardRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl';
 
-interface CardProps {
+export interface CardProps {
   children: React.ReactNode;
   variant?: CardVariant;
   size?: CardSize;
+  radius?: CardRadius;
   className?: string;
-  hoverable?: boolean;
-  clickable?: boolean;
+  isHoverable?: boolean;
+  isPressable?: boolean;
+  isBlurred?: boolean;
+  isFooterBlurred?: boolean;
   onClick?: () => void;
   header?: React.ReactNode;
   footer?: React.ReactNode;
+  shadow?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  fullWidth?: boolean;
+  disableAnimation?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
   children,
-  variant = 'elevated',
-  size = 'medium',
+  variant = 'flat',
+  size = 'md',
+  radius = 'lg',
   className = '',
-  hoverable = false,
-  clickable = false,
+  isHoverable = false,
+  isPressable = false,
+  isBlurred = false,
+  isFooterBlurred = false,
   onClick,
   header,
-  footer
+  footer,
+  shadow = 'sm',
+  fullWidth = false,
+  disableAnimation = false,
 }) => {
   const sizeClasses = {
-    small: 'p-4',
-    medium: 'p-6',
-    large: 'p-8'
+    sm: 'p-3',
+    md: 'p-4',
+    lg: 'p-6'
+  };
+
+  const radiusClasses = {
+    none: 'rounded-none',
+    sm: 'rounded-sm',
+    md: 'rounded-md',
+    lg: 'rounded-lg',
+    xl: 'rounded-xl'
   };
 
   const variantClasses = {
-    elevated: 'bg-white shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300',
-    outlined: 'bg-white border-2 border-gray-200 hover:border-gray-300 transition-colors duration-200',
-    filled: 'bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors duration-200'
+    flat: 'bg-white border border-gray-200',
+    faded: 'bg-white/70 border border-gray-200 backdrop-blur-md',
+    bordered: 'bg-transparent border-2 border-gray-200',
+    shadow: 'bg-white border border-gray-200'
   };
 
-  const hoverClasses = hoverable ? 'hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-out' : '';
-  const clickableClasses = clickable ? 'cursor-pointer active:scale-[0.98] transition-transform duration-150' : '';
+  const shadowClasses = {
+    none: '',
+    sm: 'shadow-sm',
+    md: 'shadow-md',
+    lg: 'shadow-lg',
+    xl: 'shadow-xl'
+  };
+
+  const hoverClasses = isHoverable && !disableAnimation 
+    ? 'hover:shadow-lg hover:-translate-y-1 transition-all duration-300' 
+    : '';
+    
+  const pressableClasses = isPressable 
+    ? 'cursor-pointer active:scale-[0.97] transition-transform duration-150' 
+    : '';
+
+  const blurClasses = isBlurred ? 'backdrop-blur-md bg-white/70' : '';
 
   return (
     <div
       className={`
-        rounded-xl overflow-hidden backdrop-blur-sm
+        overflow-hidden
+        ${fullWidth ? 'w-full' : ''}
+        ${radiusClasses[radius]}
         ${variantClasses[variant]}
+        ${variant === 'shadow' ? shadowClasses[shadow] : ''}
         ${hoverClasses}
-        ${clickableClasses}
+        ${pressableClasses}
+        ${blurClasses}
         ${className}
-      `}
-      onClick={clickable ? onClick : undefined}
+      `.replace(/\s+/g, ' ').trim()}
+      onClick={isPressable ? onClick : undefined}
     >
       {header && (
-        <div className="border-b border-gray-200/80 p-4 bg-gradient-to-r from-gray-50/50 to-white/50">
+        <div className={`border-b border-gray-200/80 px-4 py-3 ${isFooterBlurred ? 'backdrop-blur-md bg-white/70' : 'bg-gray-50/50'}`}>
           {header}
         </div>
       )}
@@ -63,7 +104,7 @@ const Card: React.FC<CardProps> = ({
       </div>
       
       {footer && (
-        <div className="border-t border-gray-200/80 p-4 bg-gradient-to-r from-gray-50/50 to-white/50">
+        <div className={`border-t border-gray-200/80 px-4 py-3 ${isFooterBlurred ? 'backdrop-blur-md bg-white/70' : 'bg-gray-50/50'}`}>
           {footer}
         </div>
       )}

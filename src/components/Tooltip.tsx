@@ -31,7 +31,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   const variantClasses = {
     dark: 'bg-gray-900 text-white border-gray-800',
     light: 'bg-white text-gray-900 border-gray-200 shadow-lg',
-    primary: 'bg-primary text-white border-primary-600'
+    primary: 'bg-primary text-white border-primary'
   };
 
   const arrowClasses = {

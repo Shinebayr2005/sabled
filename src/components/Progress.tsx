@@ -1,171 +1,238 @@
 import React from 'react';
 
-type ProgressVariant = 'linear' | 'circular';
-type ProgressSize = 'small' | 'medium' | 'large';
-type ProgressColor = 'default' | 'primary' | 'danger' | 'success' | 'warning';
+type ProgressVariant = 'solid' | 'bordered' | 'light' | 'flat';
+type ProgressSize = 'sm' | 'md' | 'lg';
+type ProgressColor = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+type ProgressRadius = 'none' | 'sm' | 'md' | 'lg' | 'full';
 
 interface BaseProgressProps {
   value?: number;
+  minValue?: number;
+  maxValue?: number;
   color?: ProgressColor;
   size?: ProgressSize;
+  radius?: ProgressRadius;
+  variant?: ProgressVariant;
   className?: string;
-  indeterminate?: boolean;
+  isIndeterminate?: boolean;
+  isDisabled?: boolean;
   label?: string;
-  showValue?: boolean;
+  showValueLabel?: boolean;
+  formatOptions?: Intl.NumberFormatOptions;
+  valueLabel?: string;
 }
 
 interface LinearProgressProps extends BaseProgressProps {
-  variant: 'linear';
-  thickness?: 'thin' | 'medium' | 'thick';
+  orientation?: 'horizontal' | 'vertical';
+  isStriped?: boolean;
+  disableAnimation?: boolean;
 }
 
 interface CircularProgressProps extends BaseProgressProps {
-  variant: 'circular';
-  thickness?: number;
+  strokeWidth?: number;
+  trackStroke?: string;
 }
 
-type ProgressProps = LinearProgressProps | CircularProgressProps;
+type ProgressProps = (LinearProgressProps & { type?: 'linear' }) | (CircularProgressProps & { type: 'circular' });
 
 const Progress: React.FC<ProgressProps> = (props) => {
   const {
     value = 0,
+    minValue = 0,
+    maxValue = 100,
     color = 'primary',
-    size = 'medium',
+    size = 'md',
+    radius = 'full',
+    variant = 'solid',
     className = '',
-    indeterminate = false,
+    isIndeterminate = false,
+    isDisabled = false,
     label,
-    showValue = false,
-    variant
+    showValueLabel = false,
+    valueLabel,
+    type = 'linear'
   } = props;
 
-  const clampedValue = Math.min(100, Math.max(0, value));
+  const clampedValue = Math.min(maxValue, Math.max(minValue, value));
+  const percentage = ((clampedValue - minValue) / (maxValue - minValue)) * 100;
 
   const getColorClasses = () => {
     const colorMap = {
-      default: 'bg-gradient-to-r from-gray-500 to-gray-600',
-      primary: 'bg-gradient-to-r from-primary to-primary-600',
-      danger: 'bg-gradient-to-r from-red-500 to-red-600',
-      success: 'bg-gradient-to-r from-green-500 to-green-600',
-      warning: 'bg-gradient-to-r from-yellow-500 to-yellow-600'
+      default: {
+        solid: 'bg-gray-400',
+        bordered: 'border-gray-400 bg-transparent',
+        light: 'bg-gray-100 text-gray-600',
+        flat: 'bg-gray-200'
+      },
+      primary: {
+        solid: 'bg-primary',
+        bordered: 'border-primary bg-transparent',
+        light: 'bg-primary/10 text-primary',
+        flat: 'bg-primary/20'
+      },
+      secondary: {
+        solid: 'bg-gray-500',
+        bordered: 'border-gray-500 bg-transparent',
+        light: 'bg-gray-100 text-gray-700',
+        flat: 'bg-gray-200'
+      },
+      success: {
+        solid: 'bg-green-500',
+        bordered: 'border-green-500 bg-transparent',
+        light: 'bg-green-100 text-green-700',
+        flat: 'bg-green-200'
+      },
+      warning: {
+        solid: 'bg-yellow-500',
+        bordered: 'border-yellow-500 bg-transparent',
+        light: 'bg-yellow-100 text-yellow-700',
+        flat: 'bg-yellow-200'
+      },
+      danger: {
+        solid: 'bg-red-500',
+        bordered: 'border-red-500 bg-transparent',
+        light: 'bg-red-100 text-red-700',
+        flat: 'bg-red-200'
+      }
     };
 
-    return colorMap[color];
+    return colorMap[color][variant];
   };
 
-  if (variant === 'linear') {
-    const { thickness = 'medium' } = props as LinearProgressProps;
-    
-    const sizeClasses = {
-      small: 'h-1',
-      medium: 'h-2',
-      large: 'h-3'
+  const getRadiusClasses = () => {
+    const radiusMap = {
+      none: 'rounded-none',
+      sm: 'rounded-sm',
+      md: 'rounded-md',
+      lg: 'rounded-lg',
+      full: 'rounded-full'
     };
+    return radiusMap[radius];
+  };
 
-    const thicknessClasses = {
-      thin: 'h-1',
-      medium: 'h-2',
-      thick: 'h-4'
-    };
+  const getSizeClasses = () => {
+    if (type === 'circular') {
+      const sizeMap = {
+        sm: 32,
+        md: 48,
+        lg: 64
+      };
+      return sizeMap[size];
+    } else {
+      const sizeMap = {
+        sm: 'h-1',
+        md: 'h-2',
+        lg: 'h-3'
+      };
+      return sizeMap[size];
+    }
+  };
+
+  if (type === 'circular') {
+    const { strokeWidth = 4, trackStroke } = props as CircularProgressProps;
+    const sizePx = getSizeClasses() as number;
+    const radius = (sizePx - strokeWidth) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
     return (
-      <div className={`w-full ${className}`}>
-        {label && (
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">{label}</span>
-            {showValue && (
-              <span className="text-sm text-gray-500">{Math.round(clampedValue)}%</span>
-            )}
-          </div>
-        )}
-        
-        <div className={`w-full bg-gray-200 rounded-full ${thicknessClasses[thickness]} overflow-hidden shadow-inner`}>
-          <div
-            className={`
-              ${getColorClasses()} 
-              ${thicknessClasses[thickness]} 
-              rounded-full transition-all duration-500 ease-out relative overflow-hidden
-              ${indeterminate ? 'animate-pulse' : ''}
-            `}
-            style={{
-              width: indeterminate ? '100%' : `${clampedValue}%`,
-              animation: indeterminate ? 'progressIndeterminate 2s ease-in-out infinite' : undefined
-            }}
+      <div className={`inline-flex items-center justify-center ${className} ${isDisabled ? 'opacity-50' : ''}`}>
+        <div className="relative">
+          <svg
+            width={sizePx}
+            height={sizePx}
+            className="transform -rotate-90"
           >
-            {!indeterminate && (
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
-            )}
-          </div>
+            {/* Background track */}
+            <circle
+              cx={sizePx / 2}
+              cy={sizePx / 2}
+              r={radius}
+              stroke={trackStroke || "currentColor"}
+              strokeWidth={strokeWidth}
+              fill="none"
+              className="text-gray-200"
+            />
+            
+            {/* Progress circle */}
+            <circle
+              cx={sizePx / 2}
+              cy={sizePx / 2}
+              r={radius}
+              stroke="currentColor"
+              strokeWidth={strokeWidth}
+              fill="none"
+              strokeLinecap="round"
+              className={getColorClasses().replace('bg-', 'text-')}
+              style={{
+                strokeDasharray: circumference,
+                strokeDashoffset: isIndeterminate ? 0 : strokeDashoffset,
+                transition: 'stroke-dashoffset 0.5s ease-in-out',
+                animation: isIndeterminate ? 'spin 2s linear infinite' : undefined
+              }}
+            />
+          </svg>
+          
+          {/* Center content */}
+          {(label || showValueLabel || valueLabel) && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                {(showValueLabel || valueLabel) && (
+                  <span className="text-xs font-medium text-gray-700">
+                    {valueLabel || `${Math.round(percentage)}%`}
+                  </span>
+                )}
+                {label && (
+                  <div className="text-xs text-gray-500 mt-1">{label}</div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
-  // Circular Progress
-  const { thickness = 4 } = props as CircularProgressProps;
-  
-  const sizeMap = {
-    small: 32,
-    medium: 48,
-    large: 64
-  };
-
-  const size_px = sizeMap[size];
-  const radius = (size_px - thickness) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (clampedValue / 100) * circumference;
+  // Linear Progress
+  const { orientation = 'horizontal', isStriped = false, disableAnimation = false } = props as LinearProgressProps;
+  const heightClasses = getSizeClasses() as string;
+  const isVertical = orientation === 'vertical';
 
   return (
-    <div className={`inline-flex items-center justify-center ${className}`}>
-      <div className="relative">
-        <svg
-          width={size_px}
-          height={size_px}
-          className="transform -rotate-90"
+    <div className={`${isVertical ? 'h-full w-fit' : 'w-full'} ${className} ${isDisabled ? 'opacity-50' : ''}`}>
+      {label && (
+        <div className={`flex ${isVertical ? 'flex-col items-center' : 'justify-between items-center'} mb-2`}>
+          <span className="text-sm font-medium text-gray-700">{label}</span>
+          {(showValueLabel || valueLabel) && (
+            <span className="text-sm text-gray-500">
+              {valueLabel || `${Math.round(percentage)}%`}
+            </span>
+          )}
+        </div>
+      )}
+      
+      <div className={`
+        ${isVertical ? `w-2 h-full ${getRadiusClasses()}` : `w-full ${heightClasses} ${getRadiusClasses()}`}
+        bg-gray-200 overflow-hidden shadow-inner relative
+      `}>
+        <div
+          className={`
+            ${getColorClasses()}
+            ${isVertical ? `w-full ${getRadiusClasses()}` : `${heightClasses} ${getRadiusClasses()}`}
+            ${!disableAnimation ? 'transition-all duration-500 ease-out' : ''}
+            ${isIndeterminate ? 'animate-pulse' : ''}
+            ${isStriped ? 'bg-stripes' : ''}
+            relative overflow-hidden
+          `}
+          style={{
+            [isVertical ? 'height' : 'width']: isIndeterminate ? '100%' : `${percentage}%`,
+            animation: isIndeterminate ? 'progressIndeterminate 2s ease-in-out infinite' : undefined
+          }}
         >
-          {/* Background circle */}
-          <circle
-            cx={size_px / 2}
-            cy={size_px / 2}
-            r={radius}
-            stroke="currentColor"
-            strokeWidth={thickness}
-            fill="none"
-            className="text-gray-200"
-          />
-          
-          {/* Progress circle */}
-          <circle
-            cx={size_px / 2}
-            cy={size_px / 2}
-            r={radius}
-            stroke="currentColor"
-            strokeWidth={thickness}
-            fill="none"
-            strokeLinecap="round"
-            className={getColorClasses().replace('bg-', 'text-')}
-            style={{
-              strokeDasharray: circumference,
-              strokeDashoffset: indeterminate ? 0 : strokeDashoffset,
-              animation: indeterminate ? 'spin 2s linear infinite' : undefined
-            }}
-          />
-        </svg>
-        
-        {/* Center content */}
-        {(label || showValue) && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              {showValue && (
-                <span className="text-xs font-medium text-gray-700">
-                  {Math.round(clampedValue)}%
-                </span>
-              )}
-              {label && (
-                <div className="text-xs text-gray-500">{label}</div>
-              )}
-            </div>
-          </div>
-        )}
+          {!isIndeterminate && !disableAnimation && (
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+          )}
+        </div>
       </div>
     </div>
   );

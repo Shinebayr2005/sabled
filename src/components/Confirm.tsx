@@ -37,7 +37,7 @@ const Confirm: React.FC<ConfirmProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 transition-opacity duration-300 ${
+      className={`fixed inset-0 flex items-center justify-center bg-black/50 z-50 transition-opacity duration-300 ${
         visible ? "opacity-100" : "opacity-0"
       }`}
     >
