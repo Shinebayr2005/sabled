@@ -1,7 +1,7 @@
 {
   "name": "sabled",
-  "version": "0.2.15",
-  "description": "A modern, comprehensive React UI component library with beautiful designs inspired by Material-UI, Chakra UI, and Ant Design. Built with TailwindCSS and TypeScript for maximum customization and developer experience.",
+  "version": "0.2.17",
+  "description": "A modern, comprehensive React UI component library with beautiful designs. Built with TailwindCSS and TypeScript for maximum customization and developer experience.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",
     "prepare": "npm run build",
-    "pub": "npm version patch --no-git-tag-version && npm publish --tag beta"
+    "pub": "npm version patch --no-git-tag-version && npm publish --tag beta && npm dist-tag add sabled@0.2.16 latest"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
