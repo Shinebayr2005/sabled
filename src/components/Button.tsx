@@ -83,8 +83,7 @@ const Button: React.FC<ButtonProps> = ({
       ghost: "bg-transparent text-gray-700 hover:bg-gray-100",
     },
     primary: {
-      solid:
-        "bg-primary text-white hover:bg-primary/90 active:bg-primary/80",
+      solid: "bg-primary text-white hover:bg-primary/90 active:bg-primary/80",
       flat: "bg-primary/10 text-primary hover:bg-primary/20 active:bg-primary/30",
       faded:
         "bg-primary/5 text-primary border border-primary/20 hover:bg-primary/10",
@@ -188,7 +187,11 @@ const Button: React.FC<ButtonProps> = ({
     disabled:opacity-50 disabled:pointer-events-none
     overflow-hidden
     ${fullWidth ? "w-full" : ""}
-    ${!disableAnimation ? "transform hover:scale-105 active:scale-95" : ""}
+    ${
+      !disableAnimation
+        ? "transform hover:scale-[1.02] active:scale-[0.98]"
+        : ""
+    }
   `
     .replace(/\s+/g, " ")
     .trim();
