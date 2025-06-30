@@ -1,4 +1,4 @@
-# 🎨 Sabled UI Library Demo Version aa
+# 🎨 Sabled UI Library Demo Version
 
 A modern React component library designed for practical, accessible, and beautiful user interfaces. Built with TailwindCSS and TypeScript, Sabled offers zero-setup APIs for Confirm dialogs and Message notifications, making it easy to create production-ready UIs with minimal configuration.
 
