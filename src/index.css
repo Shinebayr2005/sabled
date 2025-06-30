@@ -57,7 +57,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -75,10 +76,15 @@
 }
 
 @keyframes bounce {
-  0%, 20%, 53%, 80%, 100% {
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
     transform: translate3d(0, 0, 0);
   }
-  40%, 43% {
+  40%,
+  43% {
     transform: translate3d(0, -8px, 0);
   }
   70% {
@@ -201,7 +207,7 @@
     @apply active:scale-95;
     @apply shadow-sm hover:shadow-md;
   }
-  
+
   .sabled-button:disabled {
     @apply opacity-50 cursor-not-allowed shadow-none;
     @apply transform-none;

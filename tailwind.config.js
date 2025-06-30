@@ -4,7 +4,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: { DEFAULT: "#1573e6" },
+        primary: {
+          DEFAULT: "rgb(var(--primary-color) / <alpha-value>)",
+        },
       },
       animation: {
         ripple: "ripple 0.6s linear",
