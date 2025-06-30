@@ -45,6 +45,9 @@ const message = ({
   position = "top",
   closable = true,
   size = "medium",
+  showIcon = true,
+  bordered = false,
+  rounded = "lg",
 }: {
   text?: string;
   description?: string;
@@ -59,6 +62,9 @@ const message = ({
     | "bottom";
   closable?: boolean;
   size?: "small" | "medium" | "large";
+  showIcon?: boolean;
+  bordered?: boolean;
+  rounded?: "none" | "sm" | "md" | "lg" | "xl" | "full";
 }) => {
   const container = getContainer(position);
 
@@ -89,6 +95,9 @@ const message = ({
       closable={closable}
       size={size}
       position={position}
+      showIcon={showIcon}
+      bordered={bordered}
+      rounded={rounded}
     />
   );
 
@@ -106,6 +115,9 @@ const createMessage =
     duration = 3000,
     position,
     size,
+    showIcon,
+    bordered,
+    rounded,
   }: {
     text?: string;
     description?: string;
@@ -118,6 +130,9 @@ const createMessage =
       | "top"
       | "bottom";
     size?: "small" | "medium" | "large";
+    showIcon?: boolean;
+    bordered?: boolean;
+    rounded?: "none" | "sm" | "md" | "lg" | "xl" | "full";
   }) =>
     message({
       text,
@@ -127,6 +142,9 @@ const createMessage =
       position,
       closable: true,
       size,
+      showIcon,
+      bordered,
+      rounded,
     });
 
 // Assign static methods dynamically

@@ -15,6 +15,7 @@ export { default as Avatar } from "./components/Avatar";
 export { default as Spinner } from "./components/Spinner";
 export { default as Tooltip } from "./components/Tooltip";
 export { default as Confirm } from "./components/Confirm";
+export { default as Message } from "./components/Message";
 export { default as StyleProvider } from "./components/StyleProvider";
 
 // Badge types
@@ -34,6 +35,12 @@ export type { CardProps, CardVariant, CardSize, CardRadius } from "./components/
 
 // Avatar types
 export type { AvatarProps, AvatarSize, AvatarRadius, AvatarColor } from "./components/Avatar";
+
+// Confirm types
+export type { ConfirmProps } from "./components/Confirm";
+
+// Message types  
+export type { MessageProps } from "./components/Message";
 
 // Utils
 export { default as message } from "./utils/Message";

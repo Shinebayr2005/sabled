@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-import Confirm from "../components/Confirm";
+import Confirm, { ConfirmProps } from "../components/Confirm";
 
 const confirm = ({
   title,
@@ -8,6 +8,16 @@ const confirm = ({
   onCancel,
   confirmText = "Confirm",
   cancelText = "Cancel",
+  confirmColor = "primary",
+  confirmVariant = "solid",
+  cancelColor = "default",
+  cancelVariant = "flat",
+  type = "default",
+  width = 400,
+  showIcon = true,
+  closable = true,
+  className,
+  overlayClassName,
 }: {
   title?: string;
   content?: string;
@@ -15,6 +25,16 @@ const confirm = ({
   onCancel?: () => void;
   confirmText?: string;
   cancelText?: string;
+  confirmColor?: ConfirmProps['confirmColor'];
+  confirmVariant?: ConfirmProps['confirmVariant'];
+  cancelColor?: ConfirmProps['cancelColor'];
+  cancelVariant?: ConfirmProps['cancelVariant'];
+  type?: ConfirmProps['type'];
+  width?: string | number;
+  showIcon?: boolean;
+  closable?: boolean;
+  className?: string;
+  overlayClassName?: string;
 }) => {
   // Create a wrapper div for the dialog
   if (typeof document === "undefined") {
@@ -60,6 +80,16 @@ const confirm = ({
       onCancel={handleCancel}
       confirmText={confirmText}
       cancelText={cancelText}
+      confirmColor={confirmColor}
+      confirmVariant={confirmVariant}
+      cancelColor={cancelColor}
+      cancelVariant={cancelVariant}
+      type={type}
+      width={width}
+      showIcon={showIcon}
+      closable={closable}
+      className={className}
+      overlayClassName={overlayClassName}
     />
   );
 };
