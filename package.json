@@ -1,6 +1,6 @@
 {
   "name": "sabled",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "description": "A modern, comprehensive React UI component library with beautiful designs inspired by Material-UI, Chakra UI, and Ant Design. Built with TailwindCSS and TypeScript for maximum customization and developer experience.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -11,7 +11,7 @@
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",
     "prepare": "npm run build",
-    "pub": "npm version patch && npm publish"
+    "pub": "npm version patch --no-git-tag-version && npm publish --tag beta"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
