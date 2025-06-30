@@ -11,7 +11,7 @@
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",
     "prepare": "npm run build",
-    "pub": "npm version patch --no-git-tag-version && npm publish --tag beta && npm dist-tag add sabled@0.2.16 latest"
+    "pub": "npm version patch --no-git-tag-version && npm publish --tag beta && npm dist-tag add sabled@0.2.11 latest"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
