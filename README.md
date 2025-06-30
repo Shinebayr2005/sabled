@@ -23,18 +23,19 @@ npm install sabled
 ## 🎬 Quick Start
 
 ```tsx
-import { Confirm, Message, Button, Input, Card } from 'sabled';
+import { Confirm, Message, Button, Input, Card } from "sabled";
 
 function App() {
   const handleDelete = async () => {
     const confirmed = await Confirm({
       title: "Delete Item",
-      message: "Are you sure you want to delete this item? This action cannot be undone.",
+      message:
+        "Are you sure you want to delete this item? This action cannot be undone.",
       confirmText: "Delete",
       cancelText: "Cancel",
-      variant: "danger"
+      variant: "danger",
     });
-    
+
     if (confirmed) {
       // Perform delete action
       Message.success("Item deleted successfully!");
@@ -46,16 +47,12 @@ function App() {
       <Card variant="bordered" className="p-6">
         <h2 className="text-xl font-semibold mb-4">User Management</h2>
         <div className="flex gap-4">
-          <Input 
-            label="Search users" 
+          <Input
+            label="Search users"
             placeholder="Type to search..."
             variant="bordered"
           />
-          <Button 
-            variant="bordered" 
-            color="danger" 
-            onClick={handleDelete}
-          >
+          <Button variant="bordered" color="danger" onClick={handleDelete}>
             Delete Selected
           </Button>
         </div>
@@ -68,6 +65,7 @@ function App() {
 ## 🧩 Components
 
 ### � Confirm (Core Feature)
+
 The most important component - beautiful, promise-based confirmation dialogs that integrate seamlessly into your workflow.
 
 ```tsx
@@ -81,7 +79,7 @@ const result = await Confirm({
   confirmText: "Delete Forever",
   cancelText: "Keep Account",
   variant: "danger",
-  size: "md"
+  size: "md",
 });
 
 if (result) {
@@ -90,6 +88,7 @@ if (result) {
 ```
 
 **Why it's special:**
+
 - Promise-based API - no state management needed
 - Zero setup - works instantly without providers
 - Beautiful animations and transitions
@@ -98,6 +97,7 @@ if (result) {
 - Auto-focus management
 
 ### 📢 Message (Core Feature)
+
 Essential toast notifications with a clean, imperative API. No providers or context needed.
 
 ```tsx
@@ -111,7 +111,7 @@ Message.info("New feature available");
 Message.success("Upload complete", {
   duration: 5000,
   showClose: true,
-  position: "top-right"
+  position: "top-right",
 });
 
 // Custom content
@@ -119,11 +119,12 @@ Message.custom({
   title: "Custom Notification",
   content: <div>Rich HTML content here</div>,
   variant: "primary",
-  duration: 0 // Persist until closed
+  duration: 0, // Persist until closed
 });
 ```
 
 **Why it's essential:**
+
 - Imperative API - call from anywhere in your code
 - No setup required - works out of the box
 - Smart positioning and stacking
@@ -132,12 +133,13 @@ Message.custom({
 - Mobile-friendly responsive design
 
 ### 🔘 Button
+
 Modern button component with multiple variants and states.
 
 ```tsx
-<Button 
-  variant="bordered" 
-  color="primary" 
+<Button
+  variant="bordered"
+  color="primary"
   size="md"
   startContent={<SearchIcon />}
   loading={isLoading}
@@ -147,6 +149,7 @@ Modern button component with multiple variants and states.
 ```
 
 **Features:**
+
 - Multiple variants (solid, bordered, flat, faded, shadow, ghost)
 - Color themes (default, primary, secondary, success, warning, danger)
 - Loading states with spinners
@@ -154,6 +157,7 @@ Modern button component with multiple variants and states.
 - Full accessibility support
 
 ### 📝 Input & Textarea
+
 Modern form controls with clean HeroUI-inspired design.
 
 ```tsx
@@ -175,6 +179,7 @@ Modern form controls with clean HeroUI-inspired design.
 ```
 
 **Features:**
+
 - HeroUI-inspired variants (flat, faded, bordered, underlined)
 - Validation states with error messages
 - Start/end content support
@@ -182,19 +187,15 @@ Modern form controls with clean HeroUI-inspired design.
 - Full accessibility compliance
 
 ### 🖼️ Avatar
+
 Clean avatar component with multiple styling options.
 
 ```tsx
-<Avatar
-  src="/user.jpg"
-  name="John Doe"
-  size="lg"
-  color="primary"
-  isBordered
-/>
+<Avatar src="/user.jpg" name="John Doe" size="lg" color="primary" isBordered />
 ```
 
 **Features:**
+
 - Automatic initials fallback from name
 - Multiple sizes (sm, md, lg)
 - Color themes and border options
@@ -202,6 +203,7 @@ Clean avatar component with multiple styling options.
 - Disabled state support
 
 ### 🎯 Badge
+
 Simple, effective badges for status and labels.
 
 ```tsx
@@ -211,16 +213,18 @@ Simple, effective badges for status and labels.
 ```
 
 **Features:**
+
 - Multiple variants (solid, flat, faded, shadow, bordered)
 - Color system integration
 - Size options (sm, md, lg)
 - Content flexibility
 
 ### 🃏 Card
+
 Versatile container component for organizing content.
 
 ```tsx
-<Card 
+<Card
   variant="bordered"
   header={<h3>Card Title</h3>}
   footer={<Button fullWidth>Action</Button>}
@@ -230,38 +234,37 @@ Versatile container component for organizing content.
 ```
 
 **Features:**
+
 - Multiple variants (flat, faded, bordered, shadow)
 - Header and footer support
 - Interactive states (hoverable, pressable)
 - Flexible sizing and radius options
 
 ### 🪟 Modal
+
 Clean modal component with backdrop and animations.
 
 ```tsx
-<Modal
-  isOpen={isOpen}
-  onClose={handleClose}
-  title="Settings"
-  size="md"
->
+<Modal isOpen={isOpen} onClose={handleClose} title="Settings" size="md">
   Modal content here
 </Modal>
 ```
 
 **Features:**
+
 - Backdrop click to close
 - Keyboard navigation (Escape key)
 - Size variants and positioning
 - Scroll lock when open
 
 ### 📊 Progress
+
 Progress indicators for loading states and data visualization.
 
 ```tsx
-<Progress 
-  variant="linear" 
-  value={75} 
+<Progress
+  variant="linear"
+  value={75}
   color="primary"
   showValue
   label="Upload Progress"
@@ -269,29 +272,29 @@ Progress indicators for loading states and data visualization.
 ```
 
 **Features:**
+
 - Linear and circular variants
 - Color theme integration
 - Value display options
 - Indeterminate states
 
 ### 🔄 Spinner
+
 Loading spinners for async operations.
 
 ```tsx
-<Spinner 
-  size="md" 
-  color="primary"
-  label="Loading..."
-/>
+<Spinner size="md" color="primary" label="Loading..." />
 ```
 
 **Features:**
+
 - Multiple size options
 - Color customization
 - Optional labels
 - Accessible screen reader support
 
 ### 💬 Tooltip
+
 Contextual information overlays.
 
 ```tsx
@@ -301,6 +304,7 @@ Contextual information overlays.
 ```
 
 **Features:**
+
 - Smart positioning
 - Keyboard navigation
 - Delay customization
@@ -309,17 +313,20 @@ Contextual information overlays.
 ## 🎨 Design System
 
 ### Core Philosophy
+
 Sabled prioritizes **practical functionality** over flashy effects. Every component is designed to solve real UI problems with clean, accessible interfaces.
 
 ### Color Palette
+
 - **Primary**: Customizable brand color theme
 - **Success**: Green variants for positive actions
-- **Danger**: Red variants for destructive actions  
+- **Danger**: Red variants for destructive actions
 - **Warning**: Orange variants for caution
 - **Secondary**: Neutral secondary theme
 - **Default**: Clean neutral grays
 
 ### Component Variants
+
 - **Solid**: Filled backgrounds for primary actions
 - **Bordered**: Clean borders for secondary actions
 - **Flat**: Minimal styling for subtle interactions
@@ -327,6 +334,7 @@ Sabled prioritizes **practical functionality** over flashy effects. Every compon
 - **Shadow**: Elevated appearance with shadows
 
 ### Size System
+
 - **sm, md, lg**: Consistent sizing across all components
 - Responsive design principles
 - Touch-friendly minimum sizes
@@ -334,24 +342,28 @@ Sabled prioritizes **practical functionality** over flashy effects. Every compon
 ## 🎯 What Makes Sabled Special
 
 ### 🚀 Zero Configuration
+
 - No providers or context setup required
 - Components work instantly after installation
 - No theme configuration needed
 - Just import and use
 
 ### 💬 Imperative APIs
+
 - `Confirm()` returns a promise - no state management
 - `Message.success()` works from anywhere in your app
 - Clean, predictable APIs that feel natural
 - Async/await friendly patterns
 
 ### 🎨 Practical Design
+
 - HeroUI-inspired modern aesthetics
 - Focus on usability over decoration
 - Consistent behavior across all components
 - Mobile-first responsive design
 
 ### ♿ Accessibility Built-in
+
 - Full keyboard navigation support
 - Screen reader compatibility
 - Focus management and ARIA labels
@@ -360,6 +372,7 @@ Sabled prioritizes **practical functionality** over flashy effects. Every compon
 ## 🛠️ Customization
 
 ### TailwindCSS Integration
+
 Sabled is built with TailwindCSS and integrates seamlessly with your existing setup:
 
 ```js
@@ -373,18 +386,19 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#3b82f6',
-          50: '#eff6ff',
-          100: '#dbeafe',
+          DEFAULT: "#3b82f6",
+          50: "#eff6ff",
+          100: "#dbeafe",
           // ... your color palette
-        }
-      }
-    }
-  }
-}
+        },
+      },
+    },
+  },
+};
 ```
 
 ### Custom Styling
+
 All components accept className props and work with your existing CSS:
 
 ```tsx
@@ -392,7 +406,7 @@ All components accept className props and work with your existing CSS:
   Custom Styled
 </Button>
 
-<Confirm 
+<Confirm
   className="custom-confirm-dialog"
   title="Custom Confirmation"
 >
@@ -401,6 +415,7 @@ All components accept className props and work with your existing CSS:
 ```
 
 ## 📦 Bundle Size
+
 - Tree-shakeable components
 - Optimized CSS injection
 - No runtime dependencies
@@ -416,7 +431,7 @@ npm install
 npm run build
 
 # Publish to npm
-npm run publish
+npm run pub
 ```
 
 ## 📄 License
