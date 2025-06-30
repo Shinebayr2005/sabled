@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#3aeb34",
+        primary: { default: "#3aeb34" },
       },
       animation: {
         ripple: "ripple 0.6s linear",
