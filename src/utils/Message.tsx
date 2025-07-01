@@ -164,46 +164,65 @@ const dismissMessage = (id: number) => {
     }
     messageElement.style.transform = exitTransform;
     
-    // Animate list movement for remaining messages
-    setTimeout(() => {
-      const siblings = Array.from(container?.children || []) as HTMLElement[];
-      siblings.forEach((sibling, index) => {
-        if (sibling !== wrapper) {
-          const siblingMessage = sibling.querySelector('[data-message-element]') as HTMLElement;
-          if (siblingMessage) {
-            // Temporarily set transition for smooth movement
-            siblingMessage.style.transition = 'transform 0.2s ease-out';
-            
-            // Calculate movement direction for list reflow
-            const siblingIndex = siblings.indexOf(sibling);
-            const removedIndex = siblings.indexOf(wrapper);
-            
-            // Smooth transition for remaining messages
-            if (siblingIndex !== removedIndex) {
-              siblingMessage.style.transform = 'translateX(0) translateY(0)';
+    // First, store the current positions of all messages before removal
+    const siblings = Array.from(container?.children || []) as HTMLElement[];
+    const messagePositions = new Map();
+    
+    siblings.forEach((sibling) => {
+      if (sibling !== wrapper) {
+        const rect = sibling.getBoundingClientRect();
+        messagePositions.set(sibling, { top: rect.top, left: rect.left });
+      }
+    });
+    
+    // Start wrapper collapse immediately for smooth removal
+    wrapper.style.height = wrapper.offsetHeight + 'px';
+    wrapper.style.overflow = 'hidden';
+    wrapper.style.transition = 'height 0.3s ease-out, margin 0.3s ease-out, padding 0.3s ease-out';
+    
+    requestAnimationFrame(() => {
+      wrapper.style.height = '0px';
+      wrapper.style.marginBottom = '0px';
+      wrapper.style.paddingTop = '0px';
+      wrapper.style.paddingBottom = '0px';
+      
+      // After starting the collapse, animate remaining messages to their new positions
+      setTimeout(() => {
+        siblings.forEach((sibling) => {
+          if (sibling !== wrapper && messagePositions.has(sibling)) {
+            const siblingMessage = sibling.querySelector('[data-message-element]') as HTMLElement;
+            if (siblingMessage) {
+              const oldPosition = messagePositions.get(sibling);
+              const newRect = sibling.getBoundingClientRect();
+              
+              // Calculate the difference between old and new positions
+              const deltaY = oldPosition.top - newRect.top;
+              const deltaX = oldPosition.left - newRect.left;
+              
+              // Only animate if there's actual movement
+              if (Math.abs(deltaY) > 1 || Math.abs(deltaX) > 1) {
+                // Set initial position to where it was
+                siblingMessage.style.transform = `translateX(${deltaX}px) translateY(${deltaY}px)`;
+                siblingMessage.style.transition = 'none';
+                
+                // Force a reflow
+                siblingMessage.offsetHeight;
+                
+                // Now animate to the new position
+                siblingMessage.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                siblingMessage.style.transform = 'translateX(0) translateY(0)';
+                
+                // Clean up after animation
+                setTimeout(() => {
+                  siblingMessage.style.transition = '';
+                  siblingMessage.style.transform = '';
+                }, 400);
+              }
             }
-            
-            // Reset transition after animation
-            setTimeout(() => {
-              siblingMessage.style.transition = '';
-              siblingMessage.style.transform = '';
-            }, 200);
           }
-        }
-      });
-      
-      // Collapse the wrapper height for smooth removal
-      wrapper.style.height = wrapper.offsetHeight + 'px';
-      wrapper.style.overflow = 'hidden';
-      wrapper.style.transition = 'height 0.2s ease-out, margin 0.2s ease-out, padding 0.2s ease-out';
-      
-      requestAnimationFrame(() => {
-        wrapper.style.height = '0px';
-        wrapper.style.marginBottom = '0px';
-        wrapper.style.paddingTop = '0px';
-        wrapper.style.paddingBottom = '0px';
-      });
-    }, 100);
+        });
+      }, 50);
+    });
   }
 
   // Update z-index of remaining messages for proper stacking
@@ -224,14 +243,23 @@ const dismissMessage = (id: number) => {
       }
       activeMessages.delete(id);
       
-      // Position-specific reflow animation for remaining messages
+      // Position-specific reflow animation for remaining messages - final cleanup
       if (container) {
         requestAnimationFrame(() => {
           const messages = Array.from(container.children) as HTMLElement[];
-          messages.forEach((msg, index) => {
-            // Smooth settlement animation for all positions
-            msg.style.transform = 'translateX(0) translateY(0)';
-            msg.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+          messages.forEach((msg) => {
+            const messageElement = msg.querySelector('[data-message-element]') as HTMLElement;
+            if (messageElement) {
+              // Ensure all messages are in their final positions without any transforms
+              messageElement.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+              messageElement.style.transform = 'translateX(0) translateY(0)';
+              
+              // Clean up after final settlement
+              setTimeout(() => {
+                messageElement.style.transition = '';
+                messageElement.style.transform = '';
+              }, 200);
+            }
           });
           
           // Clean up empty container
@@ -247,7 +275,7 @@ const dismissMessage = (id: number) => {
     } catch (error) {
       console.warn('Error cleaning up message:', error);
     }
-  }, 450); // Total animation time
+  }, 550); // Increased timing to allow for smooth animations
 };
 
 const processMessageQueue = () => {
@@ -367,19 +395,56 @@ const message = (config: MessageConfig) => {
         />
       );
 
-      // Trigger position-specific enter animation
+      // Trigger position-specific enter animation with smooth list movement
       requestAnimationFrame(() => {
+        // Store current positions of existing messages before adding new one
+        const existingMessages = Array.from(container.children).filter(child => child !== wrapper) as HTMLElement[];
+        const messagePositions = new Map();
+        
+        existingMessages.forEach((msg) => {
+          const rect = msg.getBoundingClientRect();
+          messagePositions.set(msg, { top: rect.top, left: rect.left });
+        });
+        
+        // Show the new message
         wrapper.style.opacity = '1';
         wrapper.style.transform = 'translateX(0) translateY(0)';
         
-        // Update positions of other messages to create space with smooth movement
-        const allMessages = Array.from(container.children) as HTMLElement[];
-        allMessages.forEach((msg, index) => {
-          if (msg !== wrapper) {
-            // Smooth transition for existing messages
-            msg.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-            msg.style.transform = 'translateX(0) translateY(0)';
-          }
+        // Animate existing messages to their new positions
+        requestAnimationFrame(() => {
+          existingMessages.forEach((msg) => {
+            if (messagePositions.has(msg)) {
+              const messageElement = msg.querySelector('[data-message-element]') as HTMLElement;
+              if (messageElement) {
+                const oldPosition = messagePositions.get(msg);
+                const newRect = msg.getBoundingClientRect();
+                
+                // Calculate movement
+                const deltaY = oldPosition.top - newRect.top;
+                const deltaX = oldPosition.left - newRect.left;
+                
+                // Only animate if there's actual movement
+                if (Math.abs(deltaY) > 1 || Math.abs(deltaX) > 1) {
+                  // Start from old position
+                  messageElement.style.transform = `translateX(${deltaX}px) translateY(${deltaY}px)`;
+                  messageElement.style.transition = 'none';
+                  
+                  // Force reflow
+                  messageElement.offsetHeight;
+                  
+                  // Animate to new position
+                  messageElement.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                  messageElement.style.transform = 'translateX(0) translateY(0)';
+                  
+                  // Clean up
+                  setTimeout(() => {
+                    messageElement.style.transition = '';
+                    messageElement.style.transform = '';
+                  }, 400);
+                }
+              }
+            }
+          });
         });
       });
 
