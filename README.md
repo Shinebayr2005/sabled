@@ -37,7 +37,14 @@ function App() {
       onConfirm: () => {
         // Perform delete action
         console.log("Item deleted");
-        Message.success("Item deleted successfully!");
+        Message.success({
+          text: "Item deleted successfully!",
+          showProgress: true,
+          action: {
+            label: "Undo",
+            onClick: () => Message.info("Undo feature coming soon!")
+          }
+        });
       },
       onCancel: () => {
         console.log("Delete cancelled");
@@ -49,7 +56,12 @@ function App() {
   const handleSearch = (value: string) => {
     console.log("Searching for:", value);
     if (value.trim()) {
-      Message.info(`Searching for: ${value}`);
+      Message.info({
+        text: `Searching for: ${value}`,
+        description: "Please wait while we search...",
+        showProgress: true,
+        pauseOnHover: true
+      });
     }
   };
 
