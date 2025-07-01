@@ -69,7 +69,7 @@ const getContainer = (position: string) => {
       flex-direction: column;
       gap: 0px;
       max-height: 100vh;
-      overflow: hidden;
+      overflow: visible;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     `;
 
@@ -168,6 +168,11 @@ const dismissMessage = (id: number) => {
     const siblings = Array.from(container?.children || []) as HTMLElement[];
     const messagePositions = new Map();
     
+    // Temporarily allow overflow during animation
+    if (container) {
+      container.style.overflow = 'visible';
+    }
+    
     siblings.forEach((sibling) => {
       if (sibling !== wrapper) {
         const rect = sibling.getBoundingClientRect();
@@ -221,6 +226,13 @@ const dismissMessage = (id: number) => {
             }
           }
         });
+        
+        // Restore container overflow after animations complete
+        setTimeout(() => {
+          if (container && container.children.length > 0) {
+            container.style.overflow = 'visible';
+          }
+        }, 450);
       }, 50);
     });
   }
@@ -401,6 +413,9 @@ const message = (config: MessageConfig) => {
         const existingMessages = Array.from(container.children).filter(child => child !== wrapper) as HTMLElement[];
         const messagePositions = new Map();
         
+        // Temporarily allow overflow during animation
+        container.style.overflow = 'visible';
+        
         existingMessages.forEach((msg) => {
           const rect = msg.getBoundingClientRect();
           messagePositions.set(msg, { top: rect.top, left: rect.left });
@@ -445,6 +460,11 @@ const message = (config: MessageConfig) => {
               }
             }
           });
+          
+          // Restore container overflow after animations
+          setTimeout(() => {
+            container.style.overflow = 'visible';
+          }, 450);
         });
       });
 
