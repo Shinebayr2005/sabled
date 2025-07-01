@@ -117,24 +117,71 @@ const dismissMessage = (id: number) => {
     clearTimeout(timer);
   }
 
-  // Get the container to update other messages
+  // Get the container and position to determine animation direction
   const container = wrapper.parentElement;
+  const containerId = container?.id || '';
+  const position = containerId.replace('message-container-', '');
+  const isBottomPosition = position.includes('bottom');
   const messageIndex = Array.from(container?.children || []).indexOf(wrapper);
 
   // Trigger exit animation for the message being dismissed
   const messageElement = wrapper.querySelector('[data-message-element]') as HTMLElement;
   if (messageElement) {
     messageElement.style.opacity = '0';
-    messageElement.style.transform = 'translateX(100%) scale(0.95)';
-    messageElement.style.height = messageElement.offsetHeight + 'px';
+    // Direction-aware exit animation based on position
+    if (isBottomPosition) {
+      messageElement.style.transform = 'translateY(100%) scale(0.95)'; // Move down for bottom positions
+    } else {
+      messageElement.style.transform = 'translateY(-100%) scale(0.95)'; // Move up for top positions
+    }
     
-    // After a short delay, collapse the height for smooth transition
+    // Animate list movement for remaining messages
     setTimeout(() => {
-      messageElement.style.height = '0px';
-      messageElement.style.marginBottom = '0px';
-      messageElement.style.paddingTop = '0px';
-      messageElement.style.paddingBottom = '0px';
-    }, 150);
+      const siblings = Array.from(container?.children || []) as HTMLElement[];
+      siblings.forEach((sibling, index) => {
+        if (sibling !== wrapper) {
+          const siblingMessage = sibling.querySelector('[data-message-element]') as HTMLElement;
+          if (siblingMessage) {
+            // Temporarily set transition for smooth movement
+            siblingMessage.style.transition = 'transform 0.2s ease-out';
+            
+            // Calculate movement direction
+            const siblingIndex = siblings.indexOf(sibling);
+            const removedIndex = siblings.indexOf(wrapper);
+            
+            if (isBottomPosition) {
+              // For bottom positions, messages above the removed one move down
+              if (siblingIndex < removedIndex) {
+                siblingMessage.style.transform = 'translateY(0px)';
+              }
+            } else {
+              // For top positions, messages below the removed one move up
+              if (siblingIndex > removedIndex) {
+                siblingMessage.style.transform = 'translateY(0px)';
+              }
+            }
+            
+            // Reset transition after animation
+            setTimeout(() => {
+              siblingMessage.style.transition = '';
+              siblingMessage.style.transform = '';
+            }, 200);
+          }
+        }
+      });
+      
+      // Collapse the wrapper height for smooth removal
+      wrapper.style.height = wrapper.offsetHeight + 'px';
+      wrapper.style.overflow = 'hidden';
+      wrapper.style.transition = 'height 0.2s ease-out, margin 0.2s ease-out, padding 0.2s ease-out';
+      
+      requestAnimationFrame(() => {
+        wrapper.style.height = '0px';
+        wrapper.style.marginBottom = '0px';
+        wrapper.style.paddingTop = '0px';
+        wrapper.style.paddingBottom = '0px';
+      });
+    }, 100);
   }
 
   // Update z-index of remaining messages for proper stacking
@@ -155,12 +202,17 @@ const dismissMessage = (id: number) => {
       }
       activeMessages.delete(id);
       
-      // Trigger reflow animation for remaining messages
+      // Direction-aware reflow animation for remaining messages
       if (container) {
         requestAnimationFrame(() => {
           const messages = Array.from(container.children) as HTMLElement[];
           messages.forEach((msg, index) => {
-            msg.style.transform = 'translateY(0)';
+            // Direction-aware movement: top positions move up, bottom positions move down
+            if (isBottomPosition) {
+              msg.style.transform = 'translateY(0)'; // Bottom messages settle down
+            } else {
+              msg.style.transform = 'translateY(0)'; // Top messages settle up
+            }
             msg.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
           });
         });

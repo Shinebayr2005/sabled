@@ -136,6 +136,15 @@ const Message: React.FC<MessageProps> = ({
     }, 150); // Reduced timing to sync with list animation
   };
 
+  const getExitDirection = () => {
+    // Direction-aware exit animation based on position
+    if (position?.includes('bottom')) {
+      return 'translate-y-full'; // Move down for bottom positions
+    } else {
+      return '-translate-y-full'; // Move up for top positions
+    }
+  };
+
   const getTypeStyle = () => {
     const baseStyles = bordered ? "border-2" : "border-l-4";
     const shadowStyles = "shadow-lg backdrop-blur-sm";
@@ -244,7 +253,7 @@ const Message: React.FC<MessageProps> = ({
         transform transition-all duration-300 ease-out
         ${visible 
           ? "opacity-100 translate-y-0 scale-100" 
-          : "opacity-0 translate-y-2 scale-95"
+          : `opacity-0 ${getExitDirection()} scale-95`
         }
         ${getTypeStyle()}
         ${getSizeStyle()}
