@@ -26,19 +26,30 @@ npm install sabled
 import { Confirm, Message, Button, Input, Card } from "sabled";
 
 function App() {
-  const handleDelete = async () => {
-    const confirmed = await Confirm({
+  const handleDelete = () => {
+    Confirm({
       title: "Delete Item",
       message:
         "Are you sure you want to delete this item? This action cannot be undone.",
       confirmText: "Delete",
       cancelText: "Cancel",
       variant: "danger",
+      onConfirm: () => {
+        // Perform delete action
+        console.log("Item deleted");
+        Message.success("Item deleted successfully!");
+      },
+      onCancel: () => {
+        console.log("Delete cancelled");
+        Message.info("Delete operation cancelled");
+      },
     });
+  };
 
-    if (confirmed) {
-      // Perform delete action
-      Message.success("Item deleted successfully!");
+  const handleSearch = (value: string) => {
+    console.log("Searching for:", value);
+    if (value.trim()) {
+      Message.info(`Searching for: ${value}`);
     }
   };
 
@@ -51,6 +62,7 @@ function App() {
             label="Search users"
             placeholder="Type to search..."
             variant="bordered"
+            onChange={handleSearch}
           />
           <Button variant="bordered" color="danger" onClick={handleDelete}>
             Delete Selected
