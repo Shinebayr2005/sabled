@@ -67,11 +67,9 @@ const getContainer = (position: string) => {
       ${getPositionStyle(position)}
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 8px;
       max-height: 100vh;
       overflow: visible;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
     `;
 
     document.body.appendChild(container);
@@ -135,135 +133,94 @@ const dismissMessage = (id: number) => {
   const container = wrapper.parentElement;
   const containerId = container?.id || '';
   const position = containerId.replace('message-container-', '');
-  const messageIndex = Array.from(container?.children || []).indexOf(wrapper);
 
-  // Enhanced exit animation for the message being dismissed
+  // Simplified and ultra-smooth exit animation
   const messageElement = wrapper.querySelector('[data-message-element]') as HTMLElement;
   if (messageElement) {
-    messageElement.style.opacity = '0';
-    
-    // Ultra-smooth position-specific exit animations with natural physics
+    // Position-specific exit animations with consistent timing
     let exitTransform = '';
     switch (position) {
       case 'top-left':
       case 'bottom-left':
-        exitTransform = 'translateX(-110%) scale(0.9) rotateZ(-4deg)'; // Enhanced left movement
+        exitTransform = 'translateX(-100%) scale(0.95)';
         break;
       case 'top-right':
       case 'bottom-right':
-        exitTransform = 'translateX(110%) scale(0.9) rotateZ(4deg)'; // Enhanced right movement
+        exitTransform = 'translateX(100%) scale(0.95)';
         break;
       case 'top':
-        exitTransform = 'translateY(-110%) scale(0.9) rotateX(25deg)'; // Enhanced upward movement
+        exitTransform = 'translateY(-100%) scale(0.95)';
         break;
       case 'bottom':
-        exitTransform = 'translateY(110%) scale(0.9) rotateX(-25deg)'; // Enhanced downward movement
+        exitTransform = 'translateY(100%) scale(0.95)';
         break;
       default:
-        exitTransform = 'translateX(110%) scale(0.9) rotateZ(4deg)'; // Default enhanced right
+        exitTransform = 'translateX(100%) scale(0.95)';
     }
     
-    messageElement.style.transition = 'transform 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    // Apply smooth exit animation
+    messageElement.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
     messageElement.style.transform = exitTransform;
-    
-    // Pre-capture positions for ultra-smooth reflow
-    const siblings = Array.from(container?.children || []) as HTMLElement[];
-    const messagePositions = new Map();
-    
-    // Enhanced overflow management during animation
-    if (container) {
-      container.style.overflow = 'visible';
-      container.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    messageElement.style.opacity = '0';
+  }
+
+  // Capture positions for reflow before DOM changes
+  const siblings = Array.from(container?.children || []) as HTMLElement[];
+  const messagePositions = new Map();
+  
+  siblings.forEach((sibling) => {
+    if (sibling !== wrapper) {
+      const rect = sibling.getBoundingClientRect();
+      messagePositions.set(sibling, { top: rect.top, left: rect.left });
     }
+  });
+
+  // Smooth wrapper collapse
+  wrapper.style.height = wrapper.offsetHeight + 'px';
+  wrapper.style.overflow = 'hidden';
+  wrapper.style.transition = 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+  
+  // Start collapse animation
+  requestAnimationFrame(() => {
+    wrapper.style.height = '0px';
+    wrapper.style.marginBottom = '0px';
     
-    siblings.forEach((sibling) => {
-      if (sibling !== wrapper) {
-        const rect = sibling.getBoundingClientRect();
-        messagePositions.set(sibling, { 
-          top: rect.top, 
-          left: rect.left,
-          height: rect.height,
-          width: rect.width
-        });
-      }
-    });
-    
-    // Enhanced wrapper collapse with spring physics
-    wrapper.style.height = wrapper.offsetHeight + 'px';
-    wrapper.style.overflow = 'hidden';
-    wrapper.style.transition = 'height 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275), margin 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), padding 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    
-    requestAnimationFrame(() => {
-      wrapper.style.height = '0px';
-      wrapper.style.marginBottom = '0px';
-      wrapper.style.paddingTop = '0px';
-      wrapper.style.paddingBottom = '0px';
-      
-      // Enhanced reflow animation with stagger effect
-      setTimeout(() => {
-        siblings.forEach((sibling, index) => {
-          if (sibling !== wrapper && messagePositions.has(sibling)) {
-            const siblingMessage = sibling.querySelector('[data-message-element]') as HTMLElement;
-            if (siblingMessage) {
-              const oldPosition = messagePositions.get(sibling);
-              const newRect = sibling.getBoundingClientRect();
+    // Animate remaining messages to new positions
+    setTimeout(() => {
+      siblings.forEach((sibling) => {
+        if (sibling !== wrapper && messagePositions.has(sibling)) {
+          const siblingMessage = sibling.querySelector('[data-message-element]') as HTMLElement;
+          if (siblingMessage) {
+            const oldPosition = messagePositions.get(sibling);
+            const newRect = sibling.getBoundingClientRect();
+            
+            const deltaY = oldPosition.top - newRect.top;
+            const deltaX = oldPosition.left - newRect.left;
+            
+            // Only animate if there's movement
+            if (Math.abs(deltaY) > 1 || Math.abs(deltaX) > 1) {
+              siblingMessage.style.transform = `translateX(${deltaX}px) translateY(${deltaY}px)`;
+              siblingMessage.style.transition = 'none';
               
-              // Enhanced delta calculations
-              const deltaY = oldPosition.top - newRect.top;
-              const deltaX = oldPosition.left - newRect.left;
+              // Force reflow then animate
+              siblingMessage.offsetHeight;
               
-              // Only animate if there's significant movement
-              if (Math.abs(deltaY) > 0.5 || Math.abs(deltaX) > 0.5) {
-                // Set initial position with enhanced precision
-                siblingMessage.style.transform = `translateX(${deltaX}px) translateY(${deltaY}px)`;
-                siblingMessage.style.transition = 'none';
-                
-                // Force reflow for smooth animation start
-                siblingMessage.offsetHeight;
-                
-                // Staggered animation for natural feel
-                setTimeout(() => {
-                  siblingMessage.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                  siblingMessage.style.transform = 'translateX(0) translateY(0)';
-                  
-                  // Enhanced cleanup with spring settlement
-                  setTimeout(() => {
-                    siblingMessage.style.transition = '';
-                    siblingMessage.style.transform = '';
-                  }, 500);
-                }, index * 25); // Stagger delay for natural cascade effect
-              }
+              siblingMessage.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+              siblingMessage.style.transform = 'translateX(0) translateY(0)';
+              
+              // Clean up
+              setTimeout(() => {
+                siblingMessage.style.transition = '';
+                siblingMessage.style.transform = '';
+              }, 400);
             }
           }
-        });
-        
-        // Enhanced container overflow restoration
-        setTimeout(() => {
-          if (container && container.children.length > 0) {
-            container.style.overflow = 'visible';
-            container.style.transition = '';
-          }
-        }, 550);
-      }, 60); // Optimized delay for smooth coordination
-    });
-  }
-
-  // Enhanced z-index management for proper visual layering
-  if (container) {
-    const remainingMessages = Array.from(container.children) as HTMLElement[];
-    remainingMessages.forEach((msg, index) => {
-      if (msg !== wrapper) {
-        msg.style.zIndex = (remainingMessages.length - index).toString();
-        
-        // Add subtle scale effect for depth perception
-        const msgElement = msg.querySelector('[data-message-element]') as HTMLElement;
-        if (msgElement && index > 0) {
-          msgElement.style.transform = `scale(${1 - (index * 0.005)})`; // Very subtle scaling
         }
-      }
-    });
-  }
+      });
+    }, 50);
+  });
 
+  // Clean up after animation completes
   setTimeout(() => {
     try {
       root.unmount();
@@ -271,46 +228,10 @@ const dismissMessage = (id: number) => {
         wrapper.parentNode.removeChild(wrapper);
       }
       activeMessages.delete(id);
-      
-      // Enhanced final cleanup with spring physics
-      if (container) {
-        requestAnimationFrame(() => {
-          const messages = Array.from(container.children) as HTMLElement[];
-          messages.forEach((msg, index) => {
-            const messageElement = msg.querySelector('[data-message-element]') as HTMLElement;
-            if (messageElement) {
-              // Final settlement animation
-              messageElement.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-              messageElement.style.transform = 'translateX(0) translateY(0) scale(1)';
-              
-              // Clean up after settlement
-              setTimeout(() => {
-                messageElement.style.transition = '';
-                messageElement.style.transform = '';
-              }, 300);
-            }
-          });
-          
-          // Enhanced empty container cleanup
-          if (messages.length === 0 && container.parentNode) {
-            setTimeout(() => {
-              if (container.children.length === 0 && container.parentNode) {
-                container.style.transition = 'opacity 0.2s ease-out';
-                container.style.opacity = '0';
-                setTimeout(() => {
-                  if (container.parentNode) {
-                    container.parentNode.removeChild(container);
-                  }
-                }, 200);
-              }
-            }, 100);
-          }
-        });
-      }
     } catch (error) {
       console.warn('Error cleaning up message:', error);
     }
-  }, 600); // Enhanced timing for complete animation sequence
+  }, 400);
 };
 
 const processMessageQueue = () => {
@@ -430,73 +351,53 @@ const message = (config: MessageConfig) => {
         />
       );
 
-      // Enhanced entry animation with stagger effect and smooth list movement
+      // Simplified smooth entry animation
       requestAnimationFrame(() => {
-        // Store current positions of existing messages before adding new one
+        // Capture positions before adding new message
         const existingMessages = Array.from(container.children).filter(child => child !== wrapper) as HTMLElement[];
         const messagePositions = new Map();
         
-        // Enhanced overflow management during animation
-        container.style.overflow = 'visible';
-        container.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-        
         existingMessages.forEach((msg) => {
           const rect = msg.getBoundingClientRect();
-          messagePositions.set(msg, { 
-            top: rect.top, 
-            left: rect.left,
-            width: rect.width,
-            height: rect.height
-          });
+          messagePositions.set(msg, { top: rect.top, left: rect.left });
         });
         
-        // Show the new message with enhanced entry
+        // Show the new message
         wrapper.style.opacity = '1';
         wrapper.style.transform = 'translateX(0) translateY(0)';
         
-        // Enhanced list reflow with stagger and spring physics
+        // Animate existing messages to new positions
         requestAnimationFrame(() => {
-          existingMessages.forEach((msg, index) => {
+          existingMessages.forEach((msg) => {
             if (messagePositions.has(msg)) {
               const messageElement = msg.querySelector('[data-message-element]') as HTMLElement;
               if (messageElement) {
                 const oldPosition = messagePositions.get(msg);
                 const newRect = msg.getBoundingClientRect();
                 
-                // Enhanced movement calculations
                 const deltaY = oldPosition.top - newRect.top;
                 const deltaX = oldPosition.left - newRect.left;
                 
-                // Only animate if there's significant movement
-                if (Math.abs(deltaY) > 0.5 || Math.abs(deltaX) > 0.5) {
-                  // Start from old position with enhanced precision
+                // Only animate if there's actual movement
+                if (Math.abs(deltaY) > 1 || Math.abs(deltaX) > 1) {
                   messageElement.style.transform = `translateX(${deltaX}px) translateY(${deltaY}px)`;
                   messageElement.style.transition = 'none';
                   
-                  // Force reflow for smooth start
+                  // Force reflow
                   messageElement.offsetHeight;
                   
-                  // Staggered animation for natural cascade effect
+                  messageElement.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                  messageElement.style.transform = 'translateX(0) translateY(0)';
+                  
+                  // Clean up
                   setTimeout(() => {
-                    messageElement.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                    messageElement.style.transform = 'translateX(0) translateY(0)';
-                    
-                    // Enhanced cleanup
-                    setTimeout(() => {
-                      messageElement.style.transition = '';
-                      messageElement.style.transform = '';
-                    }, 500);
-                  }, index * 30); // Enhanced stagger delay
+                    messageElement.style.transition = '';
+                    messageElement.style.transform = '';
+                  }, 400);
                 }
               }
             }
           });
-          
-          // Enhanced container overflow restoration
-          setTimeout(() => {
-            container.style.overflow = 'visible';
-            container.style.transition = '';
-          }, 550);
         });
       });
 
