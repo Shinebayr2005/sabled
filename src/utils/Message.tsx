@@ -128,12 +128,28 @@ const dismissMessage = (id: number) => {
   const messageElement = wrapper.querySelector('[data-message-element]') as HTMLElement;
   if (messageElement) {
     messageElement.style.opacity = '0';
-    // Direction-aware exit animation based on position
-    if (isBottomPosition) {
-      messageElement.style.transform = 'translateY(100%) scale(0.95)'; // Move down for bottom positions
-    } else {
-      messageElement.style.transform = 'translateY(-100%) scale(0.95)'; // Move up for top positions
+    
+    // Position-specific exit animation based on natural edge
+    let exitTransform = '';
+    switch (position) {
+      case 'top-left':
+      case 'bottom-left':
+        exitTransform = 'translateX(-100%) scale(0.95)'; // Move left
+        break;
+      case 'top-right':
+      case 'bottom-right':
+        exitTransform = 'translateX(100%) scale(0.95)'; // Move right
+        break;
+      case 'top':
+        exitTransform = 'translateY(-100%) scale(0.95)'; // Move up
+        break;
+      case 'bottom':
+        exitTransform = 'translateY(100%) scale(0.95)'; // Move down
+        break;
+      default:
+        exitTransform = 'translateX(100%) scale(0.95)'; // Default to right
     }
+    messageElement.style.transform = exitTransform;
     
     // Animate list movement for remaining messages
     setTimeout(() => {
@@ -145,20 +161,13 @@ const dismissMessage = (id: number) => {
             // Temporarily set transition for smooth movement
             siblingMessage.style.transition = 'transform 0.2s ease-out';
             
-            // Calculate movement direction
+            // Calculate movement direction for list reflow
             const siblingIndex = siblings.indexOf(sibling);
             const removedIndex = siblings.indexOf(wrapper);
             
-            if (isBottomPosition) {
-              // For bottom positions, messages above the removed one move down
-              if (siblingIndex < removedIndex) {
-                siblingMessage.style.transform = 'translateY(0px)';
-              }
-            } else {
-              // For top positions, messages below the removed one move up
-              if (siblingIndex > removedIndex) {
-                siblingMessage.style.transform = 'translateY(0px)';
-              }
+            // Smooth transition for remaining messages
+            if (siblingIndex !== removedIndex) {
+              siblingMessage.style.transform = 'translateX(0) translateY(0)';
             }
             
             // Reset transition after animation
@@ -202,17 +211,13 @@ const dismissMessage = (id: number) => {
       }
       activeMessages.delete(id);
       
-      // Direction-aware reflow animation for remaining messages
+      // Position-specific reflow animation for remaining messages
       if (container) {
         requestAnimationFrame(() => {
           const messages = Array.from(container.children) as HTMLElement[];
           messages.forEach((msg, index) => {
-            // Direction-aware movement: top positions move up, bottom positions move down
-            if (isBottomPosition) {
-              msg.style.transform = 'translateY(0)'; // Bottom messages settle down
-            } else {
-              msg.style.transform = 'translateY(0)'; // Top messages settle up
-            }
+            // Smooth settlement animation for all positions
+            msg.style.transform = 'translateX(0) translateY(0)';
             msg.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
           });
         });
@@ -255,11 +260,26 @@ const message = (config: MessageConfig) => {
     const wrapper = document.createElement("div");
     wrapper.id = `message-${id}`;
     
-    // Direction-aware initial position
-    const isBottomPosition = position.includes('bottom');
-    const initialTransform = isBottomPosition 
-      ? 'translateY(100%) translateX(100%)' // Start from bottom for bottom positions
-      : 'translateY(-100%) translateX(100%)'; // Start from top for top positions
+    // Position-specific initial transform based on natural edge
+    let initialTransform = '';
+    switch (position) {
+      case 'top-left':
+      case 'bottom-left':
+        initialTransform = 'translateX(-100%)'; // Start from left
+        break;
+      case 'top-right':
+      case 'bottom-right':
+        initialTransform = 'translateX(100%)'; // Start from right
+        break;
+      case 'top':
+        initialTransform = 'translateY(-100%)'; // Start from top
+        break;
+      case 'bottom':
+        initialTransform = 'translateY(100%)'; // Start from bottom
+        break;
+      default:
+        initialTransform = 'translateX(100%)'; // Default to right
+    }
     
     wrapper.style.cssText = `
       pointer-events: auto;
@@ -306,18 +326,18 @@ const message = (config: MessageConfig) => {
       />
     );
 
-    // Trigger direction-aware enter animation
+    // Trigger position-specific enter animation
     requestAnimationFrame(() => {
       wrapper.style.opacity = '1';
-      wrapper.style.transform = 'translateY(0) translateX(0)';
+      wrapper.style.transform = 'translateX(0) translateY(0)';
       
-      // Update positions of other messages to create space with direction-aware movement
+      // Update positions of other messages to create space with smooth movement
       const allMessages = Array.from(container.children) as HTMLElement[];
       allMessages.forEach((msg, index) => {
         if (msg !== wrapper) {
           // Smooth transition for existing messages
           msg.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-          msg.style.transform = 'translateY(0)';
+          msg.style.transform = 'translateX(0) translateY(0)';
         }
       });
     });

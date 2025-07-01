@@ -128,12 +128,29 @@ const Message: React.FC<MessageProps> = ({
   };
 
   const handleClose = () => {
-    // Apply exit animation direction before hiding
+    // Apply position-specific exit animation direction before hiding
     const messageElement = document.querySelector(`[data-message-element]`) as HTMLElement;
     if (messageElement) {
-      messageElement.style.transform = position?.includes('bottom') 
-        ? 'translateY(100%) scale(0.95)' 
-        : 'translateY(-100%) scale(0.95)';
+      let transform = '';
+      switch (position) {
+        case 'top-left':
+        case 'bottom-left':
+          transform = 'translateX(-100%) scale(0.95)'; // Move left
+          break;
+        case 'top-right':
+        case 'bottom-right':
+          transform = 'translateX(100%) scale(0.95)'; // Move right
+          break;
+        case 'top':
+          transform = 'translateY(-100%) scale(0.95)'; // Move up
+          break;
+        case 'bottom':
+          transform = 'translateY(100%) scale(0.95)'; // Move down
+          break;
+        default:
+          transform = 'translateX(100%) scale(0.95)'; // Default to right
+      }
+      messageElement.style.transform = transform;
       messageElement.style.opacity = '0';
     }
     
@@ -146,20 +163,38 @@ const Message: React.FC<MessageProps> = ({
   };
 
   const getExitDirection = () => {
-    // Direction-aware exit animation based on position
-    if (position?.includes('bottom')) {
-      return 'translate-y-full'; // Move down for bottom positions
-    } else {
-      return '-translate-y-full'; // Move up for top positions
+    // Position-specific exit animation based on natural edge
+    switch (position) {
+      case 'top-left':
+      case 'bottom-left':
+        return '-translate-x-full'; // Move left for left positions
+      case 'top-right':
+      case 'bottom-right':
+        return 'translate-x-full'; // Move right for right positions
+      case 'top':
+        return '-translate-y-full'; // Move up for top center
+      case 'bottom':
+        return 'translate-y-full'; // Move down for bottom center
+      default:
+        return 'translate-x-full'; // Default to right
     }
   };
 
   const getEntryDirection = () => {
-    // Direction-aware entry animation based on position
-    if (position?.includes('bottom')) {
-      return 'translate-y-full'; // Enter from bottom for bottom positions
-    } else {
-      return '-translate-y-full'; // Enter from top for top positions
+    // Position-specific entry animation based on natural edge
+    switch (position) {
+      case 'top-left':
+      case 'bottom-left':
+        return '-translate-x-full'; // Enter from left for left positions
+      case 'top-right':
+      case 'bottom-right':
+        return 'translate-x-full'; // Enter from right for right positions
+      case 'top':
+        return '-translate-y-full'; // Enter from top for top center
+      case 'bottom':
+        return 'translate-y-full'; // Enter from bottom for bottom center
+      default:
+        return 'translate-x-full'; // Default to right
     }
   };
 
