@@ -57,43 +57,75 @@ const Message: React.FC<MessageProps> = ({
   const remainingTimeRef = useRef<number>(duration);
   const messageElementRef = useRef<HTMLDivElement>(null);
 
-  // Memoize animation directions for better performance
+  // Memoize ultra-smooth animation configurations
   const animationDirections = useMemo(() => {
     let entryDirection = '';
     let exitTransform = '';
+    let entryScale = '';
+    let springEntryTransform = '';
     
     switch (position) {
       case 'top-left':
       case 'bottom-left':
         entryDirection = '-translate-x-full';
-        exitTransform = 'translateX(-100%) scale(0.95)';
+        exitTransform = 'translateX(-130%) scale(0.88) rotateZ(-3deg)';
+        entryScale = 'scale(0.94)';
+        springEntryTransform = 'translateX(-12px) scale(0.98)';
         break;
       case 'top-right':
       case 'bottom-right':
         entryDirection = 'translate-x-full';
-        exitTransform = 'translateX(100%) scale(0.95)';
+        exitTransform = 'translateX(130%) scale(0.88) rotateZ(3deg)';
+        entryScale = 'scale(0.94)';
+        springEntryTransform = 'translateX(12px) scale(0.98)';
         break;
       case 'top':
         entryDirection = '-translate-y-full';
-        exitTransform = 'translateY(-100%) scale(0.95)';
+        exitTransform = 'translateY(-130%) scale(0.88) rotateX(20deg)';
+        entryScale = 'scale(0.94)';
+        springEntryTransform = 'translateY(-12px) scale(0.98)';
         break;
       case 'bottom':
         entryDirection = 'translate-y-full';
-        exitTransform = 'translateY(100%) scale(0.95)';
+        exitTransform = 'translateY(130%) scale(0.88) rotateX(-20deg)';
+        entryScale = 'scale(0.94)';
+        springEntryTransform = 'translateY(12px) scale(0.98)';
         break;
       default:
         entryDirection = 'translate-x-full';
-        exitTransform = 'translateX(100%) scale(0.95)';
+        exitTransform = 'translateX(130%) scale(0.88) rotateZ(3deg)';
+        entryScale = 'scale(0.94)';
+        springEntryTransform = 'translateX(12px) scale(0.98)';
     }
     
-    return { entryDirection, exitTransform };
+    return { entryDirection, exitTransform, entryScale, springEntryTransform };
   }, [position]);
 
-  // Initialize visibility
+  // Enhanced initialization with spring animation
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 50);
+    const timer = setTimeout(() => {
+      setVisible(true);
+      
+      // Add a subtle spring effect on entry
+      const messageElement = messageElementRef.current;
+      if (messageElement) {
+        // Start with spring entry position
+        messageElement.style.transform = animationDirections.springEntryTransform;
+        messageElement.style.transition = 'none';
+        
+        // Force reflow
+        messageElement.offsetHeight;
+        
+        // Animate to final position with spring effect
+        setTimeout(() => {
+          messageElement.style.transition = 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+          messageElement.style.transform = 'translateX(0) translateY(0) scale(1)';
+        }, 10);
+      }
+    }, 80); // Slight delay for better stagger effect
+    
     return () => clearTimeout(timer);
-  }, []);
+  }, [animationDirections.springEntryTransform]);
 
   // Auto-dismiss timer with pause/resume capability
   useEffect(() => {
@@ -168,19 +200,21 @@ const Message: React.FC<MessageProps> = ({
   };
 
   const handleClose = () => {
-    // Apply position-specific exit animation direction before hiding
+    // Enhanced exit animation with precise timing
     const messageElement = messageElementRef.current;
     if (messageElement) {
+      // Reset any spring transitions first
+      messageElement.style.transition = 'transform 0.35s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
       messageElement.style.transform = animationDirections.exitTransform;
       messageElement.style.opacity = '0';
     }
     
     setVisible(false);
-    // Let the utility handle the dismissal animation
+    // Synchronized timing with list animation for seamless flow
     setTimeout(() => {
       onDismiss?.();
       onClose();
-    }, 150); // Reduced timing to sync with list animation
+    }, 180); // Optimized timing for smooth list reflow
   };
 
   const getExitDirection = () => animationDirections.entryDirection;
@@ -294,7 +328,7 @@ const Message: React.FC<MessageProps> = ({
       data-message-id={id}
       className={`
         ${className}
-        transform transition-all duration-300 ease-out
+        transform transition-all duration-500 ease-out
         ${visible 
           ? "opacity-100 translate-x-0 translate-y-0 scale-100" 
           : `opacity-0 ${getEntryDirection()} scale-95`
@@ -303,13 +337,15 @@ const Message: React.FC<MessageProps> = ({
         ${getSizeStyle()}
         ${getRoundedStyle()}
         relative overflow-hidden
-        will-change-transform
+        will-change-transform, will-change-opacity
+        backdrop-blur-sm
       `}
       style={{
         ...style,
         transitionProperty: 'opacity, transform, height, margin, padding',
-        transitionDuration: '0.3s',
-        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+        transitionDuration: '0.5s, 0.6s',
+        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1), cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        filter: 'drop-shadow(0 10px 25px rgba(0, 0, 0, 0.15))',
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
