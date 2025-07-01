@@ -129,10 +129,11 @@ const Message: React.FC<MessageProps> = ({
 
   const handleClose = () => {
     setVisible(false);
+    // Let the utility handle the dismissal animation
     setTimeout(() => {
       onDismiss?.();
       onClose();
-    }, 300);
+    }, 150); // Reduced timing to sync with list animation
   };
 
   const getTypeStyle = () => {
@@ -249,8 +250,14 @@ const Message: React.FC<MessageProps> = ({
         ${getSizeStyle()}
         ${getRoundedStyle()}
         relative overflow-hidden
+        will-change-transform
       `}
-      style={style}
+      style={{
+        ...style,
+        transitionProperty: 'opacity, transform, height, margin, padding',
+        transitionDuration: '0.3s',
+        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       role="alert"

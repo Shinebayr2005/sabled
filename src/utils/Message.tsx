@@ -62,9 +62,10 @@ const getContainer = (position: string) => {
       ${getPositionStyle(position)}
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 0px;
       max-height: 100vh;
       overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     `;
 
     document.body.appendChild(container);
@@ -90,15 +91,19 @@ const enforceMaxCount = (position: string, maxCount: number) => {
   const container = getContainer(position);
   if (!container) return;
 
-  const messages = Array.from(container.children);
+  const messages = Array.from(container.children) as HTMLElement[];
   if (messages.length >= maxCount) {
-    // Remove oldest messages
+    // Remove oldest messages (from the bottom of the visual stack)
     const removeCount = messages.length - maxCount + 1;
-    for (let i = 0; i < removeCount; i++) {
-      const oldestMessage = messages[i] as HTMLElement;
-      const messageId = parseInt(oldestMessage.id.replace('message-', ''));
-      dismissMessage(messageId);
-    }
+    const messagesToRemove = position.includes('bottom') 
+      ? messages.slice(-removeCount) // Remove from end for bottom positions
+      : messages.slice(0, removeCount); // Remove from start for top positions
+    
+    messagesToRemove.forEach(messageElement => {
+      const messageId = parseInt(messageElement.id.replace('message-', ''));
+      // Add a slight delay between removals for smoother animation
+      setTimeout(() => dismissMessage(messageId), Math.random() * 100);
+    });
   }
 };
 
@@ -112,11 +117,34 @@ const dismissMessage = (id: number) => {
     clearTimeout(timer);
   }
 
-  // Trigger exit animation
+  // Get the container to update other messages
+  const container = wrapper.parentElement;
+  const messageIndex = Array.from(container?.children || []).indexOf(wrapper);
+
+  // Trigger exit animation for the message being dismissed
   const messageElement = wrapper.querySelector('[data-message-element]') as HTMLElement;
   if (messageElement) {
     messageElement.style.opacity = '0';
-    messageElement.style.transform = 'translateY(-10px) scale(0.95)';
+    messageElement.style.transform = 'translateX(100%) scale(0.95)';
+    messageElement.style.height = messageElement.offsetHeight + 'px';
+    
+    // After a short delay, collapse the height for smooth transition
+    setTimeout(() => {
+      messageElement.style.height = '0px';
+      messageElement.style.marginBottom = '0px';
+      messageElement.style.paddingTop = '0px';
+      messageElement.style.paddingBottom = '0px';
+    }, 150);
+  }
+
+  // Update z-index of remaining messages for proper stacking
+  if (container) {
+    const remainingMessages = Array.from(container.children) as HTMLElement[];
+    remainingMessages.forEach((msg, index) => {
+      if (msg !== wrapper) {
+        msg.style.zIndex = (remainingMessages.length - index).toString();
+      }
+    });
   }
 
   setTimeout(() => {
@@ -126,10 +154,21 @@ const dismissMessage = (id: number) => {
         wrapper.parentNode.removeChild(wrapper);
       }
       activeMessages.delete(id);
+      
+      // Trigger reflow animation for remaining messages
+      if (container) {
+        requestAnimationFrame(() => {
+          const messages = Array.from(container.children) as HTMLElement[];
+          messages.forEach((msg, index) => {
+            msg.style.transform = 'translateY(0)';
+            msg.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+          });
+        });
+      }
     } catch (error) {
       console.warn('Error cleaning up message:', error);
     }
-  }, 300);
+  }, 450); // Total animation time
 };
 
 const processMessageQueue = () => {
@@ -166,15 +205,23 @@ const message = (config: MessageConfig) => {
     wrapper.style.cssText = `
       pointer-events: auto;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: translateY(-10px);
+      transform: translateY(-100%) translateX(100%);
       opacity: 0;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: ${1000 + id};
     `;
 
-    // Insert based on priority
+    // Insert based on priority and position behavior
     if (priority === "high") {
       container.insertBefore(wrapper, container.firstChild);
     } else {
-      container.appendChild(wrapper);
+      // For normal priority, add to the end (top of visual stack)
+      if (position.includes('bottom')) {
+        container.insertBefore(wrapper, container.firstChild);
+      } else {
+        container.appendChild(wrapper);
+      }
     }
 
     const root = ReactDOM.createRoot(wrapper);
@@ -200,10 +247,18 @@ const message = (config: MessageConfig) => {
       />
     );
 
-    // Trigger enter animation
+    // Trigger enter animation with slide and fade
     requestAnimationFrame(() => {
       wrapper.style.opacity = '1';
-      wrapper.style.transform = 'translateY(0)';
+      wrapper.style.transform = 'translateY(0) translateX(0)';
+      
+      // Update positions of other messages to create space
+      const allMessages = Array.from(container.children) as HTMLElement[];
+      allMessages.forEach((msg, index) => {
+        if (msg !== wrapper) {
+          msg.style.transform = 'translateY(0)';
+        }
+      });
     });
 
     return id;
