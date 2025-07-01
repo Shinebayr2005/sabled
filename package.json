@@ -1,6 +1,6 @@
 {
   "name": "sabled",
-  "version": "0.2.30",
+  "version": "0.2.31",
   "description": "A modern, comprehensive React UI component library with beautiful designs. Built with TailwindCSS and TypeScript for maximum customization and developer experience.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
