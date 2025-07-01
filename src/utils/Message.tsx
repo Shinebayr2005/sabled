@@ -254,10 +254,17 @@ const message = (config: MessageConfig) => {
 
     const wrapper = document.createElement("div");
     wrapper.id = `message-${id}`;
+    
+    // Direction-aware initial position
+    const isBottomPosition = position.includes('bottom');
+    const initialTransform = isBottomPosition 
+      ? 'translateY(100%) translateX(100%)' // Start from bottom for bottom positions
+      : 'translateY(-100%) translateX(100%)'; // Start from top for top positions
+    
     wrapper.style.cssText = `
       pointer-events: auto;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: translateY(-100%) translateX(100%);
+      transform: ${initialTransform};
       opacity: 0;
       margin-bottom: 8px;
       position: relative;
@@ -299,15 +306,17 @@ const message = (config: MessageConfig) => {
       />
     );
 
-    // Trigger enter animation with slide and fade
+    // Trigger direction-aware enter animation
     requestAnimationFrame(() => {
       wrapper.style.opacity = '1';
       wrapper.style.transform = 'translateY(0) translateX(0)';
       
-      // Update positions of other messages to create space
+      // Update positions of other messages to create space with direction-aware movement
       const allMessages = Array.from(container.children) as HTMLElement[];
       allMessages.forEach((msg, index) => {
         if (msg !== wrapper) {
+          // Smooth transition for existing messages
+          msg.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
           msg.style.transform = 'translateY(0)';
         }
       });

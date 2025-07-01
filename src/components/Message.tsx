@@ -128,6 +128,15 @@ const Message: React.FC<MessageProps> = ({
   };
 
   const handleClose = () => {
+    // Apply exit animation direction before hiding
+    const messageElement = document.querySelector(`[data-message-element]`) as HTMLElement;
+    if (messageElement) {
+      messageElement.style.transform = position?.includes('bottom') 
+        ? 'translateY(100%) scale(0.95)' 
+        : 'translateY(-100%) scale(0.95)';
+      messageElement.style.opacity = '0';
+    }
+    
     setVisible(false);
     // Let the utility handle the dismissal animation
     setTimeout(() => {
@@ -142,6 +151,15 @@ const Message: React.FC<MessageProps> = ({
       return 'translate-y-full'; // Move down for bottom positions
     } else {
       return '-translate-y-full'; // Move up for top positions
+    }
+  };
+
+  const getEntryDirection = () => {
+    // Direction-aware entry animation based on position
+    if (position?.includes('bottom')) {
+      return 'translate-y-full'; // Enter from bottom for bottom positions
+    } else {
+      return '-translate-y-full'; // Enter from top for top positions
     }
   };
 
@@ -253,7 +271,7 @@ const Message: React.FC<MessageProps> = ({
         transform transition-all duration-300 ease-out
         ${visible 
           ? "opacity-100 translate-y-0 scale-100" 
-          : `opacity-0 ${getExitDirection()} scale-95`
+          : `opacity-0 ${getEntryDirection()} scale-95`
         }
         ${getTypeStyle()}
         ${getSizeStyle()}
