@@ -30,6 +30,11 @@ interface MessageConfig {
   priority?: "low" | "normal" | "high";
 }
 
+// Type for valid positions
+type ValidPosition = "top-right" | "top-left" | "bottom-right" | "bottom-left" | "top" | "bottom";
+
+const VALID_POSITIONS: ValidPosition[] = ['top-right', 'top-left', 'bottom-right', 'bottom-left', 'top', 'bottom'];
+
 const defaultConfig: Required<Omit<MessageConfig, 'text' | 'description' | 'action' | 'onClose'>> = {
   type: "info",
   duration: 4000,
@@ -89,7 +94,7 @@ const getPositionStyle = (position: string) => {
 
 const enforceMaxCount = (position: string, maxCount: number) => {
   const container = getContainer(position);
-  if (!container) return;
+  if (!container || maxCount <= 0) return;
 
   const messages = Array.from(container.children) as HTMLElement[];
   if (messages.length >= maxCount) {
@@ -99,10 +104,18 @@ const enforceMaxCount = (position: string, maxCount: number) => {
       ? messages.slice(-removeCount) // Remove from end for bottom positions
       : messages.slice(0, removeCount); // Remove from start for top positions
     
-    messagesToRemove.forEach(messageElement => {
-      const messageId = parseInt(messageElement.id.replace('message-', ''));
-      // Add a slight delay between removals for smoother animation
-      setTimeout(() => dismissMessage(messageId), Math.random() * 100);
+    messagesToRemove.forEach((messageElement, index) => {
+      try {
+        const messageIdStr = messageElement.id.replace('message-', '');
+        const messageId = parseInt(messageIdStr, 10);
+        
+        if (!isNaN(messageId)) {
+          // Add a slight delay between removals for smoother animation
+          setTimeout(() => dismissMessage(messageId), index * 50);
+        }
+      } catch (error) {
+        console.warn('Error parsing message ID for removal:', error);
+      }
     });
   }
 };
@@ -220,6 +233,15 @@ const dismissMessage = (id: number) => {
             msg.style.transform = 'translateX(0) translateY(0)';
             msg.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
           });
+          
+          // Clean up empty container
+          if (messages.length === 0 && container.parentNode) {
+            setTimeout(() => {
+              if (container.children.length === 0 && container.parentNode) {
+                container.parentNode.removeChild(container);
+              }
+            }, 500);
+          }
         });
       }
     } catch (error) {
@@ -232,11 +254,17 @@ const processMessageQueue = () => {
   if (isProcessingQueue || messageQueue.length === 0) return;
   
   isProcessingQueue = true;
-  const nextMessage = messageQueue.shift();
-  if (nextMessage) {
-    nextMessage();
+  
+  try {
+    const nextMessage = messageQueue.shift();
+    if (nextMessage) {
+      nextMessage();
+    }
+  } catch (error) {
+    console.warn('Error processing message queue:', error);
+  } finally {
+    isProcessingQueue = false;
   }
-  isProcessingQueue = false;
   
   // Process next if any
   if (messageQueue.length > 0) {
@@ -245,104 +273,121 @@ const processMessageQueue = () => {
 };
 
 const message = (config: MessageConfig) => {
+  // Input validation
+  if (!config || typeof config !== 'object') {
+    console.warn('Invalid message config provided');
+    return -1;
+  }
+
   const mergedConfig = { ...defaultConfig, ...config };
   const { position, maxCount, priority } = mergedConfig;
 
+  // Validate position
+  if (VALID_POSITIONS.indexOf(position as ValidPosition) === -1) {
+    console.warn(`Invalid position "${position}". Using default "top-right".`);
+    mergedConfig.position = 'top-right';
+  }
+
   const createMessage = () => {
-    const container = getContainer(position);
-    const id = ++messageId;
+    try {
+      const container = getContainer(mergedConfig.position);
+      const id = ++messageId;
 
-    if (!document || !container) return id;
+      if (!document || !container) return id;
 
-    // Enforce max count
-    enforceMaxCount(position, maxCount);
+      // Enforce max count
+      enforceMaxCount(mergedConfig.position, maxCount);
 
-    const wrapper = document.createElement("div");
-    wrapper.id = `message-${id}`;
-    
-    // Position-specific initial transform based on natural edge
-    let initialTransform = '';
-    switch (position) {
-      case 'top-left':
-      case 'bottom-left':
-        initialTransform = 'translateX(-100%)'; // Start from left
-        break;
-      case 'top-right':
-      case 'bottom-right':
-        initialTransform = 'translateX(100%)'; // Start from right
-        break;
-      case 'top':
-        initialTransform = 'translateY(-100%)'; // Start from top
-        break;
-      case 'bottom':
-        initialTransform = 'translateY(100%)'; // Start from bottom
-        break;
-      default:
-        initialTransform = 'translateX(100%)'; // Default to right
-    }
-    
-    wrapper.style.cssText = `
-      pointer-events: auto;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: ${initialTransform};
-      opacity: 0;
-      margin-bottom: 8px;
-      position: relative;
-      z-index: ${1000 + id};
-    `;
+      const wrapper = document.createElement("div");
+      wrapper.id = `message-${id}`;
+      
+      // Position-specific initial transform based on natural edge
+      let initialTransform = '';
+      switch (mergedConfig.position) {
+        case 'top-left':
+        case 'bottom-left':
+          initialTransform = 'translateX(-100%)'; // Start from left
+          break;
+        case 'top-right':
+        case 'bottom-right':
+          initialTransform = 'translateX(100%)'; // Start from right
+          break;
+        case 'top':
+          initialTransform = 'translateY(-100%)'; // Start from top
+          break;
+        case 'bottom':
+          initialTransform = 'translateY(100%)'; // Start from bottom
+          break;
+        default:
+          initialTransform = 'translateX(100%)'; // Default to right
+      }
+      
+      wrapper.style.cssText = `
+        pointer-events: auto;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: ${initialTransform};
+        opacity: 0;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: ${1000 + id};
+      `;
 
-    // Insert based on priority and position behavior
-    if (priority === "high") {
-      container.insertBefore(wrapper, container.firstChild);
-    } else {
-      // For normal priority, add to the end (top of visual stack)
-      if (position.includes('bottom')) {
+      // Insert based on priority and position behavior
+      if (priority === "high") {
         container.insertBefore(wrapper, container.firstChild);
       } else {
-        container.appendChild(wrapper);
-      }
-    }
-
-    const root = ReactDOM.createRoot(wrapper);
-
-    const cleanup = () => {
-      dismissMessage(id);
-      mergedConfig.onClose?.();
-    };
-
-    let timer: number | undefined;
-    if (mergedConfig.duration > 0 && !mergedConfig.persistent) {
-      timer = window.setTimeout(cleanup, mergedConfig.duration);
-    }
-
-    activeMessages.set(id, { root, wrapper, timer });
-
-    root.render(
-      <Message
-        {...mergedConfig}
-        id={id}
-        onClose={cleanup}
-        onDismiss={() => dismissMessage(id)}
-      />
-    );
-
-    // Trigger position-specific enter animation
-    requestAnimationFrame(() => {
-      wrapper.style.opacity = '1';
-      wrapper.style.transform = 'translateX(0) translateY(0)';
-      
-      // Update positions of other messages to create space with smooth movement
-      const allMessages = Array.from(container.children) as HTMLElement[];
-      allMessages.forEach((msg, index) => {
-        if (msg !== wrapper) {
-          // Smooth transition for existing messages
-          msg.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-          msg.style.transform = 'translateX(0) translateY(0)';
+        // For normal priority, add to the end (top of visual stack)
+        if (mergedConfig.position.includes('bottom')) {
+          container.insertBefore(wrapper, container.firstChild);
+        } else {
+          container.appendChild(wrapper);
         }
-      });
-    });
+      }
 
-    return id;
+      const root = ReactDOM.createRoot(wrapper);
+
+      const cleanup = () => {
+        dismissMessage(id);
+        mergedConfig.onClose?.();
+      };
+
+      let timer: number | undefined;
+      if (mergedConfig.duration > 0 && !mergedConfig.persistent) {
+        timer = window.setTimeout(cleanup, mergedConfig.duration);
+      }
+
+      activeMessages.set(id, { root, wrapper, timer });
+
+      root.render(
+        <Message
+          {...mergedConfig}
+          id={id}
+          onClose={cleanup}
+          onDismiss={() => dismissMessage(id)}
+        />
+      );
+
+      // Trigger position-specific enter animation
+      requestAnimationFrame(() => {
+        wrapper.style.opacity = '1';
+        wrapper.style.transform = 'translateX(0) translateY(0)';
+        
+        // Update positions of other messages to create space with smooth movement
+        const allMessages = Array.from(container.children) as HTMLElement[];
+        allMessages.forEach((msg, index) => {
+          if (msg !== wrapper) {
+            // Smooth transition for existing messages
+            msg.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            msg.style.transform = 'translateX(0) translateY(0)';
+          }
+        });
+      });
+
+      return id;
+    } catch (error) {
+      console.error('Error creating message:', error);
+      return -1;
+    }
   };
 
   // Handle priority queueing
@@ -379,8 +424,15 @@ const messageAPI = Object.assign(message, {
       const container = getContainer(position);
       if (container) {
         Array.from(container.children).forEach(child => {
-          const id = parseInt((child as HTMLElement).id.replace('message-', ''));
-          dismissMessage(id);
+          try {
+            const idStr = (child as HTMLElement).id.replace('message-', '');
+            const id = parseInt(idStr, 10);
+            if (!isNaN(id)) {
+              dismissMessage(id);
+            }
+          } catch (error) {
+            console.warn('Error dismissing message:', error);
+          }
         });
       }
     } else {
@@ -400,6 +452,28 @@ const messageAPI = Object.assign(message, {
       return container ? container.children.length : 0;
     }
     return activeMessages.size;
+  },
+  
+  // Check if messages can be added (respects maxCount)
+  canAddMessage: (position: ValidPosition = 'top-right', maxCount = 5) => {
+    const container = document.getElementById(`message-container-${position}`);
+    const currentCount = container ? container.children.length : 0;
+    return currentCount < maxCount;
+  },
+  
+  // Clear all messages from all positions
+  clear: () => {
+    VALID_POSITIONS.forEach(position => {
+      const container = document.getElementById(`message-container-${position}`);
+      if (container) {
+        Array.from(container.children).forEach(child => {
+          const id = parseInt((child as HTMLElement).id.replace('message-', ''), 10);
+          if (!isNaN(id)) {
+            dismissMessage(id);
+          }
+        });
+      }
+    });
   }
 });
 

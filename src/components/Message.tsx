@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 
 export interface MessageProps {
   id: number;
@@ -28,6 +28,7 @@ export interface MessageProps {
 }
 
 const Message: React.FC<MessageProps> = ({
+  id,
   text,
   description,
   type,
@@ -54,6 +55,39 @@ const Message: React.FC<MessageProps> = ({
   const progressTimerRef = useRef<number | undefined>(undefined);
   const startTimeRef = useRef<number | undefined>(undefined);
   const remainingTimeRef = useRef<number>(duration);
+  const messageElementRef = useRef<HTMLDivElement>(null);
+
+  // Memoize animation directions for better performance
+  const animationDirections = useMemo(() => {
+    let entryDirection = '';
+    let exitTransform = '';
+    
+    switch (position) {
+      case 'top-left':
+      case 'bottom-left':
+        entryDirection = '-translate-x-full';
+        exitTransform = 'translateX(-100%) scale(0.95)';
+        break;
+      case 'top-right':
+      case 'bottom-right':
+        entryDirection = 'translate-x-full';
+        exitTransform = 'translateX(100%) scale(0.95)';
+        break;
+      case 'top':
+        entryDirection = '-translate-y-full';
+        exitTransform = 'translateY(-100%) scale(0.95)';
+        break;
+      case 'bottom':
+        entryDirection = 'translate-y-full';
+        exitTransform = 'translateY(100%) scale(0.95)';
+        break;
+      default:
+        entryDirection = 'translate-x-full';
+        exitTransform = 'translateX(100%) scale(0.95)';
+    }
+    
+    return { entryDirection, exitTransform };
+  }, [position]);
 
   // Initialize visibility
   useEffect(() => {
@@ -127,30 +161,17 @@ const Message: React.FC<MessageProps> = ({
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Escape' && closable) {
+      handleClose();
+    }
+  };
+
   const handleClose = () => {
     // Apply position-specific exit animation direction before hiding
-    const messageElement = document.querySelector(`[data-message-element]`) as HTMLElement;
+    const messageElement = messageElementRef.current;
     if (messageElement) {
-      let transform = '';
-      switch (position) {
-        case 'top-left':
-        case 'bottom-left':
-          transform = 'translateX(-100%) scale(0.95)'; // Move left
-          break;
-        case 'top-right':
-        case 'bottom-right':
-          transform = 'translateX(100%) scale(0.95)'; // Move right
-          break;
-        case 'top':
-          transform = 'translateY(-100%) scale(0.95)'; // Move up
-          break;
-        case 'bottom':
-          transform = 'translateY(100%) scale(0.95)'; // Move down
-          break;
-        default:
-          transform = 'translateX(100%) scale(0.95)'; // Default to right
-      }
-      messageElement.style.transform = transform;
+      messageElement.style.transform = animationDirections.exitTransform;
       messageElement.style.opacity = '0';
     }
     
@@ -162,41 +183,9 @@ const Message: React.FC<MessageProps> = ({
     }, 150); // Reduced timing to sync with list animation
   };
 
-  const getExitDirection = () => {
-    // Position-specific exit animation based on natural edge
-    switch (position) {
-      case 'top-left':
-      case 'bottom-left':
-        return '-translate-x-full'; // Move left for left positions
-      case 'top-right':
-      case 'bottom-right':
-        return 'translate-x-full'; // Move right for right positions
-      case 'top':
-        return '-translate-y-full'; // Move up for top center
-      case 'bottom':
-        return 'translate-y-full'; // Move down for bottom center
-      default:
-        return 'translate-x-full'; // Default to right
-    }
-  };
+  const getExitDirection = () => animationDirections.entryDirection;
 
-  const getEntryDirection = () => {
-    // Position-specific entry animation based on natural edge
-    switch (position) {
-      case 'top-left':
-      case 'bottom-left':
-        return '-translate-x-full'; // Enter from left for left positions
-      case 'top-right':
-      case 'bottom-right':
-        return 'translate-x-full'; // Enter from right for right positions
-      case 'top':
-        return '-translate-y-full'; // Enter from top for top center
-      case 'bottom':
-        return 'translate-y-full'; // Enter from bottom for bottom center
-      default:
-        return 'translate-x-full'; // Default to right
-    }
-  };
+  const getEntryDirection = () => animationDirections.entryDirection;
 
   const getTypeStyle = () => {
     const baseStyles = bordered ? "border-2" : "border-l-4";
@@ -300,12 +289,14 @@ const Message: React.FC<MessageProps> = ({
 
   return (
     <div
+      ref={messageElementRef}
       data-message-element
+      data-message-id={id}
       className={`
         ${className}
         transform transition-all duration-300 ease-out
         ${visible 
-          ? "opacity-100 translate-y-0 scale-100" 
+          ? "opacity-100 translate-x-0 translate-y-0 scale-100" 
           : `opacity-0 ${getEntryDirection()} scale-95`
         }
         ${getTypeStyle()}
@@ -322,8 +313,13 @@ const Message: React.FC<MessageProps> = ({
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onKeyDown={handleKeyDown}
+      tabIndex={closable ? 0 : -1}
       role="alert"
       aria-live="polite"
+      aria-atomic="true"
+      aria-labelledby={text ? `message-title-${id}` : undefined}
+      aria-describedby={description ? `message-desc-${id}` : undefined}
     >
       {/* Progress bar */}
       {showProgress && !persistent && (
@@ -340,12 +336,18 @@ const Message: React.FC<MessageProps> = ({
           {getTypeIcon()}
           <div className="flex flex-col flex-1 min-w-0">
             {text && (
-              <div className="font-semibold leading-tight text-current">
+              <div 
+                id={`message-title-${id}`}
+                className="font-semibold leading-tight text-current"
+              >
                 {text}
               </div>
             )}
             {description && (
-              <div className="text-sm opacity-90 mt-1 leading-relaxed">
+              <div 
+                id={`message-desc-${id}`}
+                className="text-sm opacity-90 mt-1 leading-relaxed"
+              >
                 {description}
               </div>
             )}
