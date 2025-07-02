@@ -5,6 +5,8 @@ interface SelectOption {
   label: string;
   disabled?: boolean;
   group?: string;
+  description?: string;
+  icon?: React.ReactNode;
 }
 
 interface SelectProps {
@@ -16,8 +18,8 @@ interface SelectProps {
   disabled?: boolean;
   error?: boolean;
   size?: 'small' | 'medium' | 'large';
-  variant?: 'outlined' | 'filled' | 'standard';
-  color?: 'default' | 'primary' | 'danger' | 'success';
+  variant?: 'outlined' | 'filled' | 'standard' | 'ghost';
+  color?: 'default' | 'primary' | 'danger' | 'success' | 'warning';
   label?: string;
   helperText?: string;
   errorText?: string;
@@ -105,15 +107,16 @@ const Select: React.FC<SelectProps> = ({
     if (multiple && Array.isArray(selectedOption)) {
       if (selectedOption.length === 0) return '';
       if (selectedOption.length === 1) return selectedOption[0].label;
-      return `${selectedOption.length} items selected`;
+      if (selectedOption.length === 2) return `${selectedOption[0].label} +1 more`;
+      return `${selectedOption[0].label} +${selectedOption.length - 1} more`;
     }
     return selectedOption ? (selectedOption as SelectOption).label : '';
   }, [selectedOption, multiple]);
 
   const sizeClasses = {
-    small: 'px-3 py-2 text-sm',
-    medium: 'px-4 py-3 text-base',
-    large: 'px-5 py-4 text-lg'
+    small: 'px-3 py-2 text-sm min-h-[36px]',
+    medium: 'px-4 py-3 text-base min-h-[44px]',
+    large: 'px-5 py-4 text-lg min-h-[52px]'
   };
 
   const getColorClasses = () => {
@@ -123,22 +126,32 @@ const Select: React.FC<SelectProps> = ({
       default: {
         outlined: `border-gray-300 focus:border-gray-500 focus:ring-gray-500/20`,
         filled: `bg-gray-100 focus:bg-gray-50 border-gray-300`,
-        standard: `border-b-gray-300 focus:border-b-gray-500`
+        standard: `border-b-gray-300 focus:border-b-gray-500`,
+        ghost: `border-transparent focus:border-gray-300 focus:ring-gray-500/20`
       },
       primary: {
-        outlined: `border-gray-300 focus:border-primary focus:ring-primary/20`,
-        filled: `bg-gray-100 focus:bg-gray-50 border-gray-300 focus:border-primary`,
-        standard: `border-b-gray-300 focus:border-b-primary`
+        outlined: `border-gray-300 focus:border-blue-500 focus:ring-blue-500/20`,
+        filled: `bg-blue-50 focus:bg-blue-25 border-blue-200 focus:border-blue-500`,
+        standard: `border-b-gray-300 focus:border-b-blue-500`,
+        ghost: `border-transparent focus:border-blue-300 focus:ring-blue-500/20`
       },
       danger: {
         outlined: `border-red-300 focus:border-red-500 focus:ring-red-500/20`,
         filled: `bg-red-50 focus:bg-red-25 border-red-300`,
-        standard: `border-b-red-300 focus:border-b-red-500`
+        standard: `border-b-red-300 focus:border-b-red-500`,
+        ghost: `border-transparent focus:border-red-300 focus:ring-red-500/20`
       },
       success: {
         outlined: `border-green-300 focus:border-green-500 focus:ring-green-500/20`,
         filled: `bg-green-50 focus:bg-green-25 border-green-300`,
-        standard: `border-b-green-300 focus:border-b-green-500`
+        standard: `border-b-green-300 focus:border-b-green-500`,
+        ghost: `border-transparent focus:border-green-300 focus:ring-green-500/20`
+      },
+      warning: {
+        outlined: `border-yellow-300 focus:border-yellow-500 focus:ring-yellow-500/20`,
+        filled: `bg-yellow-50 focus:bg-yellow-25 border-yellow-300`,
+        standard: `border-b-yellow-300 focus:border-b-yellow-500`,
+        ghost: `border-transparent focus:border-yellow-300 focus:ring-yellow-500/20`
       }
     };
 
@@ -150,11 +163,13 @@ const Select: React.FC<SelectProps> = ({
     
     switch (variant) {
       case 'outlined':
-        return `${baseClasses} border rounded-md focus:ring-2 focus:ring-opacity-20`;
+        return `${baseClasses} border rounded-lg focus:ring-2 focus:ring-opacity-20 shadow-sm hover:shadow-md`;
       case 'filled':
-        return `${baseClasses} border border-transparent rounded-md focus:ring-2 focus:ring-opacity-20`;
+        return `${baseClasses} border border-transparent rounded-lg focus:ring-2 focus:ring-opacity-20 shadow-sm`;
       case 'standard':
         return `${baseClasses} border-0 border-b-2 rounded-none bg-transparent focus:ring-0`;
+      case 'ghost':
+        return `${baseClasses} border rounded-lg focus:ring-2 focus:ring-opacity-20 bg-transparent hover:bg-gray-50`;
       default:
         return baseClasses;
     }
@@ -294,7 +309,7 @@ const Select: React.FC<SelectProps> = ({
     ? Array.isArray(currentValue) && currentValue.length > 0
     : Boolean(currentValue);
 
-  const labelColor = error ? 'text-red-600' : focused ? (color === 'primary' ? 'text-primary' : 'text-gray-700') : 'text-gray-600';
+  const labelColor = error ? 'text-red-600' : focused ? (color === 'primary' ? 'text-blue-600' : color === 'danger' ? 'text-red-600' : color === 'success' ? 'text-green-600' : color === 'warning' ? 'text-yellow-600' : 'text-gray-700') : 'text-gray-600';
   const helperColor = error ? 'text-red-600' : 'text-gray-500';
 
   return (
@@ -328,15 +343,23 @@ const Select: React.FC<SelectProps> = ({
         aria-describedby={ariaDescribedBy}
         id={id}
       >
-        <span className={displayValue ? 'text-gray-900' : 'text-gray-500'}>
-          {loading ? 'Loading...' : displayValue || placeholder}
+        <span className={`truncate ${displayValue ? 'text-gray-900' : 'text-gray-500'}`}>
+          {loading ? (
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Loading...
+            </div>
+          ) : displayValue || placeholder}
         </span>
         
         <div className="flex items-center gap-2">
           {clearable && hasValue && !loading && (
             <button
               onClick={handleClear}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded hover:bg-gray-100"
               tabIndex={-1}
               aria-label="Clear selection"
             >
@@ -347,10 +370,12 @@ const Select: React.FC<SelectProps> = ({
           )}
           
           {loading ? (
-            <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
+            <div className="flex items-center justify-center">
+              <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
           ) : (
             <svg 
               className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
@@ -366,34 +391,46 @@ const Select: React.FC<SelectProps> = ({
 
       {isOpen && (
         <div 
-          className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg overflow-hidden"
+          className={`absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden backdrop-blur-sm transform transition-all duration-200 ease-out ${
+            isOpen ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-1 scale-95'
+          }`}
           style={{ maxHeight: maxHeight }}
           role="listbox"
           aria-multiselectable={multiple}
           ref={listRef}
         >
           {searchable && (
-            <div className="p-2 border-b border-gray-200">
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                onKeyDown={(e) => {
-                  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    handleKeyDown(e);
-                  }
-                }}
-              />
+            <div className="p-3 border-b border-gray-100 bg-gray-50/50">
+              <div className="relative">
+                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm"
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                      e.preventDefault();
+                      handleKeyDown(e);
+                    }
+                  }}
+                />
+              </div>
             </div>
           )}
           
-          <div className="overflow-auto" style={{ maxHeight: maxHeight - (searchable ? 60 : 0) }}>
+          <div className="overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent" style={{ maxHeight: maxHeight - (searchable ? 70 : 0) }}>
             {filteredOptions.length === 0 ? (
-              <div className="px-4 py-3 text-gray-500">{noOptionsText}</div>
+              <div className="px-4 py-8 text-center">
+                <svg className="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0118 12a8 8 0 10-8 8 7.962 7.962 0 01-5.291-2z" />
+                </svg>
+                <p className="text-gray-500 text-sm">{noOptionsText}</p>
+              </div>
             ) : (
               filteredOptions.map((option, index) => {
                 const isSelected = isOptionSelected(option.value);
@@ -403,28 +440,41 @@ const Select: React.FC<SelectProps> = ({
                   <div
                     key={option.value}
                     className={`
-                      px-4 py-3 cursor-pointer transition-colors duration-150 flex items-center justify-between
-                      ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}
-                      ${isSelected ? 'bg-primary/10 text-primary' : 'text-gray-900'}
-                      ${isHighlighted ? 'bg-gray-50' : ''}
+                      px-4 py-3 cursor-pointer transition-all duration-150 flex items-center gap-3 group
+                      ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}
+                      ${isSelected ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-500' : 'text-gray-900'}
+                      ${isHighlighted ? 'bg-gray-100' : ''}
                     `}
                     onClick={() => !option.disabled && handleSelect(option.value)}
                     role="option"
                     aria-selected={isSelected}
                     aria-disabled={option.disabled}
                   >
-                    {renderOption ? (
-                      renderOption(option, isSelected)
-                    ) : (
-                      <>
-                        <span>{option.label}</span>
+                    {option.icon && (
+                      <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                        {option.icon}
+                      </div>
+                    )}
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium truncate">{option.label}</span>
                         {multiple && isSelected && (
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-5 h-5 text-blue-500 flex-shrink-0 ml-2" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
                         )}
-                      </>
-                    )}
+                      </div>
+                      {option.description && (
+                        <p className="text-sm text-gray-500 mt-1 truncate">{option.description}</p>
+                      )}
+                    </div>
+                    
+                    {renderOption ? (
+                      <div className="ml-2">
+                        {renderOption(option, isSelected)}
+                      </div>
+                    ) : null}
                   </div>
                 );
               })
