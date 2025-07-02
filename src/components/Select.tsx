@@ -29,9 +29,12 @@ interface SelectProps {
   multiple?: boolean;
   loading?: boolean;
   maxHeight?: number;
+  dropdownWidth?: 'auto' | 'full' | number | string;
+  placement?: 'bottom' | 'top' | 'auto';
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
   noOptionsText?: string;
   className?: string;
+  dropdownClassName?: string;
   id?: string;
   'aria-label'?: string;
   'aria-describedby'?: string;
@@ -57,9 +60,12 @@ const Select: React.FC<SelectProps> = ({
   multiple = false,
   loading = false,
   maxHeight = 240,
+  dropdownWidth = 'auto',
+  placement = 'auto',
   renderOption,
   noOptionsText = 'No options found',
   className = '',
+  dropdownClassName = '',
   id,
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy
@@ -77,10 +83,12 @@ const Select: React.FC<SelectProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [focused, setFocused] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [dropdownPosition, setDropdownPosition] = useState<'top' | 'bottom'>('bottom');
   
   const selectRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   
   // Get current value (controlled or uncontrolled)
   const currentValue = isControlled ? value : internalValue;
@@ -102,13 +110,13 @@ const Select: React.FC<SelectProps> = ({
     return options.find(option => option.value === currentValue);
   }, [options, currentValue, multiple]);
 
-  // Display value for the select
+  // Display value for the select with better truncation
   const displayValue = useMemo(() => {
     if (multiple && Array.isArray(selectedOption)) {
       if (selectedOption.length === 0) return '';
       if (selectedOption.length === 1) return selectedOption[0].label;
-      if (selectedOption.length === 2) return `${selectedOption[0].label} +1 more`;
-      return `${selectedOption[0].label} +${selectedOption.length - 1} more`;
+      if (selectedOption.length === 2) return `${selectedOption[0].label}, ${selectedOption[1].label}`;
+      return `${selectedOption[0].label} and ${selectedOption.length - 1} others`;
     }
     return selectedOption ? (selectedOption as SelectOption).label : '';
   }, [selectedOption, multiple]);
@@ -309,6 +317,45 @@ const Select: React.FC<SelectProps> = ({
     ? Array.isArray(currentValue) && currentValue.length > 0
     : Boolean(currentValue);
 
+  // Calculate dropdown positioning and width
+  const getDropdownStyles = () => {
+    const styles: React.CSSProperties = { maxHeight };
+    
+    // Handle width
+    if (dropdownWidth === 'auto') {
+      styles.minWidth = '100%';
+      styles.width = 'max-content';
+      styles.maxWidth = '400px';
+    } else if (dropdownWidth === 'full') {
+      styles.width = '100%';
+    } else if (typeof dropdownWidth === 'number') {
+      styles.width = `${dropdownWidth}px`;
+    } else if (typeof dropdownWidth === 'string') {
+      styles.width = dropdownWidth;
+    } else {
+      styles.width = '100%';
+    }
+    
+    return styles;
+  };
+
+  // Calculate dropdown position
+  useEffect(() => {
+    if (isOpen && selectRef.current && placement === 'auto') {
+      const rect = selectRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      
+      if (spaceBelow < maxHeight && spaceAbove > spaceBelow) {
+        setDropdownPosition('top');
+      } else {
+        setDropdownPosition('bottom');
+      }
+    } else if (placement !== 'auto') {
+      setDropdownPosition(placement);
+    }
+  }, [isOpen, placement, maxHeight]);
+
   const labelColor = error ? 'text-red-600' : focused ? (color === 'primary' ? 'text-blue-600' : color === 'danger' ? 'text-red-600' : color === 'success' ? 'text-green-600' : color === 'warning' ? 'text-yellow-600' : 'text-gray-700') : 'text-gray-600';
   const helperColor = error ? 'text-red-600' : 'text-gray-500';
 
@@ -343,19 +390,23 @@ const Select: React.FC<SelectProps> = ({
         aria-describedby={ariaDescribedBy}
         id={id}
       >
-        <span className={`truncate ${displayValue ? 'text-gray-900' : 'text-gray-500'}`}>
+        <span className={`flex-1 truncate ${displayValue ? 'text-gray-900' : 'text-gray-500'}`}>
           {loading ? (
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Loading...
+              <span className="truncate">Loading...</span>
             </div>
-          ) : displayValue || placeholder}
+          ) : (
+            <span className="truncate" title={displayValue}>
+              {displayValue || placeholder}
+            </span>
+          )}
         </span>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 flex-shrink-0">
           {clearable && hasValue && !loading && (
             <button
               onClick={handleClear}
@@ -369,35 +420,41 @@ const Select: React.FC<SelectProps> = ({
             </button>
           )}
           
+          {clearable && hasValue && !loading && (
+            <div className="w-px h-4 bg-gray-300"></div>
+          )}
+          
           {loading ? (
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center p-1">
               <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             </div>
           ) : (
-            <svg 
-              className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            <div className="p-1">
+              <svg 
+                className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
           )}
         </div>
       </div>
 
       {isOpen && (
         <div 
-          className={`absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden backdrop-blur-sm transform transition-all duration-200 ease-out ${
+          ref={dropdownRef}
+          className={`absolute z-50 ${dropdownPosition === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'} ${dropdownWidth === 'auto' ? 'left-0' : 'w-full'} bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden backdrop-blur-sm transform transition-all duration-200 ease-out ${
             isOpen ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-1 scale-95'
-          }`}
-          style={{ maxHeight: maxHeight }}
+          } ${dropdownClassName}`}
+          style={getDropdownStyles()}
           role="listbox"
           aria-multiselectable={multiple}
-          ref={listRef}
         >
           {searchable && (
             <div className="p-3 border-b border-gray-100 bg-gray-50/50">
@@ -423,7 +480,7 @@ const Select: React.FC<SelectProps> = ({
             </div>
           )}
           
-          <div className="overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent" style={{ maxHeight: maxHeight - (searchable ? 70 : 0) }}>
+          <div className="overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent" style={{ maxHeight: maxHeight - (searchable ? 70 : 0) }} ref={listRef}>
             {filteredOptions.length === 0 ? (
               <div className="px-4 py-8 text-center">
                 <svg className="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -440,10 +497,11 @@ const Select: React.FC<SelectProps> = ({
                   <div
                     key={option.value}
                     className={`
-                      px-4 py-3 cursor-pointer transition-all duration-150 flex items-center gap-3 group
-                      ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}
-                      ${isSelected ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-500' : 'text-gray-900'}
+                      relative px-4 py-3 cursor-pointer transition-all duration-150 flex items-start gap-3 group
+                      ${option.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 active:bg-gray-100'}
+                      ${isSelected ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}
                       ${isHighlighted ? 'bg-gray-100' : ''}
+                      ${isSelected ? 'border-l-4 border-blue-500' : 'border-l-4 border-transparent'}
                     `}
                     onClick={() => !option.disabled && handleSelect(option.value)}
                     role="option"
@@ -451,30 +509,34 @@ const Select: React.FC<SelectProps> = ({
                     aria-disabled={option.disabled}
                   >
                     {option.icon && (
-                      <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                      <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center mt-0.5">
                         {option.icon}
                       </div>
                     )}
                     
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium truncate">{option.label}</span>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm leading-5 break-words">{option.label}</div>
+                          {option.description && (
+                            <div className="text-xs text-gray-500 mt-1 leading-4 break-words">{option.description}</div>
+                          )}
+                        </div>
                         {multiple && isSelected && (
-                          <svg className="w-5 h-5 text-blue-500 flex-shrink-0 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
+                          <div className="flex-shrink-0 mt-0.5">
+                            <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
                         )}
                       </div>
-                      {option.description && (
-                        <p className="text-sm text-gray-500 mt-1 truncate">{option.description}</p>
-                      )}
                     </div>
                     
-                    {renderOption ? (
-                      <div className="ml-2">
+                    {renderOption && (
+                      <div className="flex-shrink-0">
                         {renderOption(option, isSelected)}
                       </div>
-                    ) : null}
+                    )}
                   </div>
                 );
               })
