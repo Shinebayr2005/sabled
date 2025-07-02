@@ -14,7 +14,6 @@ const confirm = ({
   cancelColor = "default",
   cancelVariant = "flat",
   type = "default",
-  variant = "default",
   width = 400,
   showIcon = true,
   icon,
@@ -33,7 +32,6 @@ const confirm = ({
   cancelColor?: ConfirmProps['cancelColor'];
   cancelVariant?: ConfirmProps['cancelVariant'];
   type?: ConfirmProps['type'];
-  variant?: ConfirmProps['variant'];
   width?: string | number;
   showIcon?: boolean;
   icon?: React.ReactNode;
@@ -90,7 +88,6 @@ const confirm = ({
       cancelColor={cancelColor}
       cancelVariant={cancelVariant}
       type={type}
-      variant={variant}
       width={width}
       showIcon={showIcon}
       icon={icon}

@@ -18,7 +18,6 @@ export interface ConfirmProps {
   showIcon?: boolean;
   icon?: React.ReactNode;
   type?: "default" | "danger" | "warning" | "info";
-  variant?: "default" | "bordered" | "shadow" | "flat" | "glass";
   closable?: boolean;
 }
 
@@ -39,7 +38,6 @@ const Confirm: React.FC<ConfirmProps> = ({
   showIcon = true,
   icon,
   type = "default",
-  variant = "default",
   closable = true,
 }) => {
   const [visible, setVisible] = useState(false);
@@ -105,18 +103,6 @@ const Confirm: React.FC<ConfirmProps> = ({
     return colorMap[type];
   };
 
-  const getVariantStyle = () => {
-    const variantStyles = {
-      default: "bg-white border-0 shadow-lg",
-      bordered: "bg-white border-2 border-gray-200 shadow-md",
-      shadow: "bg-white border-0 shadow-2xl shadow-black/20",
-      flat: "bg-gray-50 border-0 shadow-none",
-      glass: "bg-white/80 backdrop-blur-md border border-white/20 shadow-xl",
-    };
-
-    return variantStyles[variant] || variantStyles.default;
-  };
-
   const typeColors = getTypeColors();
   const finalConfirmColor =
     confirmColor === "primary" ? typeColors.confirmColor : confirmColor;
@@ -130,9 +116,7 @@ const Confirm: React.FC<ConfirmProps> = ({
       } ${overlayClassName}`}
     >
       <div
-        className={`${
-          getVariantStyle()
-        } p-6 rounded-lg transform transition-transform duration-300 ${
+        className={`bg-white border border-gray-200 p-6 rounded-lg transform transition-transform duration-300 ${
           visible ? "scale-100" : "scale-90"
         } ${className}`}
         style={{ width: widthStyle }}
