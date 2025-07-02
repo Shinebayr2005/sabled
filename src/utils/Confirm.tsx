@@ -14,9 +14,10 @@ const confirm = ({
   cancelColor = "default",
   cancelVariant = "flat",
   type = "default",
+  variant = "default",
   width = 400,
   showIcon = true,
-  customIcon,
+  icon,
   closable = true,
   className,
   overlayClassName,
@@ -32,9 +33,10 @@ const confirm = ({
   cancelColor?: ConfirmProps['cancelColor'];
   cancelVariant?: ConfirmProps['cancelVariant'];
   type?: ConfirmProps['type'];
+  variant?: ConfirmProps['variant'];
   width?: string | number;
   showIcon?: boolean;
-  customIcon?: React.ReactNode;
+  icon?: React.ReactNode;
   closable?: boolean;
   className?: string;
   overlayClassName?: string;
@@ -88,9 +90,10 @@ const confirm = ({
       cancelColor={cancelColor}
       cancelVariant={cancelVariant}
       type={type}
+      variant={variant}
       width={width}
       showIcon={showIcon}
-      customIcon={customIcon}
+      icon={icon}
       closable={closable}
       className={className}
       overlayClassName={overlayClassName}

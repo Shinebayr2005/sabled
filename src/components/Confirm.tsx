@@ -16,8 +16,9 @@ export interface ConfirmProps {
   className?: string;
   overlayClassName?: string;
   showIcon?: boolean;
-  customIcon?: React.ReactNode;
+  icon?: React.ReactNode;
   type?: "default" | "danger" | "warning" | "info";
+  variant?: "default" | "bordered" | "shadow" | "flat" | "glass";
   closable?: boolean;
 }
 
@@ -36,8 +37,9 @@ const Confirm: React.FC<ConfirmProps> = ({
   className = "",
   overlayClassName = "",
   showIcon = true,
-  customIcon,
+  icon,
   type = "default",
+  variant = "default",
   closable = true,
 }) => {
   const [visible, setVisible] = useState(false);
@@ -61,15 +63,15 @@ const Confirm: React.FC<ConfirmProps> = ({
     if (!showIcon) return null;
 
     // Use custom icon if provided
-    if (customIcon) {
-      return customIcon;
+    if (icon) {
+      return icon;
     }
 
     // Default icons for each type
     const iconMap = {
       default: (
         <svg className="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zm-2 5a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
         </svg>
       ),
       danger: (
@@ -103,6 +105,18 @@ const Confirm: React.FC<ConfirmProps> = ({
     return colorMap[type];
   };
 
+  const getVariantStyle = () => {
+    const variantStyles = {
+      default: "bg-white border-0 shadow-lg",
+      bordered: "bg-white border-2 border-gray-200 shadow-md",
+      shadow: "bg-white border-0 shadow-2xl shadow-black/20",
+      flat: "bg-gray-50 border-0 shadow-none",
+      glass: "bg-white/80 backdrop-blur-md border border-white/20 shadow-xl",
+    };
+
+    return variantStyles[variant] || variantStyles.default;
+  };
+
   const typeColors = getTypeColors();
   const finalConfirmColor =
     confirmColor === "primary" ? typeColors.confirmColor : confirmColor;
@@ -116,7 +130,9 @@ const Confirm: React.FC<ConfirmProps> = ({
       } ${overlayClassName}`}
     >
       <div
-        className={`bg-white p-6 rounded-lg shadow-lg transform transition-transform duration-300 ${
+        className={`${
+          getVariantStyle()
+        } p-6 rounded-lg transform transition-transform duration-300 ${
           visible ? "scale-100" : "scale-90"
         } ${className}`}
         style={{ width: widthStyle }}
