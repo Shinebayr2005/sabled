@@ -386,6 +386,113 @@ const Select: React.FC<SelectProps> = ({
     }
   }, [isOpen, placement, maxHeight]);
 
+  // Get search input styling to match the Input component exactly
+  const getSearchInputClasses = () => {
+    // Use Input component's sizing system
+    const sizeClasses = {
+      small: {
+        input: "px-3 py-1.5 text-sm min-h-8",
+        startPadding: "pl-9",
+        endPadding: "pr-9",
+      },
+      medium: {
+        input: "px-3 py-2 text-sm min-h-10",
+        startPadding: "pl-10",
+        endPadding: "pr-10",
+      },
+      large: {
+        input: "px-4 py-3 text-base min-h-12",
+        startPadding: "pl-12",
+        endPadding: "pr-12",
+      },
+    };
+
+    // Use Input component's radius system
+    const radiusClasses = {
+      none: "rounded-none",
+      sm: "rounded-sm",
+      md: "rounded-md",
+      lg: "rounded-lg",
+      full: "rounded-full",
+    };
+
+    // Use Input component's color system - map Select variants to Input variants
+    const variantMapping: Record<string, "flat" | "faded" | "bordered" | "underlined"> = {
+      outlined: "flat",
+      filled: "faded",
+      standard: "underlined",
+      ghost: "bordered"
+    };
+
+    const inputVariant = variantMapping[variant] || "flat";
+    const currentColor = error ? "danger" : color;
+
+    // Input component's color classes
+    const colorClasses: Record<string, Record<string, string>> = {
+      default: {
+        flat: "bg-gray-100 hover:bg-gray-200 border-transparent focus:bg-white focus:border-gray-400",
+        faded: "bg-gray-50 border-gray-200 focus:border-gray-400 focus:bg-white",
+        bordered: "bg-transparent border-gray-300 focus:border-gray-400",
+        underlined: "bg-transparent border-b-2 border-gray-300 rounded-none focus:border-gray-400",
+      },
+      primary: {
+        flat: "bg-primary/5 hover:bg-primary/10 border-transparent focus:bg-white focus:border-primary",
+        faded: "bg-primary/5 border-primary/20 focus:border-primary focus:bg-white",
+        bordered: "bg-transparent border-primary/30 focus:border-primary",
+        underlined: "bg-transparent border-b-2 border-primary/30 rounded-none focus:border-primary",
+      },
+      secondary: {
+        flat: "bg-purple-50 hover:bg-purple-100 border-transparent focus:bg-white focus:border-purple-500",
+        faded: "bg-purple-25 border-purple-200 focus:border-purple-500 focus:bg-white",
+        bordered: "bg-transparent border-purple-300 focus:border-purple-500",
+        underlined: "bg-transparent border-b-2 border-purple-300 rounded-none focus:border-purple-500",
+      },
+      success: {
+        flat: "bg-green-50 hover:bg-green-100 border-transparent focus:bg-white focus:border-green-500",
+        faded: "bg-green-25 border-green-200 focus:border-green-500 focus:bg-white",
+        bordered: "bg-transparent border-green-300 focus:border-green-500",
+        underlined: "bg-transparent border-b-2 border-green-300 rounded-none focus:border-green-500",
+      },
+      warning: {
+        flat: "bg-yellow-50 hover:bg-yellow-100 border-transparent focus:bg-white focus:border-yellow-500",
+        faded: "bg-yellow-25 border-yellow-200 focus:border-yellow-500 focus:bg-white",
+        bordered: "bg-transparent border-yellow-300 focus:border-yellow-500",
+        underlined: "bg-transparent border-b-2 border-yellow-300 rounded-none focus:border-yellow-500",
+      },
+      danger: {
+        flat: "bg-red-50 hover:bg-red-100 border-transparent focus:bg-white focus:border-red-500",
+        faded: "bg-red-25 border-red-200 focus:border-red-500 focus:bg-white",
+        bordered: "bg-transparent border-red-300 focus:border-red-500",
+        underlined: "bg-transparent border-b-2 border-red-300 rounded-none focus:border-red-500",
+      },
+    };
+
+    // Input component's focus ring classes
+    const focusRingClasses: Record<string, string> = {
+      default: "focus:ring-gray-500/20",
+      primary: "focus:ring-primary/20",
+      secondary: "focus:ring-purple-500/20",
+      success: "focus:ring-green-500/20",
+      warning: "focus:ring-yellow-500/20",
+      danger: "focus:ring-red-500/20",
+    };
+
+    return `
+      w-full
+      font-medium
+      placeholder-gray-500
+      transition-all duration-200
+      focus:outline-none focus:ring-2 focus:ring-offset-0
+      disabled:opacity-50 disabled:cursor-not-allowed
+      ${sizeClasses[size].input}
+      ${sizeClasses[size].startPadding}
+      ${searchTerm ? sizeClasses[size].endPadding : ""}
+      ${inputVariant !== "underlined" ? radiusClasses.md : ""}
+      ${colorClasses[currentColor]?.[inputVariant] || colorClasses.default.flat}
+      ${focusRingClasses[currentColor] || focusRingClasses.default}
+    `.replace(/\s+/g, " ").trim();
+  };
+
   const labelColor = error
     ? "text-red-600"
     : focused
@@ -580,28 +687,32 @@ const Select: React.FC<SelectProps> = ({
           aria-multiselectable={multiple}
         >
           {searchable && (
-            <div className="p-3 border-b border-gray-100 bg-gray-50/50">
-              <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
+            <div className="p-3 border-b border-gray-100 bg-gray-50/30">
+              <div className="relative flex items-center">
+                <div className={`absolute left-3 flex items-center justify-center text-gray-500 pointer-events-none z-10 ${
+                  size === "small" ? "text-sm" : size === "medium" ? "text-sm" : "text-base"
+                }`}>
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder="Search..."
+                  placeholder="Search options..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm"
+                  className={getSearchInputClasses()}
                   onKeyDown={(e) => {
                     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
                       e.preventDefault();
@@ -609,6 +720,27 @@ const Select: React.FC<SelectProps> = ({
                     }
                   }}
                 />
+                {searchTerm && (
+                  <div className="absolute right-3 flex items-center justify-center z-10">
+                    <button
+                      type="button"
+                      onClick={() => setSearchTerm("")}
+                      className={`${size === "small" ? "text-sm" : size === "medium" ? "text-sm" : "text-base"} text-gray-400 hover:text-gray-600 transition-colors p-0.5 rounded flex items-center justify-center`}
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
