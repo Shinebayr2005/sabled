@@ -1,3 +1,4 @@
+import React from "react";
 import ReactDOM from "react-dom/client";
 import Confirm, { ConfirmProps } from "../components/Confirm";
 
@@ -15,6 +16,7 @@ const confirm = ({
   type = "default",
   width = 400,
   showIcon = true,
+  customIcon,
   closable = true,
   className,
   overlayClassName,
@@ -32,6 +34,7 @@ const confirm = ({
   type?: ConfirmProps['type'];
   width?: string | number;
   showIcon?: boolean;
+  customIcon?: React.ReactNode;
   closable?: boolean;
   className?: string;
   overlayClassName?: string;
@@ -87,6 +90,7 @@ const confirm = ({
       type={type}
       width={width}
       showIcon={showIcon}
+      customIcon={customIcon}
       closable={closable}
       className={className}
       overlayClassName={overlayClassName}

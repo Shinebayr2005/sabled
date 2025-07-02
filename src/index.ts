@@ -45,3 +45,6 @@ export type { MessageProps } from "./components/Message";
 // Utils
 export { default as message } from "./utils/Message";
 export { default as confirm } from "./utils/Confirm";
+
+// Demo/Test Components (for development and demonstration)
+export { default as ConfirmIconTest } from "./components/ConfirmIconTest";
