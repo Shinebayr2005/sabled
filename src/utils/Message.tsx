@@ -11,6 +11,7 @@ interface MessageConfig {
   text?: string;
   description?: string;
   type?: "success" | "error" | "info" | "warning";
+  variant?: "default" | "solid" | "minimal" | "outlined" | "ghost";
   duration?: number;
   position?: "top-right" | "top-left" | "bottom-right" | "bottom-left" | "top" | "bottom";
   closable?: boolean;
@@ -37,6 +38,7 @@ const VALID_POSITIONS: ValidPosition[] = ['top-right', 'top-left', 'bottom-right
 
 const defaultConfig: Required<Omit<MessageConfig, 'text' | 'description' | 'action' | 'onClose'>> = {
   type: "info",
+  variant: "default",
   duration: 4000,
   position: "top-right",
   closable: true,

@@ -39,16 +39,23 @@ function App() {
         console.log("Item deleted");
         Message.success({
           text: "Item deleted successfully!",
+          variant: "solid", // NEW: Use solid variant for emphasis
           showProgress: true,
           action: {
             label: "Undo",
-            onClick: () => Message.info("Undo feature coming soon!")
+            onClick: () => Message.info({
+              text: "Undo feature coming soon!",
+              variant: "minimal" // NEW: Use minimal variant for subtle info
+            })
           }
         });
       },
       onCancel: () => {
         console.log("Delete cancelled");
-        Message.info("Delete operation cancelled");
+        Message.info({
+          text: "Delete operation cancelled",
+          variant: "ghost" // NEW: Use ghost variant for non-intrusive feedback
+        });
       },
     });
   };
@@ -58,6 +65,7 @@ function App() {
     if (value.trim()) {
       Message.info({
         text: `Searching for: ${value}`,
+        variant: "outlined", // NEW: Use outlined variant for clean look
         description: "Please wait while we search...",
         showProgress: true,
         pauseOnHover: true
@@ -85,5 +93,28 @@ function App() {
   );
 }
 ```
+
+## 🎨 Message Variants (NEW!)
+
+The Message component now supports 5 different visual variants to match your design needs:
+
+```tsx
+// Default - Standard appearance
+Message.success("Standard success message");
+
+// Solid - Bold, high contrast for critical messages
+Message.error({ text: "Critical error!", variant: "solid" });
+
+// Minimal - Subtle, low visual impact
+Message.info({ text: "Auto-saved", variant: "minimal" });
+
+// Outlined - Clean, professional border design
+Message.warning({ text: "Review required", variant: "outlined" });
+
+// Ghost - Transparent, non-intrusive
+Message.success({ text: "Connected", variant: "ghost" });
+```
+
+See [MESSAGE_VARIANTS.md](./MESSAGE_VARIANTS.md) for complete documentation and examples.
 
 **Made with ❤️ by SHINEE** - Trying to make great UIs easily.

@@ -5,6 +5,7 @@ export interface MessageProps {
   text?: string;
   description?: string;
   type: "success" | "error" | "info" | "warning";
+  variant?: "default" | "solid" | "minimal" | "outlined" | "ghost";
   duration?: number;
   onClose: () => void;
   onDismiss?: () => void;
@@ -32,6 +33,7 @@ const Message: React.FC<MessageProps> = ({
   text,
   description,
   type,
+  variant = "default",
   duration = 4000,
   onClose,
   onDismiss,
@@ -192,21 +194,51 @@ const Message: React.FC<MessageProps> = ({
   const getEntryDirection = () => animationDirections.entryDirection;
 
   const getTypeStyle = () => {
-    const baseStyles = bordered ? "border-2" : "border-l-4";
     const shadowStyles = "shadow-lg backdrop-blur-sm";
+    
+    // Base color schemes for each type
+    const colorSchemes = {
+      success: {
+        default: `bg-green-50/95 text-green-900 border-green-500 ${shadowStyles}`,
+        solid: `bg-green-600 text-white border-green-600 ${shadowStyles}`,
+        minimal: `bg-green-50/50 text-green-800 border-transparent`,
+        outlined: `bg-white/95 text-green-700 border-green-500 ${shadowStyles}`,
+        ghost: `bg-transparent text-green-700 border-transparent hover:bg-green-50/50`
+      },
+      error: {
+        default: `bg-red-50/95 text-red-900 border-red-500 ${shadowStyles}`,
+        solid: `bg-red-600 text-white border-red-600 ${shadowStyles}`,
+        minimal: `bg-red-50/50 text-red-800 border-transparent`,
+        outlined: `bg-white/95 text-red-700 border-red-500 ${shadowStyles}`,
+        ghost: `bg-transparent text-red-700 border-transparent hover:bg-red-50/50`
+      },
+      info: {
+        default: `bg-blue-50/95 text-blue-900 border-blue-500 ${shadowStyles}`,
+        solid: `bg-blue-600 text-white border-blue-600 ${shadowStyles}`,
+        minimal: `bg-blue-50/50 text-blue-800 border-transparent`,
+        outlined: `bg-white/95 text-blue-700 border-blue-500 ${shadowStyles}`,
+        ghost: `bg-transparent text-blue-700 border-transparent hover:bg-blue-50/50`
+      },
+      warning: {
+        default: `bg-yellow-50/95 text-yellow-900 border-yellow-500 ${shadowStyles}`,
+        solid: `bg-yellow-600 text-white border-yellow-600 ${shadowStyles}`,
+        minimal: `bg-yellow-50/50 text-yellow-800 border-transparent`,
+        outlined: `bg-white/95 text-yellow-700 border-yellow-500 ${shadowStyles}`,
+        ghost: `bg-transparent text-yellow-700 border-transparent hover:bg-yellow-50/50`
+      }
+    };
 
-    switch (type) {
-      case "success":
-        return `bg-green-50/95 text-green-900 border-green-500 ${baseStyles} ${shadowStyles}`;
-      case "error":
-        return `bg-red-50/95 text-red-900 border-red-500 ${baseStyles} ${shadowStyles}`;
-      case "info":
-        return `bg-blue-50/95 text-blue-900 border-blue-500 ${baseStyles} ${shadowStyles}`;
-      case "warning":
-        return `bg-yellow-50/95 text-yellow-900 border-yellow-500 ${baseStyles} ${shadowStyles}`;
-      default:
-        return `bg-gray-50/95 text-gray-900 border-gray-500 ${baseStyles} ${shadowStyles}`;
-    }
+    // Determine border style based on variant and bordered prop
+    const getBorderStyle = () => {
+      if (variant === 'minimal' || variant === 'ghost') return '';
+      if (variant === 'outlined') return 'border-2';
+      return bordered ? 'border-2' : 'border-l-4';
+    };
+
+    const borderStyle = getBorderStyle();
+    const colorStyle = colorSchemes[type][variant] || colorSchemes[type].default;
+    
+    return `${colorStyle} ${borderStyle}`;
   };
 
   const getSizeStyle = () => {
@@ -259,24 +291,68 @@ const Message: React.FC<MessageProps> = ({
       ),
     };
 
-    const iconColorMap = {
-      success: "text-green-600",
-      error: "text-red-600", 
-      info: "text-blue-600",
-      warning: "text-yellow-600",
+    // Icon styling based on variant
+    const getIconStyles = () => {
+      const baseIconClass = "flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mr-3";
+      
+      switch (variant) {
+        case 'solid':
+          // For solid variant, use white icons with colored background
+          return {
+            container: `${baseIconClass} ${
+              type === "success" ? "bg-green-700" :
+              type === "error" ? "bg-red-700" :
+              type === "info" ? "bg-blue-700" : "bg-yellow-700"
+            }`,
+            icon: "text-white"
+          };
+        case 'minimal':
+        case 'ghost':
+          // For minimal and ghost variants, simpler styling
+          return {
+            container: `${baseIconClass} ${
+              type === "success" ? "bg-green-100" :
+              type === "error" ? "bg-red-100" :
+              type === "info" ? "bg-blue-100" : "bg-yellow-100"
+            }`,
+            icon: type === "success" ? "text-green-600" :
+                  type === "error" ? "text-red-600" :
+                  type === "info" ? "text-blue-600" : "text-yellow-600"
+          };
+        case 'outlined':
+          // For outlined variant, subtle background with border
+          return {
+            container: `${baseIconClass} border-2 ${
+              type === "success" ? "bg-green-50 border-green-200" :
+              type === "error" ? "bg-red-50 border-red-200" :
+              type === "info" ? "bg-blue-50 border-blue-200" : "bg-yellow-50 border-yellow-200"
+            }`,
+            icon: type === "success" ? "text-green-600" :
+                  type === "error" ? "text-red-600" :
+                  type === "info" ? "text-blue-600" : "text-yellow-600"
+          };
+        default:
+          // Default variant styling
+          return {
+            container: `${baseIconClass} ${
+              type === "success" ? "bg-green-100" :
+              type === "error" ? "bg-red-100" :
+              type === "info" ? "bg-blue-100" : "bg-yellow-100"
+            }`,
+            icon: type === "success" ? "text-green-600" :
+                  type === "error" ? "text-red-600" :
+                  type === "info" ? "text-blue-600" : "text-yellow-600"
+          };
+      }
     };
 
+    const iconStyles = getIconStyles();
+
     return (
-      <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
-        type === "success"
-          ? "bg-green-100"
-          : type === "error"
-          ? "bg-red-100"
-          : type === "info" 
-          ? "bg-blue-100"
-          : "bg-yellow-100"
-      } ${iconColorMap[type]} mr-3`}>
-        {iconMap[type]}
+      <div className={iconStyles.container}>
+        <div className={iconStyles.icon}>
+          {iconMap[type]}
+        </div>
       </div>
     );
   };
@@ -368,7 +444,11 @@ const Message: React.FC<MessageProps> = ({
         
         {closable && (
           <button
-            className="ml-4 text-current opacity-60 hover:opacity-100 transition-opacity flex-shrink-0 w-6 h-6 flex items-center justify-center rounded hover:bg-black/10 focus:outline-none focus:ring-2 focus:ring-current focus:ring-opacity-50"
+            className={`ml-4 transition-opacity flex-shrink-0 w-6 h-6 flex items-center justify-center rounded focus:outline-none focus:ring-2 focus:ring-current focus:ring-opacity-50 ${
+              variant === 'solid' 
+                ? 'text-white/80 hover:text-white hover:bg-white/20' 
+                : 'text-current opacity-60 hover:opacity-100 hover:bg-black/10'
+            }`}
             onClick={handleClose}
             aria-label="Close message"
           >
