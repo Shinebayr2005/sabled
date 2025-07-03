@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import Message from "../components/Message";
 
 let messageId = 0;
-const activeMessages = new Map<number, { root: ReactDOM.Root; wrapper: HTMLElement; timer?: number }>();
+const activeMessages = new Map<number, { root: ReactDOM.Root; wrapper: HTMLElement }>();
 const messageQueue: Array<() => void> = [];
 let isProcessingQueue = false;
 
@@ -125,11 +125,7 @@ const dismissMessage = (id: number) => {
   const messageData = activeMessages.get(id);
   if (!messageData) return;
 
-  const { root, wrapper, timer } = messageData;
-  
-  if (timer) {
-    clearTimeout(timer);
-  }
+  const { root, wrapper } = messageData;
 
   // Get the container and position to determine animation direction
   const container = wrapper.parentElement;
@@ -333,16 +329,12 @@ const message = (config: MessageConfig) => {
       const root = ReactDOM.createRoot(wrapper);
 
       const cleanup = () => {
-        dismissMessage(id);
         mergedConfig.onClose?.();
       };
 
-      let timer: number | undefined;
-      if (mergedConfig.duration > 0 && !mergedConfig.persistent) {
-        timer = window.setTimeout(cleanup, mergedConfig.duration);
-      }
-
-      activeMessages.set(id, { root, wrapper, timer });
+      // Let the component handle its own auto-dismiss timing
+      // The utility only handles cleanup when the component calls onDismiss
+      activeMessages.set(id, { root, wrapper });
 
       root.render(
         <Message
