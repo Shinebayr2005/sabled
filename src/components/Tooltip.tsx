@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'left-start' | 'left-end' | 'right-start' | 'right-end';
+type TooltipPlacement = 
+  | 'top' | 'top-start' | 'top-end'
+  | 'bottom' | 'bottom-start' | 'bottom-end'
+  | 'left' | 'left-start' | 'left-end'
+  | 'right' | 'right-start' | 'right-end';
 type TooltipVariant = 'dark' | 'light' | 'primary' | 'success' | 'warning' | 'error';
 type TooltipTrigger = 'hover' | 'click' | 'focus' | 'manual';
 type TooltipSize = 'sm' | 'md' | 'lg';
@@ -47,7 +51,9 @@ const Tooltip: React.FC<TooltipProps> = ({
   visible
 }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [actualPlacement, setActualPlacement] = useState<TooltipPlacement>(placement);
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const showTimeoutRef = useRef<number | null>(null);
@@ -81,77 +87,158 @@ const Tooltip: React.FC<TooltipProps> = ({
     lg: 'px-4 py-3 text-base'
   };
 
+  // Smart positioning with collision detection
+  const calculatePosition = (preferredPlacement: TooltipPlacement) => {
+    if (!triggerRef.current || !tooltipRef.current) return { top: 0, left: 0, placement: preferredPlacement };
+
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const tooltipRect = tooltipRef.current.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let top = 0;
+    let left = 0;
+    let finalPlacement = preferredPlacement;
+
+    const positions = {
+      'top': () => ({
+        top: triggerRect.top + scrollTop - tooltipRect.height - offset,
+        left: triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipRect.width / 2
+      }),
+      'top-start': () => ({
+        top: triggerRect.top + scrollTop - tooltipRect.height - offset,
+        left: triggerRect.left + scrollLeft
+      }),
+      'top-end': () => ({
+        top: triggerRect.top + scrollTop - tooltipRect.height - offset,
+        left: triggerRect.right + scrollLeft - tooltipRect.width
+      }),
+      'bottom': () => ({
+        top: triggerRect.bottom + scrollTop + offset,
+        left: triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipRect.width / 2
+      }),
+      'bottom-start': () => ({
+        top: triggerRect.bottom + scrollTop + offset,
+        left: triggerRect.left + scrollLeft
+      }),
+      'bottom-end': () => ({
+        top: triggerRect.bottom + scrollTop + offset,
+        left: triggerRect.right + scrollLeft - tooltipRect.width
+      }),
+      'left': () => ({
+        top: triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipRect.height / 2,
+        left: triggerRect.left + scrollLeft - tooltipRect.width - offset
+      }),
+      'left-start': () => ({
+        top: triggerRect.top + scrollTop,
+        left: triggerRect.left + scrollLeft - tooltipRect.width - offset
+      }),
+      'left-end': () => ({
+        top: triggerRect.bottom + scrollTop - tooltipRect.height,
+        left: triggerRect.left + scrollLeft - tooltipRect.width - offset
+      }),
+      'right': () => ({
+        top: triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipRect.height / 2,
+        left: triggerRect.right + scrollLeft + offset
+      }),
+      'right-start': () => ({
+        top: triggerRect.top + scrollTop,
+        left: triggerRect.right + scrollLeft + offset
+      }),
+      'right-end': () => ({
+        top: triggerRect.bottom + scrollTop - tooltipRect.height,
+        left: triggerRect.right + scrollLeft + offset
+      })
+    };
+
+    // Calculate position for preferred placement
+    const pos = positions[preferredPlacement]();
+    top = pos.top;
+    left = pos.left;
+
+    // Check for collisions and adjust if needed
+    const margin = 8;
+    
+    // Check top collision
+    if (top < margin) {
+      if (preferredPlacement.startsWith('top')) {
+        const bottomPlacement = preferredPlacement.replace('top', 'bottom') as TooltipPlacement;
+        if (positions[bottomPlacement]) {
+          const newPos = positions[bottomPlacement]();
+          if (newPos.top + tooltipRect.height + margin <= viewportHeight) {
+            top = newPos.top;
+            finalPlacement = bottomPlacement;
+          }
+        }
+      }
+    }
+
+    // Check bottom collision
+    if (top + tooltipRect.height > viewportHeight - margin) {
+      if (preferredPlacement.startsWith('bottom')) {
+        const topPlacement = preferredPlacement.replace('bottom', 'top') as TooltipPlacement;
+        if (positions[topPlacement]) {
+          const newPos = positions[topPlacement]();
+          if (newPos.top >= margin) {
+            top = newPos.top;
+            finalPlacement = topPlacement;
+          }
+        }
+      }
+    }
+
+    // Check left collision
+    if (left < margin) {
+      if (preferredPlacement.startsWith('left')) {
+        const rightPlacement = preferredPlacement.replace('left', 'right') as TooltipPlacement;
+        if (positions[rightPlacement]) {
+          const newPos = positions[rightPlacement]();
+          if (newPos.left + tooltipRect.width + margin <= viewportWidth) {
+            left = newPos.left;
+            finalPlacement = rightPlacement;
+          }
+        }
+      } else {
+        left = margin;
+      }
+    }
+
+    // Check right collision
+    if (left + tooltipRect.width > viewportWidth - margin) {
+      if (preferredPlacement.startsWith('right')) {
+        const leftPlacement = preferredPlacement.replace('right', 'left') as TooltipPlacement;
+        if (positions[leftPlacement]) {
+          const newPos = positions[leftPlacement]();
+          if (newPos.left >= margin) {
+            left = newPos.left;
+            finalPlacement = leftPlacement;
+          }
+        }
+      } else {
+        left = viewportWidth - tooltipRect.width - margin;
+      }
+    }
+
+    // Final boundary checks
+    if (top < margin) top = margin;
+    if (top + tooltipRect.height > viewportHeight - margin) {
+      top = viewportHeight - tooltipRect.height - margin;
+    }
+    if (left < margin) left = margin;
+    if (left + tooltipRect.width > viewportWidth - margin) {
+      left = viewportWidth - tooltipRect.width - margin;
+    }
+
+    return { top, left, placement: finalPlacement };
+  };
+
   useEffect(() => {
     if (shouldShow && triggerRef.current && tooltipRef.current) {
-      const triggerRect = triggerRef.current.getBoundingClientRect();
-      const tooltipRect = tooltipRef.current.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-
-      let top = 0;
-      let left = 0;
-
-      switch (placement) {
-        case 'top':
-        case 'top-start':
-        case 'top-end':
-          top = triggerRect.top + scrollTop - tooltipRect.height - offset;
-          if (placement === 'top-start') {
-            left = triggerRect.left + scrollLeft;
-          } else if (placement === 'top-end') {
-            left = triggerRect.right + scrollLeft - tooltipRect.width;
-          } else {
-            left = triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipRect.width / 2;
-          }
-          break;
-        case 'bottom':
-        case 'bottom-start':
-        case 'bottom-end':
-          top = triggerRect.bottom + scrollTop + offset;
-          if (placement === 'bottom-start') {
-            left = triggerRect.left + scrollLeft;
-          } else if (placement === 'bottom-end') {
-            left = triggerRect.right + scrollLeft - tooltipRect.width;
-          } else {
-            left = triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipRect.width / 2;
-          }
-          break;
-        case 'left':
-        case 'left-start':
-        case 'left-end':
-          left = triggerRect.left + scrollLeft - tooltipRect.width - offset;
-          if (placement === 'left-start') {
-            top = triggerRect.top + scrollTop;
-          } else if (placement === 'left-end') {
-            top = triggerRect.bottom + scrollTop - tooltipRect.height;
-          } else {
-            top = triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipRect.height / 2;
-          }
-          break;
-        case 'right':
-        case 'right-start':
-        case 'right-end':
-          left = triggerRect.right + scrollLeft + offset;
-          if (placement === 'right-start') {
-            top = triggerRect.top + scrollTop;
-          } else if (placement === 'right-end') {
-            top = triggerRect.bottom + scrollTop - tooltipRect.height;
-          } else {
-            top = triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipRect.height / 2;
-          }
-          break;
-      }
-
-      // Ensure tooltip stays within viewport
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      
-      if (left < 0) left = 8;
-      if (left + tooltipRect.width > viewportWidth) left = viewportWidth - tooltipRect.width - 8;
-      if (top < 0) top = 8;
-      if (top + tooltipRect.height > viewportHeight) top = viewportHeight - tooltipRect.height - 8;
-
-      setPosition({ top, left });
+      const result = calculatePosition(placement);
+      setPosition({ top: result.top, left: result.left });
+      setActualPlacement(result.placement);
     }
   }, [shouldShow, placement, offset]);
 
@@ -164,6 +251,7 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
     
     showTimeoutRef.current = window.setTimeout(() => {
+      setIsAnimating(true);
       setIsVisible(true);
       onShow?.();
     }, delay);
@@ -179,8 +267,12 @@ const Tooltip: React.FC<TooltipProps> = ({
     
     const actualHideDelay = hideDelay || 0;
     hideTimeoutRef.current = window.setTimeout(() => {
-      setIsVisible(false);
-      onHide?.();
+      setIsAnimating(false);
+      // Add a small delay to allow exit animation
+      setTimeout(() => {
+        setIsVisible(false);
+        onHide?.();
+      }, 200);
     }, actualHideDelay);
   };
 
@@ -246,7 +338,7 @@ const Tooltip: React.FC<TooltipProps> = ({
     
     const baseClasses = 'absolute w-0 h-0 border-4 border-solid border-transparent';
     
-    switch (placement) {
+    switch (actualPlacement) {
       case 'top':
         return `${baseClasses} top-full left-1/2 transform -translate-x-1/2 border-t-4 ${arrowClasses[variant]}`;
       case 'top-start':
@@ -273,6 +365,62 @@ const Tooltip: React.FC<TooltipProps> = ({
         return `${baseClasses} right-full bottom-4 border-r-4 ${arrowClasses[variant]}`;
       default:
         return baseClasses;
+    }
+  };
+
+  // Animation direction based on placement
+  const getAnimationDirection = () => {
+    switch (actualPlacement) {
+      case 'top':
+      case 'top-start':
+      case 'top-end':
+        return 'animate-slide-down';
+      case 'bottom':
+      case 'bottom-start':
+      case 'bottom-end':
+        return 'animate-slide-up';
+      case 'left':
+      case 'left-start':
+      case 'left-end':
+        return 'animate-slide-right';
+      case 'right':
+      case 'right-start':
+      case 'right-end':
+        return 'animate-slide-left';
+      default:
+        return 'animate-fade-in';
+    }
+  };
+
+  // Transform origin for smooth animations
+  const getTransformOrigin = () => {
+    switch (actualPlacement) {
+      case 'top':
+        return 'bottom center';
+      case 'top-start':
+        return 'bottom left';
+      case 'top-end':
+        return 'bottom right';
+      case 'bottom':
+        return 'top center';
+      case 'bottom-start':
+        return 'top left';
+      case 'bottom-end':
+        return 'top right';
+      case 'left':
+        return 'right center';
+      case 'left-start':
+        return 'right top';
+      case 'left-end':
+        return 'right bottom';
+      case 'right':
+        return 'left center';
+      case 'right-start':
+        return 'left top';
+      case 'right-end':
+        return 'left bottom';
+      default:
+        return 'center center';
     }
   };
 
@@ -310,26 +458,24 @@ const Tooltip: React.FC<TooltipProps> = ({
             ${variantClasses[variant]}
             ${sizeClasses[size]}
             ${contentClassName}
-            transition-all duration-200 ease-in-out
-            transform scale-100 opacity-100
-            break-words
             ${interactive ? 'cursor-pointer' : ''}
-            animate-in fade-in zoom-in-95
-            data-[state=closed]:animate-out
-            data-[state=closed]:fade-out
-            data-[state=closed]:zoom-out-95
+            break-words
+            transition-all duration-200 ease-out
+            ${isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+            ${getAnimationDirection()}
           `}
           style={{
             top: position.top,
             left: position.left,
             maxWidth: maxWidth,
-            animationDuration: '150ms',
-            animationTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)'
+            transformOrigin: getTransformOrigin(),
+            pointerEvents: interactive ? 'auto' : 'none'
           }}
           onMouseEnter={handleTooltipMouseEnter}
           onMouseLeave={handleTooltipMouseLeave}
           role="tooltip"
           aria-hidden={!shouldShow}
+          data-placement={actualPlacement}
         >
           {content}
           {showArrow && <div className={getArrowStyles()} />}

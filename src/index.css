@@ -125,6 +125,51 @@
   }
 }
 
+/* Tooltip animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
 /* Ripple effect */
 .ripple {
   position: absolute;
@@ -382,5 +427,52 @@
 
   .sabled-glassmorphism {
     @apply bg-white/80 backdrop-blur-lg border border-white/20;
+  }
+
+  /* Tooltip animation utility classes */
+  .animate-slide-down {
+    animation: slideDown 0.2s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.2s ease-out;
+  }
+
+  .animate-slide-left {
+    animation: slideLeft 0.2s ease-out;
+  }
+
+  .animate-slide-right {
+    animation: slideRight 0.2s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  /* Tooltip base styles */
+  .tooltip-base {
+    position: fixed;
+    z-index: 50;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    border-width: 1px;
+    word-break: break-words;
+    transition: all 0.2s ease-out;
+    pointer-events: none;
+  }
+
+  .tooltip-interactive {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  /* Tooltip arrow styles */
+  .tooltip-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 4px solid;
+    border-color: transparent;
   }
 }
