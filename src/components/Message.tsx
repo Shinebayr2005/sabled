@@ -51,6 +51,7 @@ const Message: React.FC<MessageProps> = ({
   persistent = false,
 }) => {
   const [visible, setVisible] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   const [progress, setProgress] = useState(100);
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<number | undefined>(undefined);
@@ -107,10 +108,15 @@ const Message: React.FC<MessageProps> = ({
     const startTimer = () => {
       startTimeRef.current = Date.now();
       timerRef.current = window.setTimeout(() => {
-        // Simplified auto-dismiss - let utility handle animation
+        // Start exit animation
+        setIsExiting(true);
         setVisible(false);
-        onDismiss?.();
-        onClose();
+        
+        // Delay to allow utility's exit animation to complete
+        setTimeout(() => {
+          onDismiss?.();
+          onClose();
+        }, 300); // Match the animation duration
       }, remainingTimeRef.current);
 
       // Progress bar animation
@@ -175,15 +181,34 @@ const Message: React.FC<MessageProps> = ({
   };
 
   const handleClose = () => {
-    // Simplified exit - let the utility handle the animation
+    // Start exit animation
+    setIsExiting(true);
     setVisible(false);
     
-    // Immediate callback to utility for coordinated dismissal
-    onDismiss?.();
-    onClose();
+    // Delay to allow utility's exit animation to complete
+    setTimeout(() => {
+      onDismiss?.();
+      onClose();
+    }, 300); // Match the animation duration
   };
 
-  const getExitDirection = () => animationDirections.entryDirection;
+  const getExitDirection = () => {
+    // For exit, we want the opposite direction of entry
+    switch (position) {
+      case 'top-left':
+      case 'bottom-left':
+        return '-translate-x-full'; // Exit to the left
+      case 'top-right':
+      case 'bottom-right':
+        return 'translate-x-full'; // Exit to the right
+      case 'top':
+        return '-translate-y-full'; // Exit upward
+      case 'bottom':
+        return 'translate-y-full'; // Exit downward
+      default:
+        return 'translate-x-full'; // Default exit to the right
+    }
+  };
 
   const getEntryDirection = () => animationDirections.entryDirection;
 
@@ -371,7 +396,7 @@ const Message: React.FC<MessageProps> = ({
         transform transition-all duration-300 ease-out
         ${visible 
           ? "opacity-100 translate-x-0 translate-y-0 scale-100" 
-          : `opacity-0 ${getEntryDirection()} scale-95`
+          : `opacity-0 ${isExiting ? getExitDirection() : getEntryDirection()} scale-95`
         }
         ${getTypeStyle()}
         ${getSizeStyle()}
