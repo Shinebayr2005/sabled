@@ -1,13 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 
 type TooltipPlacement = 
   | 'top' | 'top-start' | 'top-end'
   | 'bottom' | 'bottom-start' | 'bottom-end'
   | 'left' | 'left-start' | 'left-end'
   | 'right' | 'right-start' | 'right-end';
-type TooltipVariant = 'dark' | 'light' | 'primary' | 'success' | 'warning' | 'error';
+type TooltipVariant = 'dark' | 'light' | 'primary' | 'success' | 'warning' | 'error' | 'info';
 type TooltipTrigger = 'hover' | 'click' | 'focus' | 'manual';
-type TooltipSize = 'sm' | 'md' | 'lg';
+type TooltipSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type TooltipAnimation = 'fade' | 'scale' | 'slide' | 'bounce';
 
 interface TooltipProps {
   children: React.ReactNode;
@@ -15,6 +17,7 @@ interface TooltipProps {
   placement?: TooltipPlacement;
   variant?: TooltipVariant;
   size?: TooltipSize;
+  animation?: TooltipAnimation;
   trigger?: TooltipTrigger | TooltipTrigger[];
   disabled?: boolean;
   delay?: number;
@@ -25,9 +28,17 @@ interface TooltipProps {
   offset?: number;
   className?: string;
   contentClassName?: string;
+  arrowClassName?: string;
   onShow?: () => void;
   onHide?: () => void;
   visible?: boolean; // For manual control
+  zIndex?: number;
+  boundary?: 'viewport' | 'window' | HTMLElement;
+  fallbackPlacements?: TooltipPlacement[];
+  followCursor?: boolean;
+  hideOnClick?: boolean;
+  duration?: number;
+  appendTo?: HTMLElement | 'body';
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
@@ -36,67 +47,98 @@ const Tooltip: React.FC<TooltipProps> = ({
   placement = 'top',
   variant = 'dark',
   size = 'md',
+  animation = 'scale',
   trigger = 'hover',
   disabled = false,
-  delay = 300,
-  hideDelay = 0,
+  delay = 100,
+  hideDelay = 100,
   showArrow = true,
   interactive = false,
   maxWidth = '320px',
   offset = 8,
   className = '',
   contentClassName = '',
+  arrowClassName = '',
   onShow,
   onHide,
-  visible
+  visible,
+  zIndex = 9999,
+  boundary = 'viewport',
+  fallbackPlacements = [],
+  followCursor = false,
+  hideOnClick = false,
+  duration = 0,
+  appendTo = 'body'
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [actualPlacement, setActualPlacement] = useState<TooltipPlacement>(placement);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const showTimeoutRef = useRef<number | null>(null);
   const hideTimeoutRef = useRef<number | null>(null);
+  const durationTimeoutRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const mouseTrackingRef = useRef<boolean>(false);
 
   const triggers = Array.isArray(trigger) ? trigger : [trigger];
   const isManuallyControlled = visible !== undefined;
   const shouldShow = isManuallyControlled ? visible : isVisible;
 
-  const variantClasses = {
-    dark: 'bg-gray-900 text-white border-gray-800',
-    light: 'bg-white text-gray-900 border-gray-200 shadow-lg',
-    primary: 'bg-blue-600 text-white border-blue-600',
-    success: 'bg-green-600 text-white border-green-600',
-    warning: 'bg-yellow-500 text-white border-yellow-500',
-    error: 'bg-red-600 text-white border-red-600'
-  };
+  // Enhanced variant classes with better styling
+  const variantClasses = useMemo(() => ({
+    dark: 'bg-gray-900/95 text-white border-gray-700 backdrop-blur-sm shadow-xl',
+    light: 'bg-white/95 text-gray-900 border-gray-300 backdrop-blur-sm shadow-xl',
+    primary: 'bg-blue-600/95 text-white border-blue-500 backdrop-blur-sm shadow-xl',
+    success: 'bg-green-600/95 text-white border-green-500 backdrop-blur-sm shadow-xl',
+    warning: 'bg-yellow-500/95 text-white border-yellow-400 backdrop-blur-sm shadow-xl',
+    error: 'bg-red-600/95 text-white border-red-500 backdrop-blur-sm shadow-xl',
+    info: 'bg-blue-500/95 text-white border-blue-400 backdrop-blur-sm shadow-xl'
+  }), []);
 
-  const arrowClasses = {
+  const arrowClasses = useMemo(() => ({
     dark: 'border-gray-900',
-    light: 'border-gray-200',
+    light: 'border-gray-300',
     primary: 'border-blue-600',
     success: 'border-green-600',
     warning: 'border-yellow-500',
-    error: 'border-red-600'
-  };
+    error: 'border-red-600',
+    info: 'border-blue-500'
+  }), []);
 
-  const sizeClasses = {
-    sm: 'px-2 py-1 text-xs',
-    md: 'px-3 py-2 text-sm',
-    lg: 'px-4 py-3 text-base'
-  };
+  const sizeClasses = useMemo(() => ({
+    xs: 'px-2 py-1 text-xs leading-tight',
+    sm: 'px-2.5 py-1.5 text-xs leading-tight',
+    md: 'px-3 py-2 text-sm leading-snug',
+    lg: 'px-4 py-3 text-base leading-normal',
+    xl: 'px-5 py-4 text-lg leading-relaxed'
+  }), []);
 
-  // Smart positioning with collision detection
-  const calculatePosition = (preferredPlacement: TooltipPlacement) => {
+  // Smart positioning with enhanced collision detection
+  const calculatePosition = useCallback((preferredPlacement: TooltipPlacement) => {
     if (!triggerRef.current || !tooltipRef.current) return { top: 0, left: 0, placement: preferredPlacement };
 
     const triggerRect = triggerRef.current.getBoundingClientRect();
     const tooltipRect = tooltipRef.current.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+    
+    let viewportWidth = window.innerWidth;
+    let viewportHeight = window.innerHeight;
+    let boundaryRect = { top: 0, left: 0, right: viewportWidth, bottom: viewportHeight };
+
+    if (boundary instanceof HTMLElement) {
+      const rect = boundary.getBoundingClientRect();
+      boundaryRect = {
+        top: rect.top,
+        left: rect.left,
+        right: rect.right,
+        bottom: rect.bottom
+      };
+    }
 
     let top = 0;
     let left = 0;
@@ -153,247 +195,308 @@ const Tooltip: React.FC<TooltipProps> = ({
       })
     };
 
-    // Calculate position for preferred placement
-    const pos = positions[preferredPlacement]();
-    top = pos.top;
-    left = pos.left;
+    // Try preferred placement first
+    const tryPlacement = (placementToTry: TooltipPlacement) => {
+      const pos = positions[placementToTry]();
+      const wouldFit = {
+        top: pos.top >= boundaryRect.top + 8,
+        bottom: pos.top + tooltipRect.height <= boundaryRect.bottom - 8,
+        left: pos.left >= boundaryRect.left + 8,
+        right: pos.left + tooltipRect.width <= boundaryRect.right - 8
+      };
+      return { ...pos, fits: wouldFit.top && wouldFit.bottom && wouldFit.left && wouldFit.right };
+    };
 
-    // Check for collisions and adjust if needed
+    let result = tryPlacement(preferredPlacement);
+    if (!result.fits) {
+      // Try fallback placements
+      const allFallbacks = [...fallbackPlacements, getOppositePlacement(preferredPlacement)];
+      
+      for (const fallback of allFallbacks) {
+        const fallbackResult = tryPlacement(fallback);
+        if (fallbackResult.fits) {
+          result = fallbackResult;
+          finalPlacement = fallback;
+          break;
+        }
+      }
+    }
+
+    top = result.top;
+    left = result.left;
+
+    // Final boundary adjustments
     const margin = 8;
-    
-    // Check top collision
-    if (top < margin) {
-      if (preferredPlacement.startsWith('top')) {
-        const bottomPlacement = preferredPlacement.replace('top', 'bottom') as TooltipPlacement;
-        if (positions[bottomPlacement]) {
-          const newPos = positions[bottomPlacement]();
-          if (newPos.top + tooltipRect.height + margin <= viewportHeight) {
-            top = newPos.top;
-            finalPlacement = bottomPlacement;
-          }
-        }
-      }
+    if (top < boundaryRect.top + margin) top = boundaryRect.top + margin;
+    if (top + tooltipRect.height > boundaryRect.bottom - margin) {
+      top = boundaryRect.bottom - tooltipRect.height - margin;
     }
-
-    // Check bottom collision
-    if (top + tooltipRect.height > viewportHeight - margin) {
-      if (preferredPlacement.startsWith('bottom')) {
-        const topPlacement = preferredPlacement.replace('bottom', 'top') as TooltipPlacement;
-        if (positions[topPlacement]) {
-          const newPos = positions[topPlacement]();
-          if (newPos.top >= margin) {
-            top = newPos.top;
-            finalPlacement = topPlacement;
-          }
-        }
-      }
-    }
-
-    // Check left collision
-    if (left < margin) {
-      if (preferredPlacement.startsWith('left')) {
-        const rightPlacement = preferredPlacement.replace('left', 'right') as TooltipPlacement;
-        if (positions[rightPlacement]) {
-          const newPos = positions[rightPlacement]();
-          if (newPos.left + tooltipRect.width + margin <= viewportWidth) {
-            left = newPos.left;
-            finalPlacement = rightPlacement;
-          }
-        }
-      } else {
-        left = margin;
-      }
-    }
-
-    // Check right collision
-    if (left + tooltipRect.width > viewportWidth - margin) {
-      if (preferredPlacement.startsWith('right')) {
-        const leftPlacement = preferredPlacement.replace('right', 'left') as TooltipPlacement;
-        if (positions[leftPlacement]) {
-          const newPos = positions[leftPlacement]();
-          if (newPos.left >= margin) {
-            left = newPos.left;
-            finalPlacement = leftPlacement;
-          }
-        }
-      } else {
-        left = viewportWidth - tooltipRect.width - margin;
-      }
-    }
-
-    // Final boundary checks
-    if (top < margin) top = margin;
-    if (top + tooltipRect.height > viewportHeight - margin) {
-      top = viewportHeight - tooltipRect.height - margin;
-    }
-    if (left < margin) left = margin;
-    if (left + tooltipRect.width > viewportWidth - margin) {
-      left = viewportWidth - tooltipRect.width - margin;
+    if (left < boundaryRect.left + margin) left = boundaryRect.left + margin;
+    if (left + tooltipRect.width > boundaryRect.right - margin) {
+      left = boundaryRect.right - tooltipRect.width - margin;
     }
 
     return { top, left, placement: finalPlacement };
+  }, [offset, boundary, fallbackPlacements]);
+
+  // Get opposite placement for fallback
+  const getOppositePlacement = (placement: TooltipPlacement): TooltipPlacement => {
+    const opposites: Record<TooltipPlacement, TooltipPlacement> = {
+      'top': 'bottom',
+      'top-start': 'bottom-start',
+      'top-end': 'bottom-end',
+      'bottom': 'top',
+      'bottom-start': 'top-start',
+      'bottom-end': 'top-end',
+      'left': 'right',
+      'left-start': 'right-start',
+      'left-end': 'right-end',
+      'right': 'left',
+      'right-start': 'left-start',
+      'right-end': 'left-end'
+    };
+    return opposites[placement] || 'top';
   };
 
+  // Handle mouse tracking for followCursor
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!followCursor || !mouseTrackingRef.current) return;
+    
+    setMousePosition({ x: e.clientX, y: e.clientY });
+    
+    if (tooltipRef.current) {
+      const tooltipRect = tooltipRef.current.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+      
+      setPosition({
+        top: e.clientY + scrollTop + offset,
+        left: e.clientX + scrollLeft + offset
+      });
+    }
+  }, [followCursor, offset]);
+
+  // Update position
   useEffect(() => {
-    if (shouldShow && triggerRef.current && tooltipRef.current) {
+    if (shouldShow && triggerRef.current && tooltipRef.current && !followCursor) {
       const result = calculatePosition(placement);
       setPosition({ top: result.top, left: result.left });
       setActualPlacement(result.placement);
     }
-  }, [shouldShow, placement, offset]);
+  }, [shouldShow, placement, calculatePosition, followCursor]);
 
-  const showTooltip = () => {
-    if (disabled || isManuallyControlled) return;
-    
-    if (hideTimeoutRef.current) {
-      clearTimeout(hideTimeoutRef.current);
-      hideTimeoutRef.current = null;
+  // Handle mouse tracking
+  useEffect(() => {
+    if (followCursor && shouldShow) {
+      mouseTrackingRef.current = true;
+      document.addEventListener('mousemove', handleMouseMove);
+      return () => {
+        mouseTrackingRef.current = false;
+        document.removeEventListener('mousemove', handleMouseMove);
+      };
     }
-    
-    showTimeoutRef.current = window.setTimeout(() => {
-      setIsAnimating(true);
-      setIsVisible(true);
-      onShow?.();
-    }, delay);
-  };
+  }, [followCursor, shouldShow, handleMouseMove]);
 
-  const hideTooltip = () => {
-    if (disabled || isManuallyControlled) return;
-    
+  const clearAllTimeouts = useCallback(() => {
     if (showTimeoutRef.current) {
       clearTimeout(showTimeoutRef.current);
       showTimeoutRef.current = null;
     }
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+    if (durationTimeoutRef.current) {
+      clearTimeout(durationTimeoutRef.current);
+      durationTimeoutRef.current = null;
+    }
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
+
+  const showTooltip = useCallback(() => {
+    if (disabled || isManuallyControlled) return;
     
-    const actualHideDelay = hideDelay || 0;
+    clearAllTimeouts();
+    
+    showTimeoutRef.current = window.setTimeout(() => {
+      setIsVisible(true);
+      setIsAnimating(true);
+      onShow?.();
+      
+      // Set duration timeout if specified
+      if (duration > 0) {
+        durationTimeoutRef.current = window.setTimeout(() => {
+          hideTooltip();
+        }, duration);
+      }
+    }, delay);
+  }, [disabled, isManuallyControlled, delay, duration, onShow, clearAllTimeouts]);
+
+  const hideTooltip = useCallback(() => {
+    if (disabled || isManuallyControlled) return;
+    
+    clearAllTimeouts();
+    
     hideTimeoutRef.current = window.setTimeout(() => {
       setIsAnimating(false);
-      // Add a small delay to allow exit animation
+      
+      // Wait for exit animation to complete
+      const exitDelay = animation === 'fade' ? 150 : animation === 'scale' ? 200 : 250;
       setTimeout(() => {
         setIsVisible(false);
         onHide?.();
-      }, 200);
-    }, actualHideDelay);
-  };
+      }, exitDelay);
+    }, hideDelay);
+  }, [disabled, isManuallyControlled, hideDelay, animation, onHide, clearAllTimeouts]);
 
-  const handleClick = () => {
+  // Event handlers
+  const handleClick = useCallback((e: React.MouseEvent) => {
     if (disabled || isManuallyControlled) return;
     
     if (triggers.indexOf('click') !== -1) {
+      e.stopPropagation();
       if (isVisible) {
         hideTooltip();
       } else {
         showTooltip();
       }
     }
-  };
+  }, [disabled, isManuallyControlled, triggers, isVisible, showTooltip, hideTooltip]);
 
-  const handleFocus = () => {
+  const handleMouseEnter = useCallback(() => {
     if (disabled || isManuallyControlled) return;
-    
-    if (triggers.indexOf('focus') !== -1) {
-      showTooltip();
-    }
-  };
-
-  const handleBlur = () => {
-    if (disabled || isManuallyControlled) return;
-    
-    if (triggers.indexOf('focus') !== -1) {
-      hideTooltip();
-    }
-  };
-
-  const handleMouseEnter = () => {
-    if (disabled || isManuallyControlled) return;
-    
     if (triggers.indexOf('hover') !== -1) {
       showTooltip();
     }
-  };
+  }, [disabled, isManuallyControlled, triggers, showTooltip]);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     if (disabled || isManuallyControlled) return;
-    
     if (triggers.indexOf('hover') !== -1) {
       hideTooltip();
     }
-  };
+  }, [disabled, isManuallyControlled, triggers, hideTooltip]);
 
-  const handleTooltipMouseEnter = () => {
+  const handleFocus = useCallback(() => {
+    if (disabled || isManuallyControlled) return;
+    if (triggers.indexOf('focus') !== -1) {
+      showTooltip();
+    }
+  }, [disabled, isManuallyControlled, triggers, showTooltip]);
+
+  const handleBlur = useCallback(() => {
+    if (disabled || isManuallyControlled) return;
+    if (triggers.indexOf('focus') !== -1) {
+      hideTooltip();
+    }
+  }, [disabled, isManuallyControlled, triggers, hideTooltip]);
+
+  const handleTooltipMouseEnter = useCallback(() => {
     if (interactive && hideTimeoutRef.current) {
       clearTimeout(hideTimeoutRef.current);
       hideTimeoutRef.current = null;
     }
-  };
+  }, [interactive]);
 
-  const handleTooltipMouseLeave = () => {
+  const handleTooltipMouseLeave = useCallback(() => {
     if (interactive && triggers.indexOf('hover') !== -1) {
       hideTooltip();
     }
-  };
+  }, [interactive, triggers, hideTooltip]);
 
-  const getArrowStyles = () => {
+  const handleTooltipClick = useCallback(() => {
+    if (hideOnClick) {
+      hideTooltip();
+    }
+  }, [hideOnClick, hideTooltip]);
+
+  // Enhanced arrow styles
+  const getArrowStyles = useCallback(() => {
     if (!showArrow) return '';
     
-    const baseClasses = 'absolute w-0 h-0 border-4 border-solid border-transparent';
+    const arrowSize = size === 'xs' ? 'border-2' : size === 'sm' ? 'border-3' : 'border-4';
+    const baseClasses = `absolute w-0 h-0 ${arrowSize} border-solid border-transparent ${arrowClassName}`;
+    
+    const arrowColor = arrowClasses[variant];
     
     switch (actualPlacement) {
       case 'top':
-        return `${baseClasses} top-full left-1/2 transform -translate-x-1/2 border-t-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} top-full left-1/2 transform -translate-x-1/2 border-t-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'top-start':
-        return `${baseClasses} top-full left-4 border-t-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} top-full left-4 border-t-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'top-end':
-        return `${baseClasses} top-full right-4 border-t-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} top-full right-4 border-t-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'bottom':
-        return `${baseClasses} bottom-full left-1/2 transform -translate-x-1/2 border-b-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} bottom-full left-1/2 transform -translate-x-1/2 border-b-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'bottom-start':
-        return `${baseClasses} bottom-full left-4 border-b-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} bottom-full left-4 border-b-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'bottom-end':
-        return `${baseClasses} bottom-full right-4 border-b-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} bottom-full right-4 border-b-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'left':
-        return `${baseClasses} left-full top-1/2 transform -translate-y-1/2 border-l-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} left-full top-1/2 transform -translate-y-1/2 border-l-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'left-start':
-        return `${baseClasses} left-full top-4 border-l-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} left-full top-4 border-l-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'left-end':
-        return `${baseClasses} left-full bottom-4 border-l-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} left-full bottom-4 border-l-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'right':
-        return `${baseClasses} right-full top-1/2 transform -translate-y-1/2 border-r-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} right-full top-1/2 transform -translate-y-1/2 border-r-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'right-start':
-        return `${baseClasses} right-full top-4 border-r-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} right-full top-4 border-r-${arrowSize.split('-')[1]} ${arrowColor}`;
       case 'right-end':
-        return `${baseClasses} right-full bottom-4 border-r-4 ${arrowClasses[variant]}`;
+        return `${baseClasses} right-full bottom-4 border-r-${arrowSize.split('-')[1]} ${arrowColor}`;
       default:
         return baseClasses;
     }
-  };
+  }, [showArrow, size, actualPlacement, variant, arrowClasses, arrowClassName]);
 
-  // Animation direction based on placement
-  const getAnimationDirection = () => {
+  // Enhanced animation classes
+  const getAnimationClasses = useCallback(() => {
+    const baseTransition = 'transition-all duration-200 ease-out';
+    const isEntering = isAnimating;
+    
+    switch (animation) {
+      case 'fade':
+        return `${baseTransition} ${isEntering ? 'opacity-100' : 'opacity-0'}`;
+      case 'scale':
+        return `${baseTransition} ${isEntering ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`;
+      case 'slide':
+        const slideDirection = getSlideDirection();
+        return `${baseTransition} ${isEntering ? 'opacity-100 translate-x-0 translate-y-0' : `opacity-0 ${slideDirection}`}`;
+      case 'bounce':
+        return `${baseTransition} ${isEntering ? 'opacity-100 scale-100 animate-bounce' : 'opacity-0 scale-95'}`;
+      default:
+        return `${baseTransition} ${isEntering ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`;
+    }
+  }, [animation, isAnimating]);
+
+  const getSlideDirection = useCallback(() => {
     switch (actualPlacement) {
       case 'top':
       case 'top-start':
       case 'top-end':
-        return 'animate-slide-down';
+        return 'translate-y-2';
       case 'bottom':
       case 'bottom-start':
       case 'bottom-end':
-        return 'animate-slide-up';
+        return '-translate-y-2';
       case 'left':
       case 'left-start':
       case 'left-end':
-        return 'animate-slide-right';
+        return 'translate-x-2';
       case 'right':
       case 'right-start':
       case 'right-end':
-        return 'animate-slide-left';
+        return '-translate-x-2';
       default:
-        return 'animate-fade-in';
+        return 'translate-y-2';
     }
-  };
+  }, [actualPlacement]);
 
-  // Transform origin for smooth animations
-  const getTransformOrigin = () => {
+  // Transform origin for better animations
+  const getTransformOrigin = useCallback(() => {
     switch (actualPlacement) {
       case 'top':
         return 'bottom center';
@@ -422,18 +525,78 @@ const Tooltip: React.FC<TooltipProps> = ({
       default:
         return 'center center';
     }
-  };
+  }, [actualPlacement]);
 
+  // Global click handler for click-outside
   useEffect(() => {
-    return () => {
-      if (showTimeoutRef.current) {
-        clearTimeout(showTimeoutRef.current);
-      }
-      if (hideTimeoutRef.current) {
-        clearTimeout(hideTimeoutRef.current);
+    const handleGlobalClick = (e: MouseEvent) => {
+      if (triggers.indexOf('click') !== -1 && isVisible && !isManuallyControlled) {
+        const target = e.target as HTMLElement;
+        if (
+          !triggerRef.current?.contains(target) &&
+          !tooltipRef.current?.contains(target)
+        ) {
+          hideTooltip();
+        }
       }
     };
-  }, []);
+
+    if (triggers.indexOf('click') !== -1) {
+      document.addEventListener('click', handleGlobalClick);
+      return () => document.removeEventListener('click', handleGlobalClick);
+    }
+  }, [triggers, isVisible, isManuallyControlled, hideTooltip]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      clearAllTimeouts();
+      mouseTrackingRef.current = false;
+    };
+  }, [clearAllTimeouts]);
+
+  // Get container element
+  const getContainer = useCallback(() => {
+    if (appendTo === 'body') return document.body;
+    if (appendTo instanceof HTMLElement) return appendTo;
+    return document.body;
+  }, [appendTo]);
+
+  const tooltipElement = shouldShow ? (
+    <div
+      ref={tooltipRef}
+      className={`
+        fixed font-medium rounded-lg border-2
+        ${variantClasses[variant]}
+        ${sizeClasses[size]}
+        ${contentClassName}
+        ${interactive ? 'cursor-pointer' : 'cursor-default'}
+        ${getAnimationClasses()}
+        break-words select-none
+        will-change-transform
+      `}
+      style={{
+        top: position.top,
+        left: position.left,
+        maxWidth: maxWidth,
+        transformOrigin: getTransformOrigin(),
+        pointerEvents: interactive ? 'auto' : 'none',
+        zIndex: zIndex
+      }}
+      onMouseEnter={handleTooltipMouseEnter}
+      onMouseLeave={handleTooltipMouseLeave}
+      onClick={handleTooltipClick}
+      role="tooltip"
+      aria-hidden={!shouldShow}
+      data-placement={actualPlacement}
+      data-variant={variant}
+      data-size={size}
+      data-animation={animation}
+    >
+      {content}
+      {showArrow && <div className={getArrowStyles()} />}
+    </div>
+  ) : null;
 
   return (
     <>
@@ -446,41 +609,12 @@ const Tooltip: React.FC<TooltipProps> = ({
         onBlur={handleBlur}
         onClick={handleClick}
         tabIndex={triggers.indexOf('focus') !== -1 ? 0 : undefined}
+        aria-describedby={shouldShow ? `tooltip-${Math.random().toString(36).substr(2, 9)}` : undefined}
       >
         {children}
       </div>
 
-      {shouldShow && (
-        <div
-          ref={tooltipRef}
-          className={`
-            fixed z-50 font-medium rounded-lg border
-            ${variantClasses[variant]}
-            ${sizeClasses[size]}
-            ${contentClassName}
-            ${interactive ? 'cursor-pointer' : ''}
-            break-words
-            transition-all duration-200 ease-out
-            ${isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
-            ${getAnimationDirection()}
-          `}
-          style={{
-            top: position.top,
-            left: position.left,
-            maxWidth: maxWidth,
-            transformOrigin: getTransformOrigin(),
-            pointerEvents: interactive ? 'auto' : 'none'
-          }}
-          onMouseEnter={handleTooltipMouseEnter}
-          onMouseLeave={handleTooltipMouseLeave}
-          role="tooltip"
-          aria-hidden={!shouldShow}
-          data-placement={actualPlacement}
-        >
-          {content}
-          {showArrow && <div className={getArrowStyles()} />}
-        </div>
-      )}
+      {tooltipElement && createPortal(tooltipElement, getContainer())}
     </>
   );
 };
