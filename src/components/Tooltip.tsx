@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useId,
 } from "react";
 import { createPortal } from "react-dom";
 
@@ -60,6 +61,10 @@ interface TooltipProps {
   hideOnClick?: boolean;
   duration?: number;
   appendTo?: HTMLElement | "body";
+  virtualElement?: {
+    getBoundingClientRect: () => DOMRect;
+  };
+  disablePortal?: boolean;
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
@@ -90,6 +95,8 @@ const Tooltip: React.FC<TooltipProps> = ({
   hideOnClick = false,
   duration = 0,
   appendTo = "body",
+  virtualElement,
+  disablePortal = false,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -105,6 +112,8 @@ const Tooltip: React.FC<TooltipProps> = ({
   const durationTimeoutRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
   const mouseTrackingRef = useRef<boolean>(false);
+  const tooltipId = useId();
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   const triggers = Array.isArray(trigger) ? trigger : [trigger];
   const isManuallyControlled = visible !== undefined;
@@ -129,15 +138,15 @@ const Tooltip: React.FC<TooltipProps> = ({
     []
   );
 
-  const arrowClasses = useMemo(
+  const arrowColors = useMemo(
     () => ({
-      dark: "border-gray-900",
-      light: "border-gray-300",
-      primary: "border-blue-600",
-      success: "border-green-600",
-      warning: "border-yellow-500",
-      error: "border-red-600",
-      info: "border-blue-500",
+      dark: "#1f2937",
+      light: "#ffffff",
+      primary: "#2563eb",
+      success: "#059669",
+      warning: "#d97706",
+      error: "#dc2626",
+      info: "#3b82f6",
     }),
     []
   );
@@ -156,10 +165,12 @@ const Tooltip: React.FC<TooltipProps> = ({
   // Smart positioning with enhanced collision detection
   const calculatePosition = useCallback(
     (preferredPlacement: TooltipPlacement) => {
-      if (!triggerRef.current)
-        return { top: 0, left: 0, placement: preferredPlacement };
+      const triggerElement = virtualElement || triggerRef.current;
+      if (!triggerElement) return { top: 0, left: 0, placement: preferredPlacement };
 
-      const triggerRect = triggerRef.current.getBoundingClientRect();
+      const triggerRect = virtualElement 
+        ? virtualElement.getBoundingClientRect()
+        : triggerRef.current!.getBoundingClientRect();
       const scrollTop =
         window.pageYOffset || document.documentElement.scrollTop;
       const scrollLeft =
@@ -334,7 +345,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
       return { top, left, placement: finalPlacement };
     },
-    [offset, boundary, fallbackPlacements]
+    [offset, boundary, fallbackPlacements, virtualElement]
   );
 
   // Get opposite placement for fallback
@@ -381,11 +392,11 @@ const Tooltip: React.FC<TooltipProps> = ({
     [followCursor, offset]
   );
 
-  // Update position
+  // Update position with ResizeObserver for dynamic content
   useEffect(() => {
     if (
       shouldShow &&
-      triggerRef.current &&
+      (triggerRef.current || virtualElement) &&
       tooltipRef.current &&
       !followCursor
     ) {
@@ -393,7 +404,29 @@ const Tooltip: React.FC<TooltipProps> = ({
       setPosition({ top: result.top, left: result.left });
       setActualPlacement(result.placement);
     }
-  }, [shouldShow, placement, calculatePosition, followCursor]);
+  }, [shouldShow, placement, calculatePosition, followCursor, virtualElement]);
+
+  // ResizeObserver for dynamic tooltip size changes
+  useEffect(() => {
+    if (!tooltipRef.current || !shouldShow) return;
+
+    resizeObserverRef.current = new ResizeObserver(() => {
+      if (triggerRef.current || virtualElement) {
+        const result = calculatePosition(placement);
+        setPosition({ top: result.top, left: result.left });
+        setActualPlacement(result.placement);
+      }
+    });
+
+    resizeObserverRef.current.observe(tooltipRef.current);
+
+    return () => {
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
+    };
+  }, [shouldShow, calculatePosition, placement, virtualElement]);
 
   // Handle mouse tracking
   useEffect(() => {
@@ -548,69 +581,149 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   }, [hideOnClick, hideTooltip]);
 
-  // Enhanced arrow styles
+  // Enhanced arrow styles with inline styles for better control
   const getArrowStyles = useCallback(() => {
-    if (!showArrow) return "";
+    if (!showArrow) return null;
 
-    const arrowSize =
-      size === "xs" ? "border-2" : size === "sm" ? "border-3" : "border-4";
-    const baseClasses = `absolute w-0 h-0 ${arrowSize} border-solid border-transparent ${arrowClassName}`;
-
-    const arrowColor = arrowClasses[variant];
+    const arrowSize = size === "xs" ? 6 : size === "sm" ? 8 : size === "md" ? 10 : size === "lg" ? 12 : 14;
+    const arrowColor = arrowColors[variant];
+    
+    const baseStyle: React.CSSProperties = {
+      position: "absolute",
+      width: 0,
+      height: 0,
+      border: "solid transparent",
+    };
 
     switch (actualPlacement) {
       case "top":
-        return `${baseClasses} top-full left-1/2 transform -translate-x-1/2 border-t-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          top: "100%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          borderLeftWidth: arrowSize,
+          borderRightWidth: arrowSize,
+          borderTopWidth: arrowSize,
+          borderTopColor: arrowColor,
+        };
       case "top-start":
-        return `${baseClasses} top-full left-4 border-t-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          top: "100%",
+          left: "16px",
+          borderLeftWidth: arrowSize,
+          borderRightWidth: arrowSize,
+          borderTopWidth: arrowSize,
+          borderTopColor: arrowColor,
+        };
       case "top-end":
-        return `${baseClasses} top-full right-4 border-t-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          top: "100%",
+          right: "16px",
+          borderLeftWidth: arrowSize,
+          borderRightWidth: arrowSize,
+          borderTopWidth: arrowSize,
+          borderTopColor: arrowColor,
+        };
       case "bottom":
-        return `${baseClasses} bottom-full left-1/2 transform -translate-x-1/2 border-b-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          bottom: "100%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          borderLeftWidth: arrowSize,
+          borderRightWidth: arrowSize,
+          borderBottomWidth: arrowSize,
+          borderBottomColor: arrowColor,
+        };
       case "bottom-start":
-        return `${baseClasses} bottom-full left-4 border-b-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          bottom: "100%",
+          left: "16px",
+          borderLeftWidth: arrowSize,
+          borderRightWidth: arrowSize,
+          borderBottomWidth: arrowSize,
+          borderBottomColor: arrowColor,
+        };
       case "bottom-end":
-        return `${baseClasses} bottom-full right-4 border-b-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          bottom: "100%",
+          right: "16px",
+          borderLeftWidth: arrowSize,
+          borderRightWidth: arrowSize,
+          borderBottomWidth: arrowSize,
+          borderBottomColor: arrowColor,
+        };
       case "left":
-        return `${baseClasses} left-full top-1/2 transform -translate-y-1/2 border-l-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          left: "100%",
+          top: "50%",
+          transform: "translateY(-50%)",
+          borderTopWidth: arrowSize,
+          borderBottomWidth: arrowSize,
+          borderLeftWidth: arrowSize,
+          borderLeftColor: arrowColor,
+        };
       case "left-start":
-        return `${baseClasses} left-full top-4 border-l-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          left: "100%",
+          top: "16px",
+          borderTopWidth: arrowSize,
+          borderBottomWidth: arrowSize,
+          borderLeftWidth: arrowSize,
+          borderLeftColor: arrowColor,
+        };
       case "left-end":
-        return `${baseClasses} left-full bottom-4 border-l-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          left: "100%",
+          bottom: "16px",
+          borderTopWidth: arrowSize,
+          borderBottomWidth: arrowSize,
+          borderLeftWidth: arrowSize,
+          borderLeftColor: arrowColor,
+        };
       case "right":
-        return `${baseClasses} right-full top-1/2 transform -translate-y-1/2 border-r-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          right: "100%",
+          top: "50%",
+          transform: "translateY(-50%)",
+          borderTopWidth: arrowSize,
+          borderBottomWidth: arrowSize,
+          borderRightWidth: arrowSize,
+          borderRightColor: arrowColor,
+        };
       case "right-start":
-        return `${baseClasses} right-full top-4 border-r-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          right: "100%",
+          top: "16px",
+          borderTopWidth: arrowSize,
+          borderBottomWidth: arrowSize,
+          borderRightWidth: arrowSize,
+          borderRightColor: arrowColor,
+        };
       case "right-end":
-        return `${baseClasses} right-full bottom-4 border-r-${
-          arrowSize.split("-")[1]
-        } ${arrowColor}`;
+        return {
+          ...baseStyle,
+          right: "100%",
+          bottom: "16px",
+          borderTopWidth: arrowSize,
+          borderBottomWidth: arrowSize,
+          borderRightWidth: arrowSize,
+          borderRightColor: arrowColor,
+        };
       default:
-        return baseClasses;
+        return baseStyle;
     }
-  }, [showArrow, size, actualPlacement, variant, arrowClasses, arrowClassName]);
+  }, [showArrow, size, actualPlacement, variant, arrowColors]);
 
   // Enhanced animation classes
   const getAnimationClasses = useCallback(() => {
@@ -728,15 +841,20 @@ const Tooltip: React.FC<TooltipProps> = ({
     return () => {
       clearAllTimeouts();
       mouseTrackingRef.current = false;
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
     };
   }, [clearAllTimeouts]);
 
-  // Get container element
+  // Get container element with portal fallback
   const getContainer = useCallback(() => {
+    if (disablePortal) return null;
     if (appendTo === "body") return document.body;
     if (appendTo instanceof HTMLElement) return appendTo;
     return document.body;
-  }, [appendTo]);
+  }, [appendTo, disablePortal]);
 
   const tooltipElement = shouldShow ? (
     <div
@@ -764,37 +882,44 @@ const Tooltip: React.FC<TooltipProps> = ({
       onClick={handleTooltipClick}
       role="tooltip"
       aria-hidden={!shouldShow}
+      id={tooltipId}
       data-placement={actualPlacement}
       data-variant={variant}
       data-size={size}
       data-animation={animation}
     >
       {content}
-      {showArrow && <div className={getArrowStyles()} />}
+      {showArrow && getArrowStyles() && (
+        <div
+          className={arrowClassName}
+          style={getArrowStyles() as React.CSSProperties}
+        />
+      )}
     </div>
   ) : null;
 
+  const container = getContainer();
+
   return (
     <>
-      <div
-        ref={triggerRef}
-        className={`inline-block ${className}`}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        onClick={handleClick}
-        tabIndex={triggers.indexOf("focus") !== -1 ? 0 : undefined}
-        aria-describedby={
-          shouldShow
-            ? `tooltip-${Math.random().toString(36).substr(2, 9)}`
-            : undefined
-        }
-      >
-        {children}
-      </div>
+      {!virtualElement && (
+        <div
+          ref={triggerRef}
+          className={`inline-block ${className}`}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onClick={handleClick}
+          tabIndex={triggers.indexOf("focus") !== -1 ? 0 : undefined}
+          aria-describedby={shouldShow ? tooltipId : undefined}
+        >
+          {children}
+        </div>
+      )}
 
-      {tooltipElement && createPortal(tooltipElement, getContainer())}
+      {tooltipElement &&
+        (container ? createPortal(tooltipElement, container) : tooltipElement)}
     </>
   );
 };
