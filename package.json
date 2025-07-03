@@ -1,6 +1,6 @@
 {
   "name": "sabled",
-  "version": "0.2.53",
+  "version": "0.2.54",
   "description": "A modern, comprehensive React UI component library with beautiful designs and enhanced components. Features advanced Tooltip with smart positioning, Select/Input improvements, Message animations, and more. Built with TailwindCSS and TypeScript for maximum customization and developer experience.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
