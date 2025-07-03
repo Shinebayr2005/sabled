@@ -119,12 +119,40 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   // Smart positioning with enhanced collision detection
   const calculatePosition = useCallback((preferredPlacement: TooltipPlacement) => {
-    if (!triggerRef.current || !tooltipRef.current) return { top: 0, left: 0, placement: preferredPlacement };
+    if (!triggerRef.current) return { top: 0, left: 0, placement: preferredPlacement };
 
     const triggerRect = triggerRef.current.getBoundingClientRect();
-    const tooltipRect = tooltipRef.current.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    
+    // Get tooltip dimensions - use estimated if not yet rendered
+    let tooltipWidth = 200; // Default estimated width
+    let tooltipHeight = 40; // Default estimated height
+    
+    if (tooltipRef.current) {
+      const tooltipRect = tooltipRef.current.getBoundingClientRect();
+      tooltipWidth = tooltipRect.width || tooltipWidth;
+      tooltipHeight = tooltipRect.height || tooltipHeight;
+    } else {
+      // Estimate tooltip size based on content and size
+      switch (size) {
+        case 'xs':
+          tooltipHeight = 28;
+          break;
+        case 'sm':
+          tooltipHeight = 32;
+          break;
+        case 'md':
+          tooltipHeight = 40;
+          break;
+        case 'lg':
+          tooltipHeight = 48;
+          break;
+        case 'xl':
+          tooltipHeight = 56;
+          break;
+      }
+    }
     
     let viewportWidth = window.innerWidth;
     let viewportHeight = window.innerHeight;
@@ -146,20 +174,20 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     const positions = {
       'top': () => ({
-        top: triggerRect.top + scrollTop - tooltipRect.height - offset,
-        left: triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipRect.width / 2
+        top: triggerRect.top + scrollTop - tooltipHeight - offset,
+        left: triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipWidth / 2
       }),
       'top-start': () => ({
-        top: triggerRect.top + scrollTop - tooltipRect.height - offset,
+        top: triggerRect.top + scrollTop - tooltipHeight - offset,
         left: triggerRect.left + scrollLeft
       }),
       'top-end': () => ({
-        top: triggerRect.top + scrollTop - tooltipRect.height - offset,
-        left: triggerRect.right + scrollLeft - tooltipRect.width
+        top: triggerRect.top + scrollTop - tooltipHeight - offset,
+        left: triggerRect.right + scrollLeft - tooltipWidth
       }),
       'bottom': () => ({
         top: triggerRect.bottom + scrollTop + offset,
-        left: triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipRect.width / 2
+        left: triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipWidth / 2
       }),
       'bottom-start': () => ({
         top: triggerRect.bottom + scrollTop + offset,
@@ -167,22 +195,22 @@ const Tooltip: React.FC<TooltipProps> = ({
       }),
       'bottom-end': () => ({
         top: triggerRect.bottom + scrollTop + offset,
-        left: triggerRect.right + scrollLeft - tooltipRect.width
+        left: triggerRect.right + scrollLeft - tooltipWidth
       }),
       'left': () => ({
-        top: triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipRect.height / 2,
-        left: triggerRect.left + scrollLeft - tooltipRect.width - offset
+        top: triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipHeight / 2,
+        left: triggerRect.left + scrollLeft - tooltipWidth - offset
       }),
       'left-start': () => ({
         top: triggerRect.top + scrollTop,
-        left: triggerRect.left + scrollLeft - tooltipRect.width - offset
+        left: triggerRect.left + scrollLeft - tooltipWidth - offset
       }),
       'left-end': () => ({
-        top: triggerRect.bottom + scrollTop - tooltipRect.height,
-        left: triggerRect.left + scrollLeft - tooltipRect.width - offset
+        top: triggerRect.bottom + scrollTop - tooltipHeight,
+        left: triggerRect.left + scrollLeft - tooltipWidth - offset
       }),
       'right': () => ({
-        top: triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipRect.height / 2,
+        top: triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipHeight / 2,
         left: triggerRect.right + scrollLeft + offset
       }),
       'right-start': () => ({
@@ -190,7 +218,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         left: triggerRect.right + scrollLeft + offset
       }),
       'right-end': () => ({
-        top: triggerRect.bottom + scrollTop - tooltipRect.height,
+        top: triggerRect.bottom + scrollTop - tooltipHeight,
         left: triggerRect.right + scrollLeft + offset
       })
     };
@@ -200,9 +228,9 @@ const Tooltip: React.FC<TooltipProps> = ({
       const pos = positions[placementToTry]();
       const wouldFit = {
         top: pos.top >= boundaryRect.top + 8,
-        bottom: pos.top + tooltipRect.height <= boundaryRect.bottom - 8,
+        bottom: pos.top + tooltipHeight <= boundaryRect.bottom - 8,
         left: pos.left >= boundaryRect.left + 8,
-        right: pos.left + tooltipRect.width <= boundaryRect.right - 8
+        right: pos.left + tooltipWidth <= boundaryRect.right - 8
       };
       return { ...pos, fits: wouldFit.top && wouldFit.bottom && wouldFit.left && wouldFit.right };
     };
@@ -228,12 +256,12 @@ const Tooltip: React.FC<TooltipProps> = ({
     // Final boundary adjustments
     const margin = 8;
     if (top < boundaryRect.top + margin) top = boundaryRect.top + margin;
-    if (top + tooltipRect.height > boundaryRect.bottom - margin) {
-      top = boundaryRect.bottom - tooltipRect.height - margin;
+    if (top + tooltipHeight > boundaryRect.bottom - margin) {
+      top = boundaryRect.bottom - tooltipHeight - margin;
     }
     if (left < boundaryRect.left + margin) left = boundaryRect.left + margin;
-    if (left + tooltipRect.width > boundaryRect.right - margin) {
-      left = boundaryRect.right - tooltipRect.width - margin;
+    if (left + tooltipWidth > boundaryRect.right - margin) {
+      left = boundaryRect.right - tooltipWidth - margin;
     }
 
     return { top, left, placement: finalPlacement };
