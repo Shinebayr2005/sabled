@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
@@ -15,6 +15,11 @@ module.exports = {
         "slide-in": "slideIn 0.3s ease-out",
         "scale-in": "scaleIn 0.3s ease-out",
         "bounce-soft": "bounce 1s infinite",
+        // Tooltip animations
+        "slide-down": "slideDown 0.2s ease-out",
+        "slide-up": "slideUp 0.2s ease-out",
+        "slide-left": "slideLeft 0.2s ease-out",
+        "slide-right": "slideRight 0.2s ease-out",
       },
       keyframes: {
         ripple: {
@@ -61,6 +66,47 @@ module.exports = {
           "100%": {
             opacity: "1",
             transform: "scale(1)",
+          },
+        },
+        // Tooltip keyframes
+        slideDown: {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(-8px) scale(0.95)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0) scale(1)",
+          },
+        },
+        slideUp: {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(8px) scale(0.95)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0) scale(1)",
+          },
+        },
+        slideLeft: {
+          "0%": {
+            opacity: "0",
+            transform: "translateX(8px) scale(0.95)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateX(0) scale(1)",
+          },
+        },
+        slideRight: {
+          "0%": {
+            opacity: "0",
+            transform: "translateX(-8px) scale(0.95)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateX(0) scale(1)",
           },
         },
       },

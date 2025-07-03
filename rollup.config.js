@@ -1,9 +1,11 @@
-import resolve from "@rollup/plugin-node-resolve"; // Ensure this is imported
+import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import postcss from "rollup-plugin-postcss";
 import external from "rollup-plugin-peer-deps-external";
+import tailwindcss from "@tailwindcss/postcss";
+import autoprefixer from "autoprefixer";
 
 export default {
   input: "src/index.ts",
@@ -18,17 +20,21 @@ export default {
     },
   ],
   plugins: [
-    resolve(), // Add this plugin to handle module resolution
+    external(),
+    resolve(),
     commonjs(),
-    typescript(),
+    typescript({
+      tsconfig: './tsconfig.build.json',
+      declaration: true,
+      declarationDir: './dist',
+    }),
     postcss({
-      extract: false, // Inject CSS into JS for library distribution
+      extract: false,
       inject: true,
       minimize: true,
-      plugins: [require("tailwindcss"), require("autoprefixer")],
+      plugins: [tailwindcss, autoprefixer],
     }),
     terser(),
-    external(),
   ],
-  external: ["react", "react-dom", "tslib"], // Ensure React and other dependencies are external
+  external: ["react", "react-dom", "tslib"],
 };
