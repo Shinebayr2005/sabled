@@ -775,7 +775,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   ) : null;
 
   return (
-    <div className="relative">
+    <>
       <div
         ref={triggerRef}
         className={`inline-block ${className}`}
@@ -795,7 +795,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       </div>
 
       {tooltipElement && createPortal(tooltipElement, getContainer())}
-    </div>
+    </>
   );
 };
 
