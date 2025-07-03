@@ -244,18 +244,23 @@ const Tooltip: React.FC<TooltipProps> = ({
         switch (size) {
           case "xs":
             tooltipHeight = 28;
+            tooltipWidth = 120;
             break;
           case "sm":
             tooltipHeight = 32;
+            tooltipWidth = 160;
             break;
           case "md":
             tooltipHeight = 40;
+            tooltipWidth = 200;
             break;
           case "lg":
             tooltipHeight = 48;
+            tooltipWidth = 240;
             break;
           case "xl":
             tooltipHeight = 56;
+            tooltipWidth = 280;
             break;
         }
       }
@@ -655,7 +660,7 @@ const Tooltip: React.FC<TooltipProps> = ({
     if (!showArrow) return null;
 
     const arrowSize = size === "xs" ? 6 : size === "sm" ? 8 : size === "md" ? 10 : size === "lg" ? 12 : 14;
-    const arrowColor = arrowColors[variant];
+    const arrowColor = arrowColors[actualVariant];
     
     const baseStyle: React.CSSProperties = {
       position: "absolute",
@@ -792,7 +797,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       default:
         return baseStyle;
     }
-  }, [showArrow, size, actualPlacement, variant, arrowColors]);
+  }, [showArrow, size, actualPlacement, actualVariant, arrowColors]);
 
   // Professional animation system
   const getAnimationClasses = useCallback(() => {
