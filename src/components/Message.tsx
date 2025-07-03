@@ -101,6 +101,18 @@ const Message: React.FC<MessageProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
+  const handleClose = () => {
+    // Start exit animation
+    setIsExiting(true);
+    setVisible(false);
+    
+    // Delay to allow utility's exit animation to complete
+    setTimeout(() => {
+      onDismiss?.();
+      onClose();
+    }, 300); // Match the animation duration
+  };
+
   // Auto-dismiss timer with pause/resume capability
   useEffect(() => {
     if (persistent || duration <= 0) return;
@@ -108,15 +120,8 @@ const Message: React.FC<MessageProps> = ({
     const startTimer = () => {
       startTimeRef.current = Date.now();
       timerRef.current = window.setTimeout(() => {
-        // Start exit animation
-        setIsExiting(true);
-        setVisible(false);
-        
-        // Delay to allow utility's exit animation to complete
-        setTimeout(() => {
-          onDismiss?.();
-          onClose();
-        }, 300); // Match the animation duration
+        // Use the same handleClose function for consistent animation
+        handleClose();
       }, remainingTimeRef.current);
 
       // Progress bar animation
@@ -178,18 +183,6 @@ const Message: React.FC<MessageProps> = ({
     if (event.key === 'Escape' && closable) {
       handleClose();
     }
-  };
-
-  const handleClose = () => {
-    // Start exit animation
-    setIsExiting(true);
-    setVisible(false);
-    
-    // Delay to allow utility's exit animation to complete
-    setTimeout(() => {
-      onDismiss?.();
-      onClose();
-    }, 300); // Match the animation duration
   };
 
   const getExitDirection = () => {
