@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #3ab7bf;
+}
+
 /* Enhanced animations and keyframes */
 @keyframes rippleEffect {
   from {
