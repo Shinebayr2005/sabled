@@ -116,6 +116,4 @@ Message.warning({ text: "Review required", variant: "outlined" });
 Message.success({ text: "Connected", variant: "ghost" });
 ```
 
-See [MESSAGE_VARIANTS.md](./MESSAGE_VARIANTS.md) for complete documentation and examples.
-
 **Made with ❤️ by SHINEE** - Trying to make great UIs easily.
