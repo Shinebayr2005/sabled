@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef, useEffect, useCallback, useMemo, useId, isValidElement, cloneElement } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, useLayoutEffect, useCallback, useMemo, useId, isValidElement, cloneElement } from 'react';
 import { createPortal } from 'react-dom';
 
 // HeroUI-style types
@@ -138,31 +138,56 @@ const Tooltip = forwardRef<HTMLElement, TooltipProps>(({
 
   // Smart positioning with collision detection
   const updatePosition = useCallback(() => {
-    if (!triggerRef.current || !tooltipRef.current || !tooltipIsOpen) return;
+    if (!triggerRef.current || !tooltipIsOpen) return;
 
     const triggerRect = triggerRef.current.getBoundingClientRect();
-    const tooltipRect = tooltipRef.current.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 
+    // Get tooltip dimensions - use fallback if not yet rendered
+    let tooltipWidth = 200;
+    let tooltipHeight = 40;
+    
+    if (tooltipRef.current) {
+      const tooltipRect = tooltipRef.current.getBoundingClientRect();
+      tooltipWidth = tooltipRect.width || tooltipWidth;
+      tooltipHeight = tooltipRect.height || tooltipHeight;
+    } else {
+      // Estimate based on size
+      switch (size) {
+        case "sm":
+          tooltipWidth = 120;
+          tooltipHeight = 28;
+          break;
+        case "md":
+          tooltipWidth = 200;
+          tooltipHeight = 40;
+          break;
+        case "lg":
+          tooltipWidth = 280;
+          tooltipHeight = 52;
+          break;
+      }
+    }
+
     const positions = {
       top: { 
-        top: triggerRect.top + scrollTop - tooltipRect.height - offset,
-        left: triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipRect.width / 2
+        top: triggerRect.top + scrollTop - tooltipHeight - offset,
+        left: triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipWidth / 2
       },
       "top-start": {
-        top: triggerRect.top + scrollTop - tooltipRect.height - offset,
+        top: triggerRect.top + scrollTop - tooltipHeight - offset,
         left: triggerRect.left + scrollLeft
       },
       "top-end": {
-        top: triggerRect.top + scrollTop - tooltipRect.height - offset,
-        left: triggerRect.right + scrollLeft - tooltipRect.width
+        top: triggerRect.top + scrollTop - tooltipHeight - offset,
+        left: triggerRect.right + scrollLeft - tooltipWidth
       },
       bottom: {
         top: triggerRect.bottom + scrollTop + offset,
-        left: triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipRect.width / 2
+        left: triggerRect.left + scrollLeft + triggerRect.width / 2 - tooltipWidth / 2
       },
       "bottom-start": {
         top: triggerRect.bottom + scrollTop + offset,
@@ -170,22 +195,22 @@ const Tooltip = forwardRef<HTMLElement, TooltipProps>(({
       },
       "bottom-end": {
         top: triggerRect.bottom + scrollTop + offset,
-        left: triggerRect.right + scrollLeft - tooltipRect.width
+        left: triggerRect.right + scrollLeft - tooltipWidth
       },
       left: {
-        top: triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipRect.height / 2,
-        left: triggerRect.left + scrollLeft - tooltipRect.width - offset
+        top: triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipHeight / 2,
+        left: triggerRect.left + scrollLeft - tooltipWidth - offset
       },
       "left-start": {
         top: triggerRect.top + scrollTop,
-        left: triggerRect.left + scrollLeft - tooltipRect.width - offset
+        left: triggerRect.left + scrollLeft - tooltipWidth - offset
       },
       "left-end": {
-        top: triggerRect.bottom + scrollTop - tooltipRect.height,
-        left: triggerRect.left + scrollLeft - tooltipRect.width - offset
+        top: triggerRect.bottom + scrollTop - tooltipHeight,
+        left: triggerRect.left + scrollLeft - tooltipWidth - offset
       },
       right: {
-        top: triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipRect.height / 2,
+        top: triggerRect.top + scrollTop + triggerRect.height / 2 - tooltipHeight / 2,
         left: triggerRect.right + scrollLeft + offset
       },
       "right-start": {
@@ -193,7 +218,7 @@ const Tooltip = forwardRef<HTMLElement, TooltipProps>(({
         left: triggerRect.right + scrollLeft + offset
       },
       "right-end": {
-        top: triggerRect.bottom + scrollTop - tooltipRect.height,
+        top: triggerRect.bottom + scrollTop - tooltipHeight,
         left: triggerRect.right + scrollLeft + offset
       },
     };
@@ -203,9 +228,9 @@ const Tooltip = forwardRef<HTMLElement, TooltipProps>(({
       ...pos,
       fits: {
         top: pos.top >= containerPadding,
-        bottom: pos.top + tooltipRect.height <= viewportHeight - containerPadding,
+        bottom: pos.top + tooltipHeight <= viewportHeight - containerPadding,
         left: pos.left >= containerPadding,
-        right: pos.left + tooltipRect.width <= viewportWidth - containerPadding,
+        right: pos.left + tooltipWidth <= viewportWidth - containerPadding,
       }
     });
 
@@ -242,9 +267,9 @@ const Tooltip = forwardRef<HTMLElement, TooltipProps>(({
 
     // Final position adjustments to keep in viewport
     const finalTop = Math.max(containerPadding, 
-      Math.min(targetPosition.top, viewportHeight - tooltipRect.height - containerPadding));
+      Math.min(targetPosition.top, viewportHeight - tooltipHeight - containerPadding));
     const finalLeft = Math.max(containerPadding,
-      Math.min(targetPosition.left, viewportWidth - tooltipRect.width - containerPadding));
+      Math.min(targetPosition.left, viewportWidth - tooltipWidth - containerPadding));
 
     setPosition({ top: finalTop, left: finalLeft });
     setCurrentPlacement(targetPlacement);
@@ -253,7 +278,13 @@ const Tooltip = forwardRef<HTMLElement, TooltipProps>(({
   // Update position when tooltip opens or placement changes
   useEffect(() => {
     if (tooltipIsOpen && shouldUpdatePosition) {
+      // Initial position update
       updatePosition();
+      
+      // Re-update position after a short delay to account for rendering
+      const timeoutId = setTimeout(() => {
+        updatePosition();
+      }, 10);
       
       // Listen for resize/scroll to update position
       const handleUpdate = () => updatePosition();
@@ -261,11 +292,19 @@ const Tooltip = forwardRef<HTMLElement, TooltipProps>(({
       window.addEventListener('scroll', handleUpdate);
       
       return () => {
+        clearTimeout(timeoutId);
         window.removeEventListener('resize', handleUpdate);
         window.removeEventListener('scroll', handleUpdate);
       };
     }
   }, [tooltipIsOpen, updatePosition, shouldUpdatePosition]);
+
+  // Use layoutEffect for more precise positioning after DOM updates
+  useLayoutEffect(() => {
+    if (tooltipIsOpen && tooltipRef.current) {
+      updatePosition();
+    }
+  }, [tooltipIsOpen, updatePosition]);
 
   // Handle opening tooltip
   const openTooltip = useCallback(() => {
