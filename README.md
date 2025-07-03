@@ -6,6 +6,7 @@ A modern React component library designed for practical, accessible, and beautif
 
 - 🎯 **15+ Production-Ready Components** - Featuring powerful Confirm dialogs and Message notifications
 - 🚀 **Zero Setup Required** - No providers, context, or configuration needed
+- 🪄 **No CSS Imports Needed** - Styles are automatically included; just use the components
 - 💬 **Imperative APIs** - Call Confirm and Message directly from anywhere in your code
 - 🎨 **Modern Design System** - Clean, cohesive components with a focus on usability and consistency
 - ⚡ **Performance Optimized** - Tree-shakeable with minimal bundle size
