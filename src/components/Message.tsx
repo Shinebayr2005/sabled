@@ -107,8 +107,10 @@ const Message: React.FC<MessageProps> = ({
     const startTimer = () => {
       startTimeRef.current = Date.now();
       timerRef.current = window.setTimeout(() => {
+        // Simplified auto-dismiss - let utility handle animation
         setVisible(false);
-        setTimeout(onClose, 300);
+        onDismiss?.();
+        onClose();
       }, remainingTimeRef.current);
 
       // Progress bar animation
@@ -173,20 +175,12 @@ const Message: React.FC<MessageProps> = ({
   };
 
   const handleClose = () => {
-    // Clean exit animation with consistent timing
-    const messageElement = messageElementRef.current;
-    if (messageElement) {
-      messageElement.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-      messageElement.style.transform = animationDirections.exitTransform;
-      messageElement.style.opacity = '0';
-    }
-    
+    // Simplified exit - let the utility handle the animation
     setVisible(false);
-    // Synchronized timing with list animation
-    setTimeout(() => {
-      onDismiss?.();
-      onClose();
-    }, 150);
+    
+    // Immediate callback to utility for coordinated dismissal
+    onDismiss?.();
+    onClose();
   };
 
   const getExitDirection = () => animationDirections.entryDirection;
@@ -387,9 +381,7 @@ const Message: React.FC<MessageProps> = ({
       `}
       style={{
         ...style,
-        transitionProperty: 'opacity, transform, height, margin, padding',
-        transitionDuration: '0.3s',
-        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        // Let the utility handle all animations
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
