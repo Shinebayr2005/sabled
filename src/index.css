@@ -8,7 +8,7 @@
 @keyframes tooltip-scale-enter {
   from {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
@@ -23,7 +23,7 @@
   }
   to {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.9);
   }
 }
 
@@ -63,7 +63,7 @@
   }
   to {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(8px);
   }
 }
 
@@ -85,7 +85,7 @@
   }
   to {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(-8px);
   }
 }
 
@@ -107,7 +107,7 @@
   }
   to {
     opacity: 0;
-    transform: translateX(-8px);
+    transform: translateX(8px);
   }
 }
 
@@ -129,7 +129,7 @@
   }
   to {
     opacity: 0;
-    transform: translateX(8px);
+    transform: translateX(-8px);
   }
 }
 
@@ -163,730 +163,228 @@
 }
 
 /* Tooltip Animation Classes */
+.tooltip-enter {
+  animation: tooltip-fade-enter 150ms ease-out;
+}
+
+.tooltip-exit {
+  animation: tooltip-fade-exit 150ms ease-in;
+}
+
 .tooltip-scale-enter {
-  animation: tooltip-scale-enter 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tooltip-scale-enter 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tooltip-scale-exit {
-  animation: tooltip-scale-exit 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.tooltip-fade-enter {
-  animation: tooltip-fade-enter 0.2s ease-out forwards;
-}
-
-.tooltip-fade-exit {
-  animation: tooltip-fade-exit 0.15s ease-out forwards;
+  animation: tooltip-scale-exit 150ms ease-in;
 }
 
 .tooltip-slide-up-enter {
-  animation: tooltip-slide-up-enter 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tooltip-slide-up-enter 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tooltip-slide-up-exit {
-  animation: tooltip-slide-up-exit 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tooltip-slide-up-exit 150ms ease-in;
 }
 
 .tooltip-slide-down-enter {
-  animation: tooltip-slide-down-enter 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tooltip-slide-down-enter 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tooltip-slide-down-exit {
-  animation: tooltip-slide-down-exit 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tooltip-slide-down-exit 150ms ease-in;
 }
 
 .tooltip-slide-left-enter {
-  animation: tooltip-slide-left-enter 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tooltip-slide-left-enter 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tooltip-slide-left-exit {
-  animation: tooltip-slide-left-exit 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tooltip-slide-left-exit 150ms ease-in;
 }
 
 .tooltip-slide-right-enter {
-  animation: tooltip-slide-right-enter 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tooltip-slide-right-enter 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tooltip-slide-right-exit {
-  animation: tooltip-slide-right-exit 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tooltip-slide-right-exit 150ms ease-in;
 }
 
 .tooltip-bounce-enter {
-  animation: tooltip-bounce-enter 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  animation: tooltip-bounce-enter 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .tooltip-bounce-exit {
-  animation: tooltip-bounce-exit 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tooltip-bounce-exit 150ms ease-in;
 }
 
-/* Enhanced animations and keyframes */
-@keyframes rippleEffect {
-  from {
-    transform: scale(0);
-    opacity: 0.6;
-  }
-  to {
-    transform: scale(3);
-    opacity: 0;
-  }
+/* Tooltip Transform Origins for better animations */
+.tooltip-origin-top {
+  transform-origin: center bottom;
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.tooltip-origin-bottom {
+  transform-origin: center top;
 }
 
-@keyframes slideOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
+.tooltip-origin-left {
+  transform-origin: right center;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.tooltip-origin-right {
+  transform-origin: left center;
 }
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.tooltip-origin-top-left {
+  transform-origin: right bottom;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+.tooltip-origin-top-right {
+  transform-origin: left bottom;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+.tooltip-origin-bottom-left {
+  transform-origin: right top;
 }
 
-@keyframes bounce {
-  0%,
-  20%,
-  53%,
-  80%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  40%,
-  43% {
-    transform: translate3d(0, -8px, 0);
-  }
-  70% {
-    transform: translate3d(0, -4px, 0);
-  }
-  90% {
-    transform: translate3d(0, -2px, 0);
-  }
+.tooltip-origin-bottom-right {
+  transform-origin: left top;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+/* Enhanced Motion Classes */
+.motion-base {
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes indeterminate {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+.motion-enter {
+  animation-fill-mode: forwards;
 }
 
-@keyframes progressIndeterminate {
-  0% {
-    left: -35%;
-    right: 100%;
-  }
-  60% {
-    left: 100%;
-    right: -90%;
-  }
-  100% {
-    left: 100%;
-    right: -90%;
-  }
+.motion-exit {
+  animation-fill-mode: forwards;
 }
 
-/* Tooltip animations */
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+.tooltip-backdrop {
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(4px);
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+/* Custom scrollbar for Select and other components */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
 }
 
-@keyframes slideLeft {
-  from {
-    opacity: 0;
-    transform: translateX(8px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-@keyframes slideRight {
-  from {
-    opacity: 0;
-    transform: translateX(-8px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgb(203 213 225);
+  border-radius: 4px;
 }
 
-/* Enhanced Tooltip Animations */
-@keyframes tooltipFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgb(148 163 184);
 }
 
-@keyframes tooltipFadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+/* HeroUI-style utility classes */
+.text-tiny {
+  font-size: 0.75rem;
+  line-height: 1rem;
 }
 
-@keyframes tooltipScaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.text-small {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
-@keyframes tooltipScaleOut {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95);
-  }
+.text-medium {
+  font-size: 1rem;
+  line-height: 1.5rem;
 }
 
-@keyframes tooltipSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.rounded-small {
+  border-radius: 0.5rem;
 }
 
-@keyframes tooltipSlideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.rounded-medium {
+  border-radius: 0.75rem;
 }
 
-@keyframes tooltipSlideLeft {
-  from {
-    opacity: 0;
-    transform: translateX(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.rounded-large {
+  border-radius: 1rem;
 }
 
-@keyframes tooltipSlideRight {
-  from {
-    opacity: 0;
-    transform: translateX(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.shadow-small {
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 }
 
-@keyframes tooltipBounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+.shadow-medium {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Ripple effect */
-.ripple {
-  position: absolute;
-  border-radius: 50%;
-  transform: scale(0);
-  animation: rippleEffect 0.6s ease-out;
-  pointer-events: none;
-  background-color: rgba(255, 255, 255, 0.3);
+.shadow-large {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-/* Loading spinner for buttons */
-.loader {
-  width: 16px;
-  height: 16px;
-  border: 2px solid transparent;
-  border-top: 2px solid currentColor;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+/* HeroUI Color System */
+.bg-content1 {
+  background-color: #ffffff;
 }
 
-/* Shimmer loading effect */
-.shimmer {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+.text-content1-foreground {
+  color: #11181c;
 }
 
-/* Progress bar utilities */
-@layer utilities {
-  .bg-stripes {
-    background-image: linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0.1) 25%,
-      transparent 25%,
-      transparent 50%,
-      rgba(255, 255, 255, 0.1) 50%,
-      rgba(255, 255, 255, 0.1) 75%,
-      transparent 75%,
-      transparent
-    );
-    background-size: 0.75rem 0.75rem;
-    animation: stripes 1s linear infinite;
-  }
+.border-divider {
+  border-color: #e4e4e7;
 }
 
-@keyframes stripes {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 0.75rem 0;
-  }
+.bg-primary {
+  background-color: #006fee;
 }
 
-/* Custom scrollbar utility */
-@utility custom-scrollbar {
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 3px;
-  }
-  
-  &::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-  }
+.text-primary-foreground {
+  color: #ffffff;
 }
 
-/* Enhanced component styles */
-@layer components {
-  /* Button enhancements */
-  .sabled-button {
-    @apply relative inline-flex items-center justify-center font-medium transition-all duration-200 ease-in-out overflow-hidden;
-    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
-    @apply active:scale-95;
-    @apply shadow-sm hover:shadow-md;
-  }
+.bg-secondary {
+  background-color: #9353d3;
+}
 
-  .sabled-button:disabled {
-    @apply opacity-50 cursor-not-allowed shadow-none;
-    @apply transform-none;
-  }
+.text-secondary-foreground {
+  color: #ffffff;
+}
 
-  .sabled-button-primary {
-    @apply focus:ring-primary/50;
-  }
+.bg-success {
+  background-color: #17c964;
+}
 
-  .sabled-button-danger {
-    @apply focus:ring-red-500/50;
-  }
+.text-success-foreground {
+  color: #ffffff;
+}
 
-  .sabled-button-success {
-    @apply focus:ring-green-500/50;
-  }
+.bg-warning {
+  background-color: #f5a524;
+}
 
-  /* Input enhancements */
-  .sabled-input {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg transition-all duration-200;
-    @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary;
-    @apply placeholder:text-gray-400;
-    @apply shadow-sm hover:shadow-md focus:shadow-md;
-  }
+.text-warning-foreground {
+  color: #000000;
+}
 
-  .sabled-input-error {
-    @apply border-red-300 focus:border-red-500 focus:ring-red-500/20;
-  }
+.bg-danger {
+  background-color: #f31260;
+}
 
-  .sabled-input-success {
-    @apply border-green-300 focus:border-green-500 focus:ring-green-500/20;
-  }
+.text-danger-foreground {
+  color: #ffffff;
+}
 
-  /* Floating label animation */
-  .sabled-input-floating {
-    @apply relative;
-  }
+.bg-foreground {
+  background-color: #11181c;
+}
 
-  .sabled-input-floating label {
-    @apply absolute left-4 transition-all duration-200 pointer-events-none;
-    @apply text-gray-500 transform origin-top-left;
-  }
-
-  .sabled-input-floating input:focus + label,
-  .sabled-input-floating input:not(:placeholder-shown) + label {
-    @apply -translate-y-6 scale-75 text-primary font-medium;
-  }
-
-  /* Select enhancements */
-  .sabled-select {
-    @apply relative w-full cursor-pointer;
-  }
-
-  .sabled-select-dropdown {
-    @apply absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg;
-    @apply max-h-60 overflow-auto custom-scrollbar;
-    animation: slideIn 0.2s ease-out;
-  }
-
-  .sabled-select-option {
-    @apply px-4 py-3 cursor-pointer transition-colors duration-150;
-    @apply hover:bg-gray-50 active:bg-gray-100;
-  }
-
-  .sabled-select-option-selected {
-    @apply bg-primary/10 text-primary font-medium;
-  }
-
-  /* Card enhancements */
-  .sabled-card {
-    @apply bg-white rounded-xl border border-gray-100 shadow-sm transition-all duration-300;
-  }
-
-  .sabled-card-elevated {
-    @apply shadow-lg hover:shadow-xl;
-  }
-
-  .sabled-card-hoverable {
-    @apply hover:shadow-lg hover:-translate-y-1 cursor-pointer;
-  }
-
-  /* Modal enhancements */
-  .sabled-modal-overlay {
-    @apply fixed inset-0 z-50 flex items-center justify-center p-4;
-    @apply bg-black/50 backdrop-blur-sm;
-    animation: fadeIn 0.3s ease-out;
-  }
-
-  .sabled-modal-content {
-    @apply relative w-full max-h-[90vh] bg-white rounded-xl shadow-2xl;
-    @apply transform transition-all duration-300 ease-out;
-    animation: scaleIn 0.3s ease-out;
-  }
-
-  /* Badge enhancements */
-  .sabled-badge {
-    @apply inline-flex items-center justify-center font-medium transition-all duration-200;
-    @apply shadow-sm;
-  }
-
-  .sabled-badge-pulse {
-    animation: pulse 2s infinite;
-  }
-
-  /* Progress enhancements */
-  .sabled-progress {
-    @apply w-full bg-gray-100 rounded-full overflow-hidden;
-  }
-
-  .sabled-progress-bar {
-    @apply h-full transition-all duration-500 ease-out;
-    @apply bg-gradient-to-r from-primary to-primary/80;
-  }
-
-  .sabled-progress-indeterminate {
-    @apply relative overflow-hidden;
-  }
-
-  .sabled-progress-indeterminate::before {
-    @apply content-[''] absolute top-0 h-full bg-primary;
-    animation: progressIndeterminate 2s infinite linear;
-  }
-
-  /* Toast enhancements */
-  .sabled-toast {
-    @apply max-w-sm w-full bg-white border rounded-lg shadow-lg pointer-events-auto;
-    @apply transform transition-all duration-300 ease-in-out;
-    animation: slideIn 0.3s ease-out;
-  }
-
-  .sabled-toast-success {
-    @apply border-l-4 border-l-green-500 bg-green-50;
-  }
-
-  .sabled-toast-error {
-    @apply border-l-4 border-l-red-500 bg-red-50;
-  }
-
-  .sabled-toast-warning {
-    @apply border-l-4 border-l-yellow-500 bg-yellow-50;
-  }
-
-  .sabled-toast-info {
-    @apply border-l-4 border-l-blue-500 bg-blue-50;
-  }
-
-  /* Checkbox and Radio enhancements */
-  .sabled-checkbox {
-    @apply w-5 h-5 text-primary border-2 border-gray-300 rounded transition-all duration-200;
-    @apply focus:ring-2 focus:ring-primary/20 focus:border-primary;
-    @apply hover:border-primary/60;
-  }
-
-  .sabled-radio {
-    @apply w-5 h-5 text-primary border-2 border-gray-300 transition-all duration-200;
-    @apply focus:ring-2 focus:ring-primary/20 focus:border-primary;
-    @apply hover:border-primary/60;
-  }
-
-  /* Utility classes */
-  .sabled-shadow-soft {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 4px 20px rgba(0, 0, 0, 0.04);
-  }
-
-  .sabled-shadow-medium {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
-  }
-
-  .sabled-shadow-strong {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 16px 40px rgba(0, 0, 0, 0.08);
-  }
-
-  .sabled-glassmorphism {
-    @apply bg-white/80 backdrop-blur-lg border border-white/20;
-  }
-
-  /* Tooltip animation utility classes */
-  .animate-slide-down {
-    animation: slideDown 0.2s ease-out;
-  }
-
-  .animate-slide-up {
-    animation: slideUp 0.2s ease-out;
-  }
-
-  .animate-slide-left {
-    animation: slideLeft 0.2s ease-out;
-  }
-
-  .animate-slide-right {
-    animation: slideRight 0.2s ease-out;
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.2s ease-out;
-  }
-
-  /* Tooltip base styles */
-  .tooltip-base {
-    position: fixed;
-    z-index: 50;
-    font-weight: 500;
-    border-radius: 0.5rem;
-    border-width: 1px;
-    word-break: break-words;
-    transition: all 0.2s ease-out;
-    pointer-events: none;
-  }
-
-  .tooltip-interactive {
-    pointer-events: auto;
-    cursor: pointer;
-  }
-
-  /* Tooltip arrow styles */
-  .tooltip-arrow {
-    position: absolute;
-    width: 0;
-    height: 0;
-    border: 4px solid;
-    border-color: transparent;
-  }
-
-  /* Enhanced tooltip styles */
-  .tooltip-enhanced {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    will-change: transform, opacity;
-  }
-
-  .tooltip-enhanced.tooltip-dark {
-    background: rgba(17, 24, 39, 0.95);
-    border-color: rgba(55, 65, 81, 0.7);
-  }
-
-  .tooltip-enhanced.tooltip-light {
-    background: rgba(255, 255, 255, 0.95);
-    border-color: rgba(209, 213, 219, 0.7);
-  }
-
-  /* Arrow enhancements */
-  .tooltip-arrow-enhanced {
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  }
-
-  /* Tooltip sizes */
-  .tooltip-xs {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    line-height: 1.2;
-  }
-
-  .tooltip-sm {
-    font-size: 0.75rem;
-    padding: 0.375rem 0.625rem;
-    line-height: 1.2;
-  }
-
-  .tooltip-md {
-    font-size: 0.875rem;
-    padding: 0.5rem 0.75rem;
-    line-height: 1.3;
-  }
-
-  .tooltip-lg {
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
-    line-height: 1.4;
-  }
-
-  .tooltip-xl {
-    font-size: 1.125rem;
-    padding: 1rem 1.25rem;
-    line-height: 1.5;
-  }
-
-  /* Tooltip interactive states */
-  .tooltip-interactive:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
-  }
-
-  /* Tooltip responsive adjustments */
-  @media (max-width: 640px) {
-    .tooltip-enhanced {
-      max-width: calc(100vw - 2rem);
-      font-size: 0.875rem;
-    }
-    
-    .tooltip-xl {
-      font-size: 1rem;
-      padding: 0.75rem 1rem;
-    }
-    
-    .tooltip-lg {
-      font-size: 0.875rem;
-      padding: 0.625rem 0.875rem;
-    }
-  }
-
-  /* Tooltip accessibility */
-  .tooltip-enhanced:focus-visible {
-    outline: 2px solid rgba(59, 130, 246, 0.5);
-    outline-offset: 2px;
-  }
-
-  /* Tooltip performance optimizations */
-  .tooltip-enhanced {
-    contain: layout style paint;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-  }
+.text-background {
+  color: #ffffff;
 }
