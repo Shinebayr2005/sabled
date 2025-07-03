@@ -5,6 +5,8 @@ import React, {
   useCallback,
   useMemo,
   useId,
+  isValidElement,
+  cloneElement,
 } from "react";
 import { createPortal } from "react-dom";
 
@@ -31,7 +33,8 @@ type TooltipVariant =
   | "info";
 type TooltipTrigger = "hover" | "click" | "focus" | "manual";
 type TooltipSize = "xs" | "sm" | "md" | "lg" | "xl";
-type TooltipAnimation = "fade" | "scale" | "slide" | "bounce";
+type TooltipAnimation = "fade" | "scale" | "slide" | "bounce" | "none";
+type TooltipMotion = "spring" | "smooth" | "fast" | "slow";
 
 interface TooltipProps {
   children: React.ReactNode;
@@ -40,6 +43,7 @@ interface TooltipProps {
   variant?: TooltipVariant;
   size?: TooltipSize;
   animation?: TooltipAnimation;
+  motion?: TooltipMotion;
   trigger?: TooltipTrigger | TooltipTrigger[];
   disabled?: boolean;
   delay?: number;
@@ -51,6 +55,7 @@ interface TooltipProps {
   className?: string;
   contentClassName?: string;
   arrowClassName?: string;
+  triggerClassName?: string;
   onShow?: () => void;
   onHide?: () => void;
   visible?: boolean; // For manual control
@@ -65,6 +70,18 @@ interface TooltipProps {
     getBoundingClientRect: () => DOMRect;
   };
   disablePortal?: boolean;
+  // HeroUI-style props
+  color?: TooltipVariant;
+  radius?: "none" | "sm" | "md" | "lg" | "full";
+  shadow?: "none" | "sm" | "md" | "lg" | "xl";
+  closeDelay?: number;
+  openDelay?: number;
+  motionProps?: {
+    initial?: object;
+    animate?: object;
+    exit?: object;
+    transition?: object;
+  };
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
@@ -72,12 +89,16 @@ const Tooltip: React.FC<TooltipProps> = ({
   content,
   placement = "top",
   variant = "dark",
+  color,
   size = "md",
   animation = "scale",
+  motion = "spring",
   trigger = "hover",
   disabled = false,
-  delay = 100,
-  hideDelay = 100,
+  delay = 0,
+  hideDelay = 0,
+  openDelay,
+  closeDelay,
   showArrow = true,
   interactive = false,
   maxWidth = "320px",
@@ -85,6 +106,9 @@ const Tooltip: React.FC<TooltipProps> = ({
   className = "",
   contentClassName = "",
   arrowClassName = "",
+  triggerClassName = "",
+  radius = "md",
+  shadow = "lg",
   onShow,
   onHide,
   visible,
@@ -97,20 +121,21 @@ const Tooltip: React.FC<TooltipProps> = ({
   appendTo = "body",
   virtualElement,
   disablePortal = false,
+  motionProps,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [animationState, setAnimationState] = useState<'entering' | 'entered' | 'exiting' | 'exited'>('exited');
   const [position, setPosition] = useState({ top: 0, left: 0 });
-  const [actualPlacement, setActualPlacement] =
-    useState<TooltipPlacement>(placement);
+  const [actualPlacement, setActualPlacement] = useState<TooltipPlacement>(placement);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  const triggerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const showTimeoutRef = useRef<number | null>(null);
   const hideTimeoutRef = useRef<number | null>(null);
   const durationTimeoutRef = useRef<number | null>(null);
-  const rafRef = useRef<number | null>(null);
+  const animationTimeoutRef = useRef<number | null>(null);
   const mouseTrackingRef = useRef<boolean>(false);
   const tooltipId = useId();
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
@@ -118,22 +143,52 @@ const Tooltip: React.FC<TooltipProps> = ({
   const triggers = Array.isArray(trigger) ? trigger : [trigger];
   const isManuallyControlled = visible !== undefined;
   const shouldShow = isManuallyControlled ? visible : isVisible;
+  const actualDelay = openDelay ?? delay;
+  const actualHideDelay = closeDelay ?? hideDelay;
+  const actualVariant = color ?? variant;
 
-  // Enhanced variant classes with better styling
+  // Enhanced variant classes with modern glassmorphism
   const variantClasses = useMemo(
     () => ({
-      dark: "bg-gray-900/95 text-white border-gray-700 backdrop-blur-sm shadow-xl",
-      light:
-        "bg-white/95 text-gray-900 border-gray-300 backdrop-blur-sm shadow-xl",
-      primary:
-        "bg-blue-600/95 text-white border-blue-500 backdrop-blur-sm shadow-xl",
-      success:
-        "bg-green-600/95 text-white border-green-500 backdrop-blur-sm shadow-xl",
-      warning:
-        "bg-yellow-500/95 text-white border-yellow-400 backdrop-blur-sm shadow-xl",
-      error:
-        "bg-red-600/95 text-white border-red-500 backdrop-blur-sm shadow-xl",
-      info: "bg-blue-500/95 text-white border-blue-400 backdrop-blur-sm shadow-xl",
+      dark: "bg-gray-900/90 text-white border-gray-700/50 backdrop-blur-md shadow-2xl",
+      light: "bg-white/90 text-gray-900 border-gray-200/50 backdrop-blur-md shadow-2xl",
+      primary: "bg-blue-600/90 text-white border-blue-500/50 backdrop-blur-md shadow-2xl shadow-blue-500/20",
+      success: "bg-green-600/90 text-white border-green-500/50 backdrop-blur-md shadow-2xl shadow-green-500/20",
+      warning: "bg-yellow-500/90 text-white border-yellow-400/50 backdrop-blur-md shadow-2xl shadow-yellow-500/20",
+      error: "bg-red-600/90 text-white border-red-500/50 backdrop-blur-md shadow-2xl shadow-red-500/20",
+      info: "bg-blue-500/90 text-white border-blue-400/50 backdrop-blur-md shadow-2xl shadow-blue-500/20",
+    }),
+    []
+  );
+
+  const radiusClasses = useMemo(
+    () => ({
+      none: "rounded-none",
+      sm: "rounded-sm",
+      md: "rounded-lg",
+      lg: "rounded-xl",
+      full: "rounded-full",
+    }),
+    []
+  );
+
+  const shadowClasses = useMemo(
+    () => ({
+      none: "shadow-none",
+      sm: "shadow-sm",
+      md: "shadow-md",
+      lg: "shadow-lg",
+      xl: "shadow-xl",
+    }),
+    []
+  );
+
+  const motionClasses = useMemo(
+    () => ({
+      spring: "transition-all duration-300 cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+      smooth: "transition-all duration-200 ease-out",
+      fast: "transition-all duration-150 ease-in-out",
+      slow: "transition-all duration-500 ease-in-out",
     }),
     []
   );
@@ -453,9 +508,9 @@ const Tooltip: React.FC<TooltipProps> = ({
       clearTimeout(durationTimeoutRef.current);
       durationTimeoutRef.current = null;
     }
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+    if (animationTimeoutRef.current) {
+      clearTimeout(animationTimeoutRef.current);
+      animationTimeoutRef.current = null;
     }
   }, []);
 
@@ -463,25 +518,39 @@ const Tooltip: React.FC<TooltipProps> = ({
     if (disabled || isManuallyControlled) return;
 
     clearAllTimeouts();
-
+    
     showTimeoutRef.current = window.setTimeout(() => {
       setIsVisible(true);
-      setIsAnimating(true);
+      setAnimationState('entering');
       onShow?.();
+
+      // Wait for entrance animation
+      animationTimeoutRef.current = window.setTimeout(() => {
+        setAnimationState('entered');
+      }, animation === 'bounce' ? 300 : 200);
 
       // Set duration timeout if specified
       if (duration > 0) {
         durationTimeoutRef.current = window.setTimeout(() => {
-          hideTooltip();
+          // Inline hide logic to avoid dependency issues
+          setAnimationState('exiting');
+          const exitDelay = animation === 'bounce' ? 150 : animation === 'fade' ? 150 : 200;
+          setTimeout(() => {
+            setIsVisible(false);
+            setAnimationState('exited');
+            onHide?.();
+          }, exitDelay);
         }, duration);
       }
-    }, delay);
+    }, actualDelay);
   }, [
     disabled,
     isManuallyControlled,
-    delay,
+    actualDelay,
     duration,
+    animation,
     onShow,
+    onHide,
     clearAllTimeouts,
   ]);
 
@@ -491,20 +560,20 @@ const Tooltip: React.FC<TooltipProps> = ({
     clearAllTimeouts();
 
     hideTimeoutRef.current = window.setTimeout(() => {
-      setIsAnimating(false);
+      setAnimationState('exiting');
 
       // Wait for exit animation to complete
-      const exitDelay =
-        animation === "fade" ? 150 : animation === "scale" ? 200 : 250;
-      setTimeout(() => {
+      const exitDelay = animation === 'bounce' ? 150 : animation === 'fade' ? 150 : 200;
+      animationTimeoutRef.current = window.setTimeout(() => {
         setIsVisible(false);
+        setAnimationState('exited');
         onHide?.();
       }, exitDelay);
-    }, hideDelay);
+    }, actualHideDelay);
   }, [
     disabled,
     isManuallyControlled,
-    hideDelay,
+    actualHideDelay,
     animation,
     onHide,
     clearAllTimeouts,
@@ -725,58 +794,66 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   }, [showArrow, size, actualPlacement, variant, arrowColors]);
 
-  // Enhanced animation classes
+  // Professional animation system
   const getAnimationClasses = useCallback(() => {
-    const baseTransition = "transition-all duration-200 ease-out";
-    const isEntering = isAnimating;
-
-    switch (animation) {
-      case "fade":
-        return `${baseTransition} ${isEntering ? "opacity-100" : "opacity-0"}`;
-      case "scale":
-        return `${baseTransition} ${
-          isEntering ? "opacity-100 scale-100" : "opacity-0 scale-95"
-        }`;
-      case "slide":
-        const slideDirection = getSlideDirection();
-        return `${baseTransition} ${
-          isEntering
-            ? "opacity-100 translate-x-0 translate-y-0"
-            : `opacity-0 ${slideDirection}`
-        }`;
-      case "bounce":
-        return `${baseTransition} ${
-          isEntering
-            ? "opacity-100 scale-100 animate-bounce"
-            : "opacity-0 scale-95"
-        }`;
-      default:
-        return `${baseTransition} ${
-          isEntering ? "opacity-100 scale-100" : "opacity-0 scale-95"
-        }`;
+    const baseClasses = motionClasses[motion];
+    const isEntering = animationState === 'entering';
+    const isExiting = animationState === 'exiting';
+    
+    // Use CSS animations for better performance
+    if (animation === 'none') {
+      return baseClasses;
     }
-  }, [animation, isAnimating]);
+
+    if (animation === 'fade') {
+      if (isEntering) return `${baseClasses} tooltip-fade-enter`;
+      if (isExiting) return `${baseClasses} tooltip-fade-exit`;
+      return `${baseClasses} opacity-100`;
+    }
+
+    if (animation === 'scale') {
+      if (isEntering) return `${baseClasses} tooltip-scale-enter`;
+      if (isExiting) return `${baseClasses} tooltip-scale-exit`;
+      return `${baseClasses} opacity-100 scale-100`;
+    }
+
+    if (animation === 'slide') {
+      const direction = getSlideDirection();
+      if (isEntering) return `${baseClasses} tooltip-slide-${direction}-enter`;
+      if (isExiting) return `${baseClasses} tooltip-slide-${direction}-exit`;
+      return `${baseClasses} opacity-100 translate-x-0 translate-y-0`;
+    }
+
+    if (animation === 'bounce') {
+      if (isEntering) return `${baseClasses} tooltip-bounce-enter`;
+      if (isExiting) return `${baseClasses} tooltip-bounce-exit`;
+      return `${baseClasses} opacity-100 scale-100`;
+    }
+
+    // Default
+    return `${baseClasses} opacity-100 scale-100`;
+  }, [animation, motion, animationState, motionClasses]);
 
   const getSlideDirection = useCallback(() => {
     switch (actualPlacement) {
       case "top":
       case "top-start":
       case "top-end":
-        return "translate-y-2";
+        return "up";
       case "bottom":
       case "bottom-start":
       case "bottom-end":
-        return "-translate-y-2";
+        return "down";
       case "left":
       case "left-start":
       case "left-end":
-        return "translate-x-2";
+        return "left";
       case "right":
       case "right-start":
       case "right-end":
-        return "-translate-x-2";
+        return "right";
       default:
-        return "translate-y-2";
+        return "up";
     }
   }, [actualPlacement]);
 
@@ -860,9 +937,11 @@ const Tooltip: React.FC<TooltipProps> = ({
     <div
       ref={tooltipRef}
       className={`
-        fixed font-medium rounded-lg border-2
-        ${variantClasses[variant]}
+        fixed font-medium border-2 z-50
+        ${variantClasses[actualVariant]}
         ${sizeClasses[size]}
+        ${radiusClasses[radius]}
+        ${shadowClasses[shadow]}
         ${contentClassName}
         ${interactive ? "cursor-pointer" : "cursor-default"}
         ${getAnimationClasses()}
@@ -876,6 +955,9 @@ const Tooltip: React.FC<TooltipProps> = ({
         transformOrigin: getTransformOrigin(),
         pointerEvents: interactive ? "auto" : "none",
         zIndex: zIndex,
+        ...motionProps?.initial,
+        ...(animationState === 'entering' && motionProps?.animate),
+        ...(animationState === 'exiting' && motionProps?.exit),
       }}
       onMouseEnter={handleTooltipMouseEnter}
       onMouseLeave={handleTooltipMouseLeave}
@@ -884,14 +966,15 @@ const Tooltip: React.FC<TooltipProps> = ({
       aria-hidden={!shouldShow}
       id={tooltipId}
       data-placement={actualPlacement}
-      data-variant={variant}
+      data-variant={actualVariant}
       data-size={size}
       data-animation={animation}
+      data-state={animationState}
     >
       {content}
       {showArrow && getArrowStyles() && (
         <div
-          className={arrowClassName}
+          className={`absolute ${arrowClassName}`}
           style={getArrowStyles() as React.CSSProperties}
         />
       )}
@@ -900,23 +983,71 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   const container = getContainer();
 
+  // Enhanced children handling like HeroUI
+  const renderTrigger = () => {
+    if (virtualElement) return null;
+
+    // If children is a single React element, clone it with our props
+    if (isValidElement(children)) {
+      const childProps = children.props as any;
+      return cloneElement(children as React.ReactElement<any>, {
+        ref: (node: HTMLElement) => {
+          triggerRef.current = node;
+          // Handle existing ref
+          const originalRef = (children as any).ref;
+          if (typeof originalRef === 'function') {
+            originalRef(node);
+          } else if (originalRef?.current !== undefined) {
+            originalRef.current = node;
+          }
+        },
+        className: `${childProps.className || ''} ${triggerClassName}`.trim(),
+        onMouseEnter: (e: React.MouseEvent) => {
+          childProps.onMouseEnter?.(e);
+          handleMouseEnter();
+        },
+        onMouseLeave: (e: React.MouseEvent) => {
+          childProps.onMouseLeave?.(e);
+          handleMouseLeave();
+        },
+        onFocus: (e: React.FocusEvent) => {
+          childProps.onFocus?.(e);
+          handleFocus();
+        },
+        onBlur: (e: React.FocusEvent) => {
+          childProps.onBlur?.(e);
+          handleBlur();
+        },
+        onClick: (e: React.MouseEvent) => {
+          childProps.onClick?.(e);
+          handleClick(e);
+        },
+        tabIndex: triggers.indexOf("focus") !== -1 ? 0 : childProps.tabIndex,
+        'aria-describedby': shouldShow ? tooltipId : undefined,
+      });
+    }
+
+    // Fallback for non-React elements or multiple children
+    return (
+      <span
+        ref={triggerRef as any}
+        className={`inline-block ${triggerClassName}`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onClick={handleClick}
+        tabIndex={triggers.indexOf("focus") !== -1 ? 0 : undefined}
+        aria-describedby={shouldShow ? tooltipId : undefined}
+      >
+        {children}
+      </span>
+    );
+  };
+
   return (
     <>
-      {!virtualElement && (
-        <div
-          ref={triggerRef}
-          className={`inline-block ${className}`}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onClick={handleClick}
-          tabIndex={triggers.indexOf("focus") !== -1 ? 0 : undefined}
-          aria-describedby={shouldShow ? tooltipId : undefined}
-        >
-          {children}
-        </div>
-      )}
+      {renderTrigger()}
 
       {tooltipElement &&
         (container ? createPortal(tooltipElement, container) : tooltipElement)}
