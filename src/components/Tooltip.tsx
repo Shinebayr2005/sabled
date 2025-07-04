@@ -35,6 +35,26 @@ const Tooltip: React.FC<TooltipProps> = ({
   const hideTimeoutRef = useRef<number | null>(null);
   const animationTimeoutRef = useRef<number | null>(null);
 
+  const getAnimationDuration = (phase: "enter" | "exit") => {
+    if (phase === "exit") {
+      // Exit animation durations - now consistent
+      return animation === "fade" ? 200 : 200; // All exit animations are 200ms
+    }
+    
+    // Enter animation durations vary by type
+    switch (animation) {
+      case "fade":
+        return 150;
+      case "scale":
+      case "slide":
+        return 200;
+      case "bounce":
+        return 300;
+      default:
+        return 200;
+    }
+  };
+
   const show = () => {
     if (isDisabled) return;
 
@@ -55,7 +75,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       animationTimeoutRef.current = setTimeout(() => {
         setIsAnimating(false);
         setAnimationPhase("idle");
-      }, 300);
+      }, getAnimationDuration("enter"));
     }, delay);
   };
 
@@ -72,7 +92,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     if (!visible) return;
 
-    // Start exit animation
+    // Start exit animation immediately
     setIsAnimating(true);
     setAnimationPhase("exit");
 
@@ -80,7 +100,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       setVisible(false);
       setIsAnimating(false);
       setAnimationPhase("idle");
-    }, closeDelay + 150); // Add time for exit animation
+    }, getAnimationDuration("exit"));
   };
 
   // Cleanup timeouts on unmount

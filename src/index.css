@@ -187,7 +187,7 @@
 }
 
 .tooltip-fade-exit {
-  animation: tooltip-fade-exit 150ms ease-in;
+  animation: tooltip-fade-exit 200ms ease-in;
 }
 
 .tooltip-scale-enter {
@@ -195,7 +195,7 @@
 }
 
 .tooltip-scale-exit {
-  animation: tooltip-scale-exit 150ms ease-in;
+  animation: tooltip-scale-exit 200ms ease-in;
 }
 
 .tooltip-slide-up-enter {
@@ -203,7 +203,7 @@
 }
 
 .tooltip-slide-up-exit {
-  animation: tooltip-slide-up-exit 150ms ease-in;
+  animation: tooltip-slide-up-exit 200ms ease-in;
 }
 
 .tooltip-slide-down-enter {
@@ -211,7 +211,7 @@
 }
 
 .tooltip-slide-down-exit {
-  animation: tooltip-slide-down-exit 150ms ease-in;
+  animation: tooltip-slide-down-exit 200ms ease-in;
 }
 
 .tooltip-slide-left-enter {
@@ -219,7 +219,7 @@
 }
 
 .tooltip-slide-left-exit {
-  animation: tooltip-slide-left-exit 150ms ease-in;
+  animation: tooltip-slide-left-exit 200ms ease-in;
 }
 
 .tooltip-slide-right-enter {
@@ -227,7 +227,7 @@
 }
 
 .tooltip-slide-right-exit {
-  animation: tooltip-slide-right-exit 150ms ease-in;
+  animation: tooltip-slide-right-exit 200ms ease-in;
 }
 
 .tooltip-bounce-enter {
@@ -235,7 +235,7 @@
 }
 
 .tooltip-bounce-exit {
-  animation: tooltip-bounce-exit 150ms ease-in;
+  animation: tooltip-bounce-exit 200ms ease-in;
 }
 
 /* Tooltip Transform Origins for better animations */
