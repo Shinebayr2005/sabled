@@ -28,6 +28,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
 }) => {
   const [visible, setVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [animationPhase, setAnimationPhase] = useState<'enter' | 'exit' | 'idle'>('idle');
   const showTimeoutRef = useRef<number | null>(null);
   const hideTimeoutRef = useRef<number | null>(null);
   const animationTimeoutRef = useRef<number | null>(null);
@@ -46,10 +47,12 @@ export const Tooltip: React.FC<TooltipProps> = ({
     showTimeoutRef.current = setTimeout(() => {
       setVisible(true);
       setIsAnimating(true);
+      setAnimationPhase('enter');
       
       // Remove animation class after animation completes
       animationTimeoutRef.current = setTimeout(() => {
         setIsAnimating(false);
+        setAnimationPhase('idle');
       }, 300);
     }, delay);
   };
@@ -67,10 +70,15 @@ export const Tooltip: React.FC<TooltipProps> = ({
     
     if (!visible) return;
     
+    // Start exit animation
+    setIsAnimating(true);
+    setAnimationPhase('exit');
+    
     hideTimeoutRef.current = setTimeout(() => {
       setVisible(false);
       setIsAnimating(false);
-    }, closeDelay);
+      setAnimationPhase('idle');
+    }, closeDelay + 150); // Add time for exit animation
   };
 
   // Cleanup timeouts on unmount
@@ -99,21 +107,26 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const getAnimationClasses = () => {
     if (!isAnimating) return "";
     
-    switch (animation) {
-      case "scale":
-        return "tooltip-scale-enter";
-      case "fade":
-        return "tooltip-fade-enter";
-      case "slide":
-        return placement === "top" ? "tooltip-slide-up-enter" :
-               placement === "bottom" ? "tooltip-slide-down-enter" :
-               placement === "left" ? "tooltip-slide-left-enter" :
-               "tooltip-slide-right-enter";
-      case "bounce":
-        return "tooltip-bounce-enter";
-      default:
-        return "tooltip-scale-enter";
-    }
+    const baseAnimation = (() => {
+      switch (animation) {
+        case "scale":
+          return "tooltip-scale";
+        case "fade":
+          return "tooltip-fade";
+        case "slide":
+          return placement === "top" ? "tooltip-slide-up" :
+                 placement === "bottom" ? "tooltip-slide-down" :
+                 placement === "left" ? "tooltip-slide-left" :
+                 "tooltip-slide-right";
+        case "bounce":
+          return "tooltip-bounce";
+        default:
+          return "tooltip-scale";
+      }
+    })();
+    
+    const phase = animationPhase === 'enter' ? 'enter' : 'exit';
+    return `${baseAnimation}-${phase}`;
   };
 
   const getTransformOrigin = () => {

@@ -181,12 +181,12 @@
   }
 }
 
-/* Tooltip Animation Classes */
-.tooltip-enter {
+/* Tooltip Animation Classes - Enhanced with Enter/Exit */
+.tooltip-fade-enter {
   animation: tooltip-fade-enter 150ms ease-out;
 }
 
-.tooltip-exit {
+.tooltip-fade-exit {
   animation: tooltip-fade-exit 150ms ease-in;
 }
 
