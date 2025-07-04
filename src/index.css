@@ -362,18 +362,6 @@
   border-color: #e4e4e7;
 }
 
-.bg-primary {
-  background-color: var(--color-primary, #006fee);
-}
-
-.text-primary {
-  color: var(--color-primary, #006fee);
-}
-
-.border-primary {
-  border-color: var(--color-primary, #006fee);
-}
-
 .text-primary-foreground {
   color: #ffffff;
 }
