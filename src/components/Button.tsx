@@ -146,16 +146,13 @@ const Button: React.FC<ButtonProps> = ({
         ? "rgba(0, 0, 0, 0.3)"
         : "rgba(255, 255, 255, 0.4)";
     }
-    return (
-      {
-        primary: "rgba(59, 130, 246, 0.3)",
-        secondary: "rgba(147, 51, 234, 0.3)",
-        danger: "rgba(239, 68, 68, 0.3)",
-        success: "rgba(34, 197, 94, 0.3)",
-        warning: "rgba(245, 158, 11, 0.3)",
-        default: "rgba(107, 114, 128, 0.3)",
-      }[color] || "rgba(107, 114, 128, 0.3)"
-    );
+    // Use Tailwind's text color utility to get the ripple color for "primary" and others
+    if (color === "primary") return "rgba(var(--tw-color-primary, 59,130,246), 0.3)";
+    if (color === "secondary") return "rgba(147, 51, 234, 0.3)";
+    if (color === "danger") return "rgba(239, 68, 68, 0.3)";
+    if (color === "success") return "rgba(34, 197, 94, 0.3)";
+    if (color === "warning") return "rgba(245, 158, 11, 0.3)";
+    return "rgba(107, 114, 128, 0.3)";
   };
 
   const handleRippleClick = (event: MouseEvent<HTMLButtonElement>) => {
