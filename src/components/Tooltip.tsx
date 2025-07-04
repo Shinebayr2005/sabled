@@ -2,7 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 
 type TooltipPlacement = "top" | "bottom" | "left" | "right";
 type TooltipAnimation = "scale" | "fade" | "slide" | "bounce";
-type TooltipVariant = "default" | "primary" | "secondary" | "success" | "warning" | "danger" | "info";
+type TooltipVariant =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger"
+  | "info";
 type TooltipSize = "sm" | "md" | "lg";
 
 interface TooltipProps {
@@ -17,6 +24,7 @@ interface TooltipProps {
   size?: TooltipSize;
   className?: string;
   isDisabled?: boolean;
+  maxWidth?: string; // Added maxWidth prop for tooltip width control
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
@@ -31,6 +39,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   size = "md",
   className = "",
   isDisabled = false,
+  maxWidth = "210px",
 }) => {
   const [visible, setVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -64,7 +73,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   const getVariantClasses = () => {
     switch (variant) {
       case "primary":
-        return "bg-blue-600 text-white border-blue-700";
+        return "bg-primary text-white border-primary";
       case "secondary":
         return "bg-gray-600 text-white border-gray-700";
       case "success":
@@ -84,12 +93,12 @@ const Tooltip: React.FC<TooltipProps> = ({
   const getSizeClasses = () => {
     switch (size) {
       case "sm":
-        return "text-xs px-2 py-1 max-w-48";
+        return "text-xs px-2 py-1";
       case "lg":
-        return "text-base px-4 py-3 max-w-80";
+        return "text-base px-4 py-3";
       case "md":
       default:
-        return "text-sm px-3 py-2 max-w-xs";
+        return "text-sm px-3 py-2";
     }
   };
 
@@ -116,16 +125,25 @@ const Tooltip: React.FC<TooltipProps> = ({
   const getArrowClasses = () => {
     const baseClasses = "absolute w-0 h-0 border-8";
     const colorClass = getArrowColor();
-    
+
     switch (placement) {
       case "top":
         return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 ${colorClass} border-x-transparent border-b-transparent`;
       case "bottom":
-        return `${baseClasses} top-0 left-1/2 -translate-x-1/2 ${colorClass.replace('border-t-', 'border-b-')} border-x-transparent border-t-transparent`;
+        return `${baseClasses} top-0 left-1/2 -translate-x-1/2 ${colorClass.replace(
+          "border-t-",
+          "border-b-"
+        )} border-x-transparent border-t-transparent`;
       case "left":
-        return `${baseClasses} right-0 top-1/2 -translate-y-1/2 ${colorClass.replace('border-t-', 'border-l-')} border-y-transparent border-r-transparent`;
+        return `${baseClasses} right-0 top-1/2 -translate-y-1/2 ${colorClass.replace(
+          "border-t-",
+          "border-l-"
+        )} border-y-transparent border-r-transparent`;
       case "right":
-        return `${baseClasses} left-0 top-1/2 -translate-y-1/2 ${colorClass.replace('border-t-', 'border-r-')} border-y-transparent border-l-transparent`;
+        return `${baseClasses} left-0 top-1/2 -translate-y-1/2 ${colorClass.replace(
+          "border-t-",
+          "border-r-"
+        )} border-y-transparent border-l-transparent`;
       default:
         return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 ${colorClass} border-x-transparent border-b-transparent`;
     }
@@ -253,17 +271,16 @@ const Tooltip: React.FC<TooltipProps> = ({
         <div
           className={`
             absolute z-50 pointer-events-none
-            max-w-52 min-w-max
+            min-w-max
             ${positionClasses[placement]} 
             ${getAnimationClasses()}
             ${getTransformOrigin()}
             ${className}
           `}
+          style={{ maxWidth: maxWidth }}
         >
           <div className="relative">
-            {showArrow && (
-              <div className={getArrowClasses()} />
-            )}
+            {showArrow && <div className={getArrowClasses()} />}
             <div
               className={`
                 rounded-lg shadow-lg backdrop-blur-sm border break-words
