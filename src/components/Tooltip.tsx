@@ -15,7 +15,7 @@ interface TooltipProps {
   isDisabled?: boolean;
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({
+const Tooltip: React.FC<TooltipProps> = ({
   content,
   children,
   placement = "top",
@@ -207,4 +207,6 @@ export type {
 };
 
 // Set display name for debugging
-Tooltip.displayName = "TooltipNew";
+Tooltip.displayName = "Tooltip";
+
+export default Tooltip;

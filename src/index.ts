@@ -15,8 +15,8 @@ export { default as Avatar } from "./components/Avatar";
 export { default as Spinner } from "./components/Spinner";
 export { default as Confirm } from "./components/Confirm";
 export { default as Message } from "./components/Message";
-// export { default as Tooltip } from "./components/Tooltip";
-export { Tooltip } from "./components/Tooltip";
+export { default as Tooltip } from "./components/Tooltip";
+// export { Tooltip } from "./components/Tooltip";
 
 
 // Badge types
