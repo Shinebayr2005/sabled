@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@config "../tailwind.config.js";
 
 /* Professional Tooltip Animations */
 @keyframes tooltip-scale-enter {
