@@ -44,6 +44,9 @@ export type { ConfirmProps } from "./components/Confirm";
 // Message types  
 export type { MessageProps } from "./components/Message";
 
+// TooltipNew types
+export type { TooltipNewProps, TooltipNewPlacement, TooltipNewAnimation } from "./components/Tooltip-new";
+
 // Utils
 export { default as message } from "./utils/Message";
 export { default as confirm } from "./utils/Confirm";
