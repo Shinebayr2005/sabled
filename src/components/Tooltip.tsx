@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 
 type TooltipPlacement = "top" | "bottom" | "left" | "right";
 type TooltipAnimation = "scale" | "fade" | "slide" | "bounce";
+type TooltipVariant = "default" | "primary" | "secondary" | "success" | "warning" | "danger" | "info";
+type TooltipSize = "sm" | "md" | "lg";
 
 interface TooltipProps {
   content: React.ReactNode;
@@ -11,6 +13,8 @@ interface TooltipProps {
   delay?: number;
   closeDelay?: number;
   animation?: TooltipAnimation;
+  variant?: TooltipVariant;
+  size?: TooltipSize;
   className?: string;
   isDisabled?: boolean;
 }
@@ -23,6 +27,8 @@ const Tooltip: React.FC<TooltipProps> = ({
   delay = 500,
   closeDelay = 100,
   animation = "scale",
+  variant = "default",
+  size = "md",
   className = "",
   isDisabled = false,
 }) => {
@@ -52,6 +58,76 @@ const Tooltip: React.FC<TooltipProps> = ({
         return 300;
       default:
         return 200;
+    }
+  };
+
+  const getVariantClasses = () => {
+    switch (variant) {
+      case "primary":
+        return "bg-blue-600 text-white border-blue-700";
+      case "secondary":
+        return "bg-gray-600 text-white border-gray-700";
+      case "success":
+        return "bg-green-600 text-white border-green-700";
+      case "warning":
+        return "bg-yellow-600 text-white border-yellow-700";
+      case "danger":
+        return "bg-red-600 text-white border-red-700";
+      case "info":
+        return "bg-cyan-600 text-white border-cyan-700";
+      case "default":
+      default:
+        return "bg-gray-800 text-white border-gray-700";
+    }
+  };
+
+  const getSizeClasses = () => {
+    switch (size) {
+      case "sm":
+        return "text-xs px-2 py-1 max-w-48";
+      case "lg":
+        return "text-base px-4 py-3 max-w-80";
+      case "md":
+      default:
+        return "text-sm px-3 py-2 max-w-xs";
+    }
+  };
+
+  const getArrowColor = () => {
+    switch (variant) {
+      case "primary":
+        return "border-t-blue-600";
+      case "secondary":
+        return "border-t-gray-600";
+      case "success":
+        return "border-t-green-600";
+      case "warning":
+        return "border-t-yellow-600";
+      case "danger":
+        return "border-t-red-600";
+      case "info":
+        return "border-t-cyan-600";
+      case "default":
+      default:
+        return "border-t-gray-800";
+    }
+  };
+
+  const getArrowClasses = () => {
+    const baseClasses = "absolute w-0 h-0 border-8";
+    const colorClass = getArrowColor();
+    
+    switch (placement) {
+      case "top":
+        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 ${colorClass} border-x-transparent border-b-transparent`;
+      case "bottom":
+        return `${baseClasses} top-0 left-1/2 -translate-x-1/2 ${colorClass.replace('border-t-', 'border-b-')} border-x-transparent border-t-transparent`;
+      case "left":
+        return `${baseClasses} right-0 top-1/2 -translate-y-1/2 ${colorClass.replace('border-t-', 'border-l-')} border-y-transparent border-r-transparent`;
+      case "right":
+        return `${baseClasses} left-0 top-1/2 -translate-y-1/2 ${colorClass.replace('border-t-', 'border-r-')} border-y-transparent border-l-transparent`;
+      default:
+        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 ${colorClass} border-x-transparent border-b-transparent`;
     }
   };
 
@@ -120,15 +196,6 @@ const Tooltip: React.FC<TooltipProps> = ({
     right: "left-full top-1/2 -translate-y-1/2 ml-2",
   };
 
-  const arrowClasses = {
-    top: "bottom-0 left-1/2 -translate-x-1/2 border-t-gray-800 border-x-transparent border-b-transparent",
-    bottom:
-      "top-0 left-1/2 -translate-x-1/2 border-b-gray-800 border-x-transparent border-t-transparent",
-    left: "right-0 top-1/2 -translate-y-1/2 border-l-gray-800 border-y-transparent border-r-transparent",
-    right:
-      "left-0 top-1/2 -translate-y-1/2 border-r-gray-800 border-y-transparent border-l-transparent",
-  };
-
   const getAnimationClasses = () => {
     if (!isAnimating) return "";
 
@@ -195,20 +262,14 @@ const Tooltip: React.FC<TooltipProps> = ({
         >
           <div className="relative">
             {showArrow && (
-              <div
-                className={`
-                  absolute w-auto h-auto border-8 
-                  ${arrowClasses[placement]}
-                `}
-              />
+              <div className={getArrowClasses()} />
             )}
             <div
-              className="
-              rounded-lg bg-gray-800 text-white text-sm 
-              px-3 py-2 shadow-lg backdrop-blur-sm
-              border border-gray-700
-              max-w-xs break-words
-            "
+              className={`
+                rounded-lg shadow-lg backdrop-blur-sm border break-words
+                ${getVariantClasses()}
+                ${getSizeClasses()}
+              `}
             >
               {content}
             </div>
@@ -221,6 +282,11 @@ const Tooltip: React.FC<TooltipProps> = ({
 
 // Export types
 export type {
+  TooltipProps,
+  TooltipPlacement,
+  TooltipAnimation,
+  TooltipVariant,
+  TooltipSize,
   TooltipProps as TooltipNewProps,
   TooltipPlacement as TooltipNewPlacement,
   TooltipAnimation as TooltipNewAnimation,

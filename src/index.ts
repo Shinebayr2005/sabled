@@ -16,8 +16,6 @@ export { default as Spinner } from "./components/Spinner";
 export { default as Confirm } from "./components/Confirm";
 export { default as Message } from "./components/Message";
 export { default as Tooltip } from "./components/Tooltip";
-// export { Tooltip } from "./components/Tooltip";
-
 
 // Badge types
 export type { BadgeProps, BadgeVariant, BadgeColor, BadgeSize, BadgeRadius, BadgePlacement } from "./components/Badge";
@@ -43,8 +41,17 @@ export type { ConfirmProps } from "./components/Confirm";
 // Message types  
 export type { MessageProps } from "./components/Message";
 
-// TooltipNew types
-export type { TooltipNewProps, TooltipNewPlacement, TooltipNewAnimation } from "./components/Tooltip";
+// Tooltip types
+export type { 
+  TooltipProps, 
+  TooltipPlacement, 
+  TooltipAnimation, 
+  TooltipVariant, 
+  TooltipSize,
+  TooltipNewProps, 
+  TooltipNewPlacement, 
+  TooltipNewAnimation 
+} from "./components/Tooltip";
 
 // Utils
 export { default as message } from "./utils/Message";
