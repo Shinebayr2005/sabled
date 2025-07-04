@@ -1,11 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #f1d831;
+  --color-primary: #006fee;
 }
 
 :root {
-  --color-primary: #f1d831;
+  /* Default primary color system - HeroUI Blue */
+  --color-primary-50: 230, 241, 254;
+  --color-primary-100: 204, 227, 253;
+  --color-primary-200: 153, 199, 251;
+  --color-primary-300: 102, 170, 249;
+  --color-primary-400: 51, 142, 247;
+  --color-primary-500: 0, 111, 238;
+  --color-primary-600: 0, 91, 196;
+  --color-primary-700: 0, 68, 147;
+  --color-primary-800: 0, 46, 98;
+  --color-primary-900: 0, 23, 49;
+  
+  /* Main primary color variable */
+  --color-primary: #006fee;
+  --color-primary-rgb: 0, 111, 238;
+  
+  /* User can override these by setting custom values */
+  /* Example: --color-primary: #f1d831; */
 }
 
 /* Professional Tooltip Animations */
@@ -345,6 +362,18 @@
 
 .border-divider {
   border-color: #e4e4e7;
+}
+
+.bg-primary {
+  background-color: var(--color-primary, #006fee);
+}
+
+.text-primary {
+  color: var(--color-primary, #006fee);
+}
+
+.border-primary {
+  border-color: var(--color-primary, #006fee);
 }
 
 .text-primary-foreground {
