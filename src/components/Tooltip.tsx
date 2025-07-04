@@ -174,7 +174,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   return (
     <div
-      className="relative inline-block"
+      className="relative inline-block max-w-max min-w-max"
       onMouseEnter={show}
       onMouseLeave={hide}
       onFocus={show}
