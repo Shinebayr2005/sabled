@@ -15,7 +15,7 @@ export default {
           700: "rgb(var(--color-primary-700) / <alpha-value>)",
           800: "rgb(var(--color-primary-800) / <alpha-value>)",
           900: "rgb(var(--color-primary-900) / <alpha-value>)",
-          DEFAULT: "var(--color-primary)",
+          DEFAULT: "var(--color-primary, #006fee)",
         },
       },
       animation: {

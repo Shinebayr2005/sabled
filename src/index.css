@@ -1,11 +1,8 @@
 @import "tailwindcss";
 
-@theme {
-  --color-primary: #006fee;
-}
-
+/* Default primary color system - used as fallback */
 :root {
-  /* Default primary color system - HeroUI Blue */
+  /* Default primary color shades (HeroUI Blue) - can be overridden */
   --color-primary-50: 230, 241, 254;
   --color-primary-100: 204, 227, 253;
   --color-primary-200: 153, 199, 251;
@@ -16,14 +13,15 @@
   --color-primary-700: 0, 68, 147;
   --color-primary-800: 0, 46, 98;
   --color-primary-900: 0, 23, 49;
-  
-  /* Main primary color variable */
-  --color-primary: #006fee;
   --color-primary-rgb: 0, 111, 238;
-  
-  /* User can override these by setting custom values */
-  /* Example: --color-primary: #f1d831; */
 }
+
+/* DO NOT define --color-primary here - let user's definition take precedence */
+/* User can define it in their CSS like:
+   :root { --color-primary: #3cd763; }
+   or
+   @theme { --color-primary: #3cd763; }
+*/
 
 /* Professional Tooltip Animations */
 @keyframes tooltip-scale-enter {
