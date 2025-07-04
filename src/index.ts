@@ -17,6 +17,8 @@ export { default as Tooltip } from "./components/Tooltip";
 export { default as Confirm } from "./components/Confirm";
 export { default as Message } from "./components/Message";
 export { default as StyleProvider } from "./components/StyleProvider";
+export { Tooltip as TooltipNew } from "./components/Tooltip-new";
+
 
 // Badge types
 export type { BadgeProps, BadgeVariant, BadgeColor, BadgeSize, BadgeRadius, BadgePlacement } from "./components/Badge";
