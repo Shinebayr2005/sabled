@@ -13,11 +13,10 @@ export { default as Badge } from "./components/Badge";
 export { default as Progress } from "./components/Progress";
 export { default as Avatar } from "./components/Avatar";
 export { default as Spinner } from "./components/Spinner";
-export { default as Tooltip } from "./components/Tooltip";
 export { default as Confirm } from "./components/Confirm";
 export { default as Message } from "./components/Message";
-export { default as StyleProvider } from "./components/StyleProvider";
-export { Tooltip as TooltipNew } from "./components/Tooltip-new";
+// export { default as Tooltip } from "./components/Tooltip";
+export { Tooltip } from "./components/Tooltip";
 
 
 // Badge types
@@ -45,7 +44,7 @@ export type { ConfirmProps } from "./components/Confirm";
 export type { MessageProps } from "./components/Message";
 
 // TooltipNew types
-export type { TooltipNewProps, TooltipNewPlacement, TooltipNewAnimation } from "./components/Tooltip-new";
+export type { TooltipNewProps, TooltipNewPlacement, TooltipNewAnimation } from "./components/Tooltip";
 
 // Utils
 export { default as message } from "./utils/Message";
