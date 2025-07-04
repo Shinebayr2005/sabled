@@ -4,9 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: "rgb(var(--primary-color) / <alpha-value>)",
-        },
+        primary: "rgb(var(--color-primary) / <alpha-value>)",
       },
       animation: {
         // Only keep the animations actually used in components
