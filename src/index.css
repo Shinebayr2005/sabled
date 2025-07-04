@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #f1d831;
+}
+
+:root {
+  --color-primary: #f1d831;
+}
+
 /* Professional Tooltip Animations */
 @keyframes tooltip-scale-enter {
   from {
