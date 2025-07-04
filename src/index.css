@@ -1,10 +1,6 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
-@theme {
-  --color-primary: #ea9b24;
-}
-
 /* Professional Tooltip Animations */
 @keyframes tooltip-scale-enter {
   from {
