@@ -40,7 +40,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       // Exit animation durations - now consistent
       return animation === "fade" ? 200 : 200; // All exit animations are 200ms
     }
-    
+
     // Enter animation durations vary by type
     switch (animation) {
       case "fade":
@@ -173,14 +173,14 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   return (
-    <div
-      className="relative inline-block max-w-max min-w-max"
+    <span
+      className="relative inline-block max-w-max"
       onMouseEnter={show}
       onMouseLeave={hide}
       onFocus={show}
       onBlur={hide}
     >
-      <span className="inline-block">{children}</span>
+      <span className="inline-block ">{children}</span>
 
       {visible && (
         <div
@@ -215,7 +215,7 @@ const Tooltip: React.FC<TooltipProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </span>
   );
 };
 
