@@ -105,7 +105,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   const getArrowColor = () => {
     switch (variant) {
       case "primary":
-        return "border-t-blue-600";
+        return "border-t-primary";
       case "secondary":
         return "border-t-gray-600";
       case "success":
