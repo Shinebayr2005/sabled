@@ -202,63 +202,61 @@ const Tooltip: React.FC<TooltipProps> = ({
     return arrowColorMap[color][variant];
   };
 
-  const getArrowBackgroundColor = () => {
-    // For bordered variant, we need the background color
-    const arrowBgColorMap = {
+  const getArrowBg = () => {
+    const bgMap = {
       default: {
-        solid: "border-t-gray-800", // matches bg-gray-800
-        bordered: "border-t-transparent", // matches bg-transparent
-        light: "border-t-gray-100", // matches bg-gray-100
-        flat: "border-t-gray-200", // matches bg-gray-200
-        shadow: "border-t-white", // matches bg-white
+        solid: "bg-gray-800",
+        bordered: "bg-white",
+        light: "bg-gray-100",
+        flat: "bg-gray-200",
+        shadow: "bg-white",
       },
       primary: {
-        solid: "border-t-[rgb(var(--color-primary-rgb,59,130,246))]", // matches bg-primary
-        bordered: "border-t-transparent", // matches bg-transparent
-        light: "border-t-[rgb(var(--color-primary-50,239,246,255))]", // matches bg-primary/10
-        flat: "border-t-[rgb(var(--color-primary-100,219,234,254))]", // matches bg-primary/20
-        shadow: "border-t-white", // matches bg-white
+        solid: "bg-primary",
+        bordered: "bg-white",
+        light: "bg-primary/10",
+        flat: "bg-primary/20",
+        shadow: "bg-white",
       },
       secondary: {
-        solid: "border-t-gray-600", // matches bg-gray-600
-        bordered: "border-t-transparent", // matches bg-transparent
-        light: "border-t-gray-100", // matches bg-gray-100
-        flat: "border-t-gray-200", // matches bg-gray-200
-        shadow: "border-t-white", // matches bg-white
+        solid: "bg-gray-600",
+        bordered: "bg-white",
+        light: "bg-gray-100",
+        flat: "bg-gray-200",
+        shadow: "bg-white",
       },
       success: {
-        solid: "border-t-green-600", // matches bg-green-600
-        bordered: "border-t-transparent", // matches bg-transparent
-        light: "border-t-green-100", // matches bg-green-100
-        flat: "border-t-green-200", // matches bg-green-200
-        shadow: "border-t-white", // matches bg-white
+        solid: "bg-green-600",
+        bordered: "bg-white",
+        light: "bg-green-100",
+        flat: "bg-green-200",
+        shadow: "bg-white",
       },
       warning: {
-        solid: "border-t-yellow-600", // matches bg-yellow-600
-        bordered: "border-t-transparent", // matches bg-transparent
-        light: "border-t-yellow-100", // matches bg-yellow-100
-        flat: "border-t-yellow-200", // matches bg-yellow-200
-        shadow: "border-t-white", // matches bg-white
+        solid: "bg-yellow-600",
+        bordered: "bg-white",
+        light: "bg-yellow-100",
+        flat: "bg-yellow-200",
+        shadow: "bg-white",
       },
       danger: {
-        solid: "border-t-red-600", // matches bg-red-600
-        bordered: "border-t-transparent", // matches bg-transparent
-        light: "border-t-red-100", // matches bg-red-100
-        flat: "border-t-red-200", // matches bg-red-200
-        shadow: "border-t-white", // matches bg-white
+        solid: "bg-red-600",
+        bordered: "bg-white",
+        light: "bg-red-100",
+        flat: "bg-red-200",
+        shadow: "bg-white",
       },
       info: {
-        solid: "border-t-cyan-600", // matches bg-cyan-600
-        bordered: "border-t-transparent", // matches bg-transparent
-        light: "border-t-cyan-100", // matches bg-cyan-100
-        flat: "border-t-cyan-200", // matches bg-cyan-200
-        shadow: "border-t-white", // matches bg-white
+        solid: "bg-cyan-600",
+        bordered: "bg-white",
+        light: "bg-cyan-100",
+        flat: "bg-cyan-200",
+        shadow: "bg-white",
       },
     };
 
-    return arrowBgColorMap[color][variant];
+    return bgMap[color]?.[variant] || "bg-gray-800";
   };
-
   const getArrowClasses = () => {
     const baseClasses = "absolute w-0 h-0 border-8 z-20";
     const colorClass = getArrowColor();
@@ -325,76 +323,22 @@ const Tooltip: React.FC<TooltipProps> = ({
   const renderArrow = () => {
     if (!showArrow) return null;
 
-    // For bordered variant, we need to create a layered arrow effect
-    if (variant === "bordered") {
-      const getBorderArrowClasses = () => {
-        const borderSize = "border-[9px]"; // Slightly larger for border effect
-        const borderColorClass = getArrowColor(); // Border color
-        const baseBorderClasses = `absolute w-0 h-0 ${borderSize} z-10`;
+    const sizeMap = {
+      sm: "w-2 h-2",
+      md: "w-2.5 h-2.5",
+      lg: "w-3 h-3",
+    };
 
-        switch (placement) {
-          case "top":
-            return `${baseBorderClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${borderColorClass} border-x-transparent border-b-transparent`;
-          case "bottom":
-            return `${baseBorderClasses} top-0 left-1/2 -translate-x-1/2 -translate-y-full ${borderColorClass.replace(
-              "border-t-",
-              "border-b-"
-            )} border-x-transparent border-t-transparent`;
-          case "left":
-            return `${baseBorderClasses} right-0 top-1/2 -translate-y-1/2 translate-x-full ${borderColorClass.replace(
-              "border-t-",
-              "border-l-"
-            )} border-y-transparent border-r-transparent`;
-          case "right":
-            return `${baseBorderClasses} left-0 top-1/2 -translate-y-1/2 -translate-x-full ${borderColorClass.replace(
-              "border-t-",
-              "border-r-"
-            )} border-y-transparent border-l-transparent`;
-          default:
-            return `${baseBorderClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${borderColorClass} border-x-transparent border-b-transparent`;
-        }
-      };
+    const base = `absolute rotate-45 ${sizeMap[size]} ${getArrowBg()} z-20`;
 
-      const getBackgroundArrowClasses = () => {
-        const bgSize = "border-[7px]"; // Smaller for background
-        const bgColorClass = getArrowBackgroundColor(); // Background color
-        const baseBgClasses = `absolute w-0 h-0 ${bgSize} z-20`;
+    const placementMap = {
+      top: "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2",
+      bottom: "top-0 left-1/2 -translate-x-1/2 -translate-y-1/2",
+      left: "right-0 top-1/2 -translate-y-1/2 translate-x-1/2",
+      right: "left-0 top-1/2 -translate-y-1/2 -translate-x-1/2",
+    };
 
-        switch (placement) {
-          case "top":
-            return `${baseBgClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${bgColorClass} border-x-transparent border-b-transparent backdrop-blur-sm`;
-          case "bottom":
-            return `${baseBgClasses} top-0 left-1/2 -translate-x-1/2 -translate-y-full ${bgColorClass.replace(
-              "border-t-",
-              "border-b-"
-            )} border-x-transparent border-t-transparent backdrop-blur-sm`;
-          case "left":
-            return `${baseBgClasses} right-0 top-1/2 -translate-y-1/2 translate-x-full ${bgColorClass.replace(
-              "border-t-",
-              "border-l-"
-            )} border-y-transparent border-r-transparent backdrop-blur-sm`;
-          case "right":
-            return `${baseBgClasses} left-0 top-1/2 -translate-y-1/2 -translate-x-full ${bgColorClass.replace(
-              "border-t-",
-              "border-r-"
-            )} border-y-transparent border-l-transparent backdrop-blur-sm`;
-          default:
-            return `${baseBgClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${bgColorClass} border-x-transparent border-b-transparent backdrop-blur-sm`;
-        }
-      };
-
-      return (
-        <>
-          {/* Border arrow (larger, behind) */}
-          <div className={getBorderArrowClasses()} />
-          {/* Background arrow (smaller, in front) */}
-          <div className={getBackgroundArrowClasses()} />
-        </>
-      );
-    }
-
-    // For non-bordered variants, use simple arrow
-    return <div className={getArrowClasses()} />;
+    return <div className={`${base} ${placementMap[placement]}`} />;
   };
 
   const show = () => {
