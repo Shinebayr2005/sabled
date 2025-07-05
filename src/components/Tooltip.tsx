@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 type TooltipPlacement = "top" | "bottom" | "left" | "right";
 type TooltipAnimation = "scale" | "fade" | "slide" | "bounce";
-type TooltipVariant =
+type TooltipColor =
   | "default"
   | "primary"
   | "secondary"
@@ -10,6 +10,7 @@ type TooltipVariant =
   | "warning"
   | "danger"
   | "info";
+type TooltipVariant = "solid" | "bordered" | "light" | "flat" | "shadow";
 type TooltipSize = "sm" | "md" | "lg";
 
 interface TooltipProps {
@@ -20,11 +21,12 @@ interface TooltipProps {
   delay?: number;
   closeDelay?: number;
   animation?: TooltipAnimation;
+  color?: TooltipColor;
   variant?: TooltipVariant;
   size?: TooltipSize;
   className?: string;
   isDisabled?: boolean;
-  maxWidth?: string; // Added maxWidth prop for tooltip width control
+  maxWidth?: string;
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
@@ -35,7 +37,8 @@ const Tooltip: React.FC<TooltipProps> = ({
   delay = 500,
   closeDelay = 100,
   animation = "scale",
-  variant = "default",
+  color = "default",
+  variant = "solid",
   size = "md",
   className = "",
   isDisabled = false,
@@ -52,8 +55,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   const getAnimationDuration = (phase: "enter" | "exit") => {
     if (phase === "exit") {
-      // Exit animation durations - now consistent
-      return animation === "fade" ? 200 : 200; // All exit animations are 200ms
+      return 200; // All exit animations are 200ms
     }
 
     // Enter animation durations vary by type
@@ -70,24 +72,60 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   };
 
-  const getVariantClasses = () => {
-    switch (variant) {
-      case "primary":
-        return "bg-primary text-white border-primary";
-      case "secondary":
-        return "bg-gray-600 text-white border-gray-700";
-      case "success":
-        return "bg-green-600 text-white border-green-700";
-      case "warning":
-        return "bg-yellow-600 text-white border-yellow-700";
-      case "danger":
-        return "bg-red-600 text-white border-red-700";
-      case "info":
-        return "bg-cyan-600 text-white border-cyan-700";
-      case "default":
-      default:
-        return "bg-gray-800 text-white border-gray-700";
-    }
+  const getColorClasses = () => {
+    const colorMap = {
+      default: {
+        solid: "bg-gray-800 text-white border-gray-700",
+        bordered: "bg-transparent text-gray-800 border-gray-300 border-2",
+        light: "bg-gray-100 text-gray-800 border-gray-200",
+        flat: "bg-gray-200 text-gray-800 border-transparent",
+        shadow: "bg-white text-gray-800 border-gray-200 shadow-lg",
+      },
+      primary: {
+        solid: "bg-primary text-white border-primary",
+        bordered: "bg-transparent text-primary border-primary border-2",
+        light: "bg-primary/10 text-primary border-primary/20",
+        flat: "bg-primary/20 text-primary border-transparent",
+        shadow: "bg-white text-primary border-primary/20 shadow-lg shadow-primary/25",
+      },
+      secondary: {
+        solid: "bg-gray-600 text-white border-gray-700",
+        bordered: "bg-transparent text-gray-600 border-gray-600 border-2",
+        light: "bg-gray-100 text-gray-600 border-gray-200",
+        flat: "bg-gray-200 text-gray-600 border-transparent",
+        shadow: "bg-white text-gray-600 border-gray-200 shadow-lg",
+      },
+      success: {
+        solid: "bg-green-600 text-white border-green-700",
+        bordered: "bg-transparent text-green-600 border-green-600 border-2",
+        light: "bg-green-100 text-green-600 border-green-200",
+        flat: "bg-green-200 text-green-600 border-transparent",
+        shadow: "bg-white text-green-600 border-green-200 shadow-lg shadow-green-500/25",
+      },
+      warning: {
+        solid: "bg-yellow-600 text-white border-yellow-700",
+        bordered: "bg-transparent text-yellow-600 border-yellow-600 border-2",
+        light: "bg-yellow-100 text-yellow-600 border-yellow-200",
+        flat: "bg-yellow-200 text-yellow-600 border-transparent",
+        shadow: "bg-white text-yellow-600 border-yellow-200 shadow-lg shadow-yellow-500/25",
+      },
+      danger: {
+        solid: "bg-red-600 text-white border-red-700",
+        bordered: "bg-transparent text-red-600 border-red-600 border-2",
+        light: "bg-red-100 text-red-600 border-red-200",
+        flat: "bg-red-200 text-red-600 border-transparent",
+        shadow: "bg-white text-red-600 border-red-200 shadow-lg shadow-red-500/25",
+      },
+      info: {
+        solid: "bg-cyan-600 text-white border-cyan-700",
+        bordered: "bg-transparent text-cyan-600 border-cyan-600 border-2",
+        light: "bg-cyan-100 text-cyan-600 border-cyan-200",
+        flat: "bg-cyan-200 text-cyan-600 border-transparent",
+        shadow: "bg-white text-cyan-600 border-cyan-200 shadow-lg shadow-cyan-500/25",
+      },
+    };
+
+    return colorMap[color][variant];
   };
 
   const getSizeClasses = () => {
@@ -103,23 +141,59 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getArrowColor = () => {
-    switch (variant) {
-      case "primary":
-        return "border-t-primary";
-      case "secondary":
-        return "border-t-gray-600";
-      case "success":
-        return "border-t-green-600";
-      case "warning":
-        return "border-t-yellow-600";
-      case "danger":
-        return "border-t-red-600";
-      case "info":
-        return "border-t-cyan-600";
-      case "default":
-      default:
-        return "border-t-gray-800";
-    }
+    const arrowColorMap = {
+      default: {
+        solid: "border-t-gray-800",
+        bordered: "border-t-gray-300",
+        light: "border-t-gray-100",
+        flat: "border-t-gray-200",
+        shadow: "border-t-white",
+      },
+      primary: {
+        solid: "border-t-primary",
+        bordered: "border-t-primary",
+        light: "border-t-primary/10",
+        flat: "border-t-primary/20",
+        shadow: "border-t-white",
+      },
+      secondary: {
+        solid: "border-t-gray-600",
+        bordered: "border-t-gray-600",
+        light: "border-t-gray-100",
+        flat: "border-t-gray-200",
+        shadow: "border-t-white",
+      },
+      success: {
+        solid: "border-t-green-600",
+        bordered: "border-t-green-600",
+        light: "border-t-green-100",
+        flat: "border-t-green-200",
+        shadow: "border-t-white",
+      },
+      warning: {
+        solid: "border-t-yellow-600",
+        bordered: "border-t-yellow-600",
+        light: "border-t-yellow-100",
+        flat: "border-t-yellow-200",
+        shadow: "border-t-white",
+      },
+      danger: {
+        solid: "border-t-red-600",
+        bordered: "border-t-red-600",
+        light: "border-t-red-100",
+        flat: "border-t-red-200",
+        shadow: "border-t-white",
+      },
+      info: {
+        solid: "border-t-cyan-600",
+        bordered: "border-t-cyan-600",
+        light: "border-t-cyan-100",
+        flat: "border-t-cyan-200",
+        shadow: "border-t-white",
+      },
+    };
+
+    return arrowColorMap[color][variant];
   };
 
   const getArrowClasses = () => {
@@ -283,8 +357,8 @@ const Tooltip: React.FC<TooltipProps> = ({
             {showArrow && <div className={getArrowClasses()} />}
             <div
               className={`
-                rounded-lg shadow-lg backdrop-blur-sm border break-words
-                ${getVariantClasses()}
+                rounded-lg backdrop-blur-sm border break-words
+                ${getColorClasses()}
                 ${getSizeClasses()}
               `}
             >
@@ -302,11 +376,9 @@ export type {
   TooltipProps,
   TooltipPlacement,
   TooltipAnimation,
+  TooltipColor,
   TooltipVariant,
   TooltipSize,
-  TooltipProps as TooltipNewProps,
-  TooltipPlacement as TooltipNewPlacement,
-  TooltipAnimation as TooltipNewAnimation,
 };
 
 // Set display name for debugging

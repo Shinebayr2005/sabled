@@ -45,12 +45,10 @@ export type { MessageProps } from "./components/Message";
 export type { 
   TooltipProps, 
   TooltipPlacement, 
-  TooltipAnimation, 
-  TooltipVariant, 
-  TooltipSize,
-  TooltipNewProps, 
-  TooltipNewPlacement, 
-  TooltipNewAnimation 
+  TooltipAnimation,
+  TooltipColor,
+  TooltipVariant,
+  TooltipSize
 } from "./components/Tooltip";
 
 // Utils
