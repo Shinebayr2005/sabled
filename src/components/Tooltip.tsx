@@ -146,55 +146,56 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getArrowColor = () => {
+    // Match the exact background colors from getColorClasses()
     const arrowColorMap = {
       default: {
-        solid: "border-t-gray-800",
-        bordered: "border-t-gray-300", // matches border color
-        light: "border-t-gray-100",
-        flat: "border-t-gray-200",
-        shadow: "border-t-white",
+        solid: "border-t-gray-800", // matches bg-gray-800
+        bordered: "border-t-transparent", // matches bg-transparent with border
+        light: "border-t-gray-100", // matches bg-gray-100
+        flat: "border-t-gray-200", // matches bg-gray-200
+        shadow: "border-t-white", // matches bg-white
       },
       primary: {
-        solid: "border-t-primary",
-        bordered: "border-t-primary", // matches border color
-        light: "border-t-primary/10",
-        flat: "border-t-primary/20",
-        shadow: "border-t-white",
+        solid: "border-t-primary", // matches bg-primary
+        bordered: "border-t-transparent", // matches bg-transparent with border
+        light: "border-t-primary/10", // matches bg-primary/10
+        flat: "border-t-primary/20", // matches bg-primary/20
+        shadow: "border-t-white", // matches bg-white
       },
       secondary: {
-        solid: "border-t-gray-600",
-        bordered: "border-t-gray-600", // matches border color
-        light: "border-t-gray-100",
-        flat: "border-t-gray-200",
-        shadow: "border-t-white",
+        solid: "border-t-gray-600", // matches bg-gray-600
+        bordered: "border-t-transparent", // matches bg-transparent with border
+        light: "border-t-gray-100", // matches bg-gray-100
+        flat: "border-t-gray-200", // matches bg-gray-200
+        shadow: "border-t-white", // matches bg-white
       },
       success: {
-        solid: "border-t-green-600",
-        bordered: "border-t-green-600", // matches border color
-        light: "border-t-green-100",
-        flat: "border-t-green-200",
-        shadow: "border-t-white",
+        solid: "border-t-green-600", // matches bg-green-600
+        bordered: "border-t-transparent", // matches bg-transparent with border
+        light: "border-t-green-100", // matches bg-green-100
+        flat: "border-t-green-200", // matches bg-green-200
+        shadow: "border-t-white", // matches bg-white
       },
       warning: {
-        solid: "border-t-yellow-600",
-        bordered: "border-t-yellow-600", // matches border color
-        light: "border-t-yellow-100",
-        flat: "border-t-yellow-200",
-        shadow: "border-t-white",
+        solid: "border-t-yellow-600", // matches bg-yellow-600
+        bordered: "border-t-transparent", // matches bg-transparent with border
+        light: "border-t-yellow-100", // matches bg-yellow-100
+        flat: "border-t-yellow-200", // matches bg-yellow-200
+        shadow: "border-t-white", // matches bg-white
       },
       danger: {
-        solid: "border-t-red-600",
-        bordered: "border-t-red-600", // matches border color
-        light: "border-t-red-100",
-        flat: "border-t-red-200",
-        shadow: "border-t-white",
+        solid: "border-t-red-600", // matches bg-red-600
+        bordered: "border-t-transparent", // matches bg-transparent with border
+        light: "border-t-red-100", // matches bg-red-100
+        flat: "border-t-red-200", // matches bg-red-200
+        shadow: "border-t-white", // matches bg-white
       },
       info: {
-        solid: "border-t-cyan-600",
-        bordered: "border-t-cyan-600", // matches border color
-        light: "border-t-cyan-100",
-        flat: "border-t-cyan-200",
-        shadow: "border-t-white",
+        solid: "border-t-cyan-600", // matches bg-cyan-600
+        bordered: "border-t-transparent", // matches bg-transparent with border
+        light: "border-t-cyan-100", // matches bg-cyan-100
+        flat: "border-t-cyan-200", // matches bg-cyan-200
+        shadow: "border-t-white", // matches bg-white
       },
     };
 
@@ -202,29 +203,35 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getArrowClasses = () => {
-    const baseClasses = "absolute w-0 h-0 border-8 z-20";
+    const baseClasses = "absolute w-0 h-0 border-8 z-20 backdrop-blur-sm";
     const colorClass = getArrowColor();
+    
+    // Add shadow and border styling to match tooltip
+    const shadowClass = variant === "shadow" ? "drop-shadow-lg" : "";
+    const borderClass = variant === "bordered" ? "drop-shadow-sm" : "";
+    
+    const arrowStyleClasses = `${shadowClass} ${borderClass}`;
 
     switch (placement) {
       case "top":
-        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${colorClass} border-x-transparent border-b-transparent`;
+        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${colorClass} border-x-transparent border-b-transparent ${arrowStyleClasses}`;
       case "bottom":
         return `${baseClasses} top-0 left-1/2 -translate-x-1/2 -translate-y-full ${colorClass.replace(
           "border-t-",
           "border-b-"
-        )} border-x-transparent border-t-transparent`;
+        )} border-x-transparent border-t-transparent ${arrowStyleClasses}`;
       case "left":
         return `${baseClasses} right-0 top-1/2 -translate-y-1/2 translate-x-full ${colorClass.replace(
           "border-t-",
           "border-l-"
-        )} border-y-transparent border-r-transparent`;
+        )} border-y-transparent border-r-transparent ${arrowStyleClasses}`;
       case "right":
         return `${baseClasses} left-0 top-1/2 -translate-y-1/2 -translate-x-full ${colorClass.replace(
           "border-t-",
           "border-r-"
-        )} border-y-transparent border-l-transparent`;
+        )} border-y-transparent border-l-transparent ${arrowStyleClasses}`;
       default:
-        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${colorClass} border-x-transparent border-b-transparent`;
+        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${colorClass} border-x-transparent border-b-transparent ${arrowStyleClasses}`;
     }
   };
 
