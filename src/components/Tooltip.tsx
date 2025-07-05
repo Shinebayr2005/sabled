@@ -90,11 +90,11 @@ const Tooltip: React.FC<TooltipProps> = ({
           "bg-white text-primary border-primary/20 shadow-lg shadow-primary/25",
       },
       secondary: {
-        solid: "bg-gray-600 text-white border-gray-700",
-        bordered: "bg-transparent text-gray-600 border-gray-600 border-2",
-        light: "bg-gray-100 text-gray-600 border-gray-200",
-        flat: "bg-gray-200 text-gray-600 border-transparent",
-        shadow: "bg-white text-gray-600 border-gray-200 shadow-lg",
+        solid: "bg-secondary text-white border-secondary",
+        bordered: "bg-transparent text-secondary border-secondary border-2",
+        light: "bg-secondary/10 text-secondary border-secondary/20",
+        flat: "bg-secondary/20 text-secondary border-transparent",
+        shadow: "bg-white text-secondary border-secondary/20 shadow-lg",
       },
       success: {
         solid: "bg-green-600 text-white border-green-700",
@@ -163,10 +163,10 @@ const Tooltip: React.FC<TooltipProps> = ({
         shadow: "border-t-white", // matches bg-white
       },
       secondary: {
-        solid: "border-t-gray-600", // matches bg-gray-600
-        bordered: "border-t-gray-600", // matches the border color
-        light: "border-t-gray-100", // matches bg-gray-100
-        flat: "border-t-gray-200", // matches bg-gray-200
+        solid: "border-t-secondary", // matches bg-secondary
+        bordered: "border-t-secondary", // matches the border color
+        light: "border-t-secondary/10", // matches bg-secondary/10
+        flat: "border-t-secondary/20", // matches bg-secondary/20
         shadow: "border-t-white", // matches bg-white
       },
       success: {
@@ -219,10 +219,10 @@ const Tooltip: React.FC<TooltipProps> = ({
         shadow: "bg-white",
       },
       secondary: {
-        solid: "bg-gray-600",
+        solid: "bg-secondary",
         bordered: "bg-white",
-        light: "bg-gray-100",
-        flat: "bg-gray-200",
+        light: "bg-secondary/10",
+        flat: "bg-secondary/20",
         shadow: "bg-white",
       },
       success: {
@@ -282,6 +282,8 @@ const Tooltip: React.FC<TooltipProps> = ({
         const shadowClass =
           color === "primary"
             ? "drop-shadow-[0_4px_12px_rgba(var(--color-primary-rgb,59,130,246),0.25)]"
+            : color === "secondary"
+            ? "drop-shadow-[0_4px_12px_rgba(var(--color-secondary-rgb,75,85,99),0.25)]"
             : color === "success"
             ? "drop-shadow-[0_4px_12px_rgba(34,197,94,0.25)]"
             : color === "warning"
