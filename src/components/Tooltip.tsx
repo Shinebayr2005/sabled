@@ -149,49 +149,49 @@ const Tooltip: React.FC<TooltipProps> = ({
     const arrowColorMap = {
       default: {
         solid: "border-t-gray-800",
-        bordered: "border-t-gray-300",
+        bordered: "border-t-gray-300", // matches border color
         light: "border-t-gray-100",
         flat: "border-t-gray-200",
         shadow: "border-t-white",
       },
       primary: {
         solid: "border-t-primary",
-        bordered: "border-t-primary",
+        bordered: "border-t-primary", // matches border color
         light: "border-t-primary/10",
         flat: "border-t-primary/20",
         shadow: "border-t-white",
       },
       secondary: {
         solid: "border-t-gray-600",
-        bordered: "border-t-gray-600",
+        bordered: "border-t-gray-600", // matches border color
         light: "border-t-gray-100",
         flat: "border-t-gray-200",
         shadow: "border-t-white",
       },
       success: {
         solid: "border-t-green-600",
-        bordered: "border-t-green-600",
+        bordered: "border-t-green-600", // matches border color
         light: "border-t-green-100",
         flat: "border-t-green-200",
         shadow: "border-t-white",
       },
       warning: {
         solid: "border-t-yellow-600",
-        bordered: "border-t-yellow-600",
+        bordered: "border-t-yellow-600", // matches border color
         light: "border-t-yellow-100",
         flat: "border-t-yellow-200",
         shadow: "border-t-white",
       },
       danger: {
         solid: "border-t-red-600",
-        bordered: "border-t-red-600",
+        bordered: "border-t-red-600", // matches border color
         light: "border-t-red-100",
         flat: "border-t-red-200",
         shadow: "border-t-white",
       },
       info: {
         solid: "border-t-cyan-600",
-        bordered: "border-t-cyan-600",
+        bordered: "border-t-cyan-600", // matches border color
         light: "border-t-cyan-100",
         flat: "border-t-cyan-200",
         shadow: "border-t-white",
