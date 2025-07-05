@@ -86,7 +86,8 @@ const Tooltip: React.FC<TooltipProps> = ({
         bordered: "bg-transparent text-primary border-primary border-2",
         light: "bg-primary/10 text-primary border-primary/20",
         flat: "bg-primary/20 text-primary border-transparent",
-        shadow: "bg-white text-primary border-primary/20 shadow-lg shadow-primary/25",
+        shadow:
+          "bg-white text-primary border-primary/20 shadow-lg shadow-primary/25",
       },
       secondary: {
         solid: "bg-gray-600 text-white border-gray-700",
@@ -100,28 +101,32 @@ const Tooltip: React.FC<TooltipProps> = ({
         bordered: "bg-transparent text-green-600 border-green-600 border-2",
         light: "bg-green-100 text-green-600 border-green-200",
         flat: "bg-green-200 text-green-600 border-transparent",
-        shadow: "bg-white text-green-600 border-green-200 shadow-lg shadow-green-500/25",
+        shadow:
+          "bg-white text-green-600 border-green-200 shadow-lg shadow-green-500/25",
       },
       warning: {
         solid: "bg-yellow-600 text-white border-yellow-700",
         bordered: "bg-transparent text-yellow-600 border-yellow-600 border-2",
         light: "bg-yellow-100 text-yellow-600 border-yellow-200",
         flat: "bg-yellow-200 text-yellow-600 border-transparent",
-        shadow: "bg-white text-yellow-600 border-yellow-200 shadow-lg shadow-yellow-500/25",
+        shadow:
+          "bg-white text-yellow-600 border-yellow-200 shadow-lg shadow-yellow-500/25",
       },
       danger: {
         solid: "bg-red-600 text-white border-red-700",
         bordered: "bg-transparent text-red-600 border-red-600 border-2",
         light: "bg-red-100 text-red-600 border-red-200",
         flat: "bg-red-200 text-red-600 border-transparent",
-        shadow: "bg-white text-red-600 border-red-200 shadow-lg shadow-red-500/25",
+        shadow:
+          "bg-white text-red-600 border-red-200 shadow-lg shadow-red-500/25",
       },
       info: {
         solid: "bg-cyan-600 text-white border-cyan-700",
         bordered: "bg-transparent text-cyan-600 border-cyan-600 border-2",
         light: "bg-cyan-100 text-cyan-600 border-cyan-200",
         flat: "bg-cyan-200 text-cyan-600 border-transparent",
-        shadow: "bg-white text-cyan-600 border-cyan-200 shadow-lg shadow-cyan-500/25",
+        shadow:
+          "bg-white text-cyan-600 border-cyan-200 shadow-lg shadow-cyan-500/25",
       },
     };
 
@@ -202,24 +207,24 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     switch (placement) {
       case "top":
-        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 ${colorClass} border-x-transparent border-b-transparent`;
+        return `${baseClasses} -bottom-2 left-1/2 -translate-x-1/2 ${colorClass} border-x-transparent border-b-transparent`;
       case "bottom":
-        return `${baseClasses} top-0 left-1/2 -translate-x-1/2 ${colorClass.replace(
+        return `${baseClasses} -top-2 left-1/2 -translate-x-1/2 ${colorClass.replace(
           "border-t-",
           "border-b-"
         )} border-x-transparent border-t-transparent`;
       case "left":
-        return `${baseClasses} right-0 top-1/2 -translate-y-1/2 ${colorClass.replace(
+        return `${baseClasses} -right-2 top-1/2 -translate-y-1/2 ${colorClass.replace(
           "border-t-",
           "border-l-"
         )} border-y-transparent border-r-transparent`;
       case "right":
-        return `${baseClasses} left-0 top-1/2 -translate-y-1/2 ${colorClass.replace(
+        return `${baseClasses} -left-2 top-1/2 -translate-y-1/2 ${colorClass.replace(
           "border-t-",
           "border-r-"
         )} border-y-transparent border-l-transparent`;
       default:
-        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 ${colorClass} border-x-transparent border-b-transparent`;
+        return `${baseClasses} -bottom-2 left-1/2 -translate-x-1/2 ${colorClass} border-x-transparent border-b-transparent`;
     }
   };
 
