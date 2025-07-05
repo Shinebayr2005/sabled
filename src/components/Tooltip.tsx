@@ -202,29 +202,29 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getArrowClasses = () => {
-    const baseClasses = "absolute w-0 h-0 border-8";
+    const baseClasses = "absolute w-0 h-0 border-8 z-20";
     const colorClass = getArrowColor();
 
     switch (placement) {
       case "top":
-        return `${baseClasses} -bottom-2 left-1/2 -translate-x-1/2 ${colorClass} border-x-transparent border-b-transparent`;
+        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${colorClass} border-x-transparent border-b-transparent`;
       case "bottom":
-        return `${baseClasses} -top-2 left-1/2 -translate-x-1/2 ${colorClass.replace(
+        return `${baseClasses} top-0 left-1/2 -translate-x-1/2 -translate-y-full ${colorClass.replace(
           "border-t-",
           "border-b-"
         )} border-x-transparent border-t-transparent`;
       case "left":
-        return `${baseClasses} -right-2 top-1/2 -translate-y-1/2 ${colorClass.replace(
+        return `${baseClasses} right-0 top-1/2 -translate-y-1/2 translate-x-full ${colorClass.replace(
           "border-t-",
           "border-l-"
         )} border-y-transparent border-r-transparent`;
       case "right":
-        return `${baseClasses} -left-2 top-1/2 -translate-y-1/2 ${colorClass.replace(
+        return `${baseClasses} left-0 top-1/2 -translate-y-1/2 -translate-x-full ${colorClass.replace(
           "border-t-",
           "border-r-"
         )} border-y-transparent border-l-transparent`;
       default:
-        return `${baseClasses} -bottom-2 left-1/2 -translate-x-1/2 ${colorClass} border-x-transparent border-b-transparent`;
+        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${colorClass} border-x-transparent border-b-transparent`;
     }
   };
 
@@ -358,11 +358,11 @@ const Tooltip: React.FC<TooltipProps> = ({
           `}
           style={{ maxWidth: maxWidth }}
         >
-          <div className="relative">
+          <div className="relative z-10">
             {showArrow && <div className={getArrowClasses()} />}
             <div
               className={`
-                rounded-lg backdrop-blur-sm border break-words
+                rounded-lg backdrop-blur-sm border break-words relative z-10
                 ${getColorClasses()}
                 ${getSizeClasses()}
               `}
