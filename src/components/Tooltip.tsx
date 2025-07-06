@@ -167,45 +167,45 @@ const Tooltip: React.FC<TooltipProps> = ({
     // Use Tailwind v4 CSS custom properties for arrow border colors
     const colorMap = {
       primary: {
-        solid: "border-b-[rgb(var(--color-primary))]",
-        bordered: "border-b-[rgb(var(--color-primary))]",
-        light: "border-b-[rgb(var(--color-primary-100))]",
-        flat: "border-b-[rgb(var(--color-primary-100))]",
+        solid: "border-b-primary",
+        bordered: "border-b-primary",
+        light: "border-b-primary/10",
+        flat: "border-b-primary/10",
         shadow: "border-b-white",
       },
       secondary: {
-        solid: "border-b-[rgb(var(--color-secondary))]",
-        bordered: "border-b-[rgb(var(--color-secondary))]",
-        light: "border-b-[rgb(var(--color-secondary-100))]",
-        flat: "border-b-[rgb(var(--color-secondary-100))]",
+        solid: "border-b-secondary",
+        bordered: "border-b-secondary",
+        light: "border-b-secondary-100",
+        flat: "border-b-secondary-100",
         shadow: "border-b-white",
       },
       success: {
-        solid: "border-b-[rgb(var(--color-success))]",
-        bordered: "border-b-[rgb(var(--color-success))]",
-        light: "border-b-[rgb(var(--color-success-100))]",
-        flat: "border-b-[rgb(var(--color-success-100))]",
+        solid: "border-b-success",
+        bordered: "border-b-success",
+        light: "border-b-success",
+        flat: "border-b-success",
         shadow: "border-b-white",
       },
       warning: {
-        solid: "border-b-[rgb(var(--color-warning))]",
-        bordered: "border-b-[rgb(var(--color-warning))]",
-        light: "border-b-[rgb(var(--color-warning-100))]",
-        flat: "border-b-[rgb(var(--color-warning-100))]",
+        solid: "border-b-warning",
+        bordered: "border-b-warning",
+        light: "border-b-warning-100",
+        flat: "border-b-warning-100",
         shadow: "border-b-white",
       },
       danger: {
-        solid: "border-b-[rgb(var(--color-danger))]",
-        bordered: "border-b-[rgb(var(--color-danger))]",
-        light: "border-b-[rgb(var(--color-danger-100))]",
-        flat: "border-b-[rgb(var(--color-danger-100))]",
+        solid: "border-b-danger",
+        bordered: "border-b-danger",
+        light: "border-b-danger-100",
+        flat: "border-b-danger-100",
         shadow: "border-b-white",
       },
       info: {
-        solid: "border-b-[rgb(var(--color-info))]",
-        bordered: "border-b-[rgb(var(--color-info))]",
-        light: "border-b-[rgb(var(--color-info-100))]",
-        flat: "border-b-[rgb(var(--color-info-100))]",
+        solid: "border-b-cyan",
+        bordered: "border-b-cyan",
+        light: "border-b-cyan-100",
+        flat: "border-b-cyan-100",
         shadow: "border-b-white",
       },
       default: {
@@ -239,55 +239,67 @@ const Tooltip: React.FC<TooltipProps> = ({
     const arrowDirectionMap = {
       sm: {
         top: {
-          classes: "border-l-[5px] border-r-[5px] border-b-[5px] border-l-transparent border-r-transparent",
+          classes:
+            "border-l-[5px] border-r-[5px] border-b-[5px] border-l-transparent border-r-transparent",
           position: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
         },
         bottom: {
-          classes: "border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent",
+          classes:
+            "border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent",
           position: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
         },
         left: {
-          classes: "border-t-[5px] border-b-[5px] border-r-[5px] border-t-transparent border-b-transparent",
+          classes:
+            "border-t-[5px] border-b-[5px] border-r-[5px] border-t-transparent border-b-transparent",
           position: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
         },
         right: {
-          classes: "border-t-[5px] border-b-[5px] border-l-[5px] border-t-transparent border-b-transparent",
+          classes:
+            "border-t-[5px] border-b-[5px] border-l-[5px] border-t-transparent border-b-transparent",
           position: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
         },
       },
       md: {
         top: {
-          classes: "border-l-[6px] border-r-[6px] border-b-[6px] border-l-transparent border-r-transparent",
+          classes:
+            "border-l-[6px] border-r-[6px] border-b-[6px] border-l-transparent border-r-transparent",
           position: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
         },
         bottom: {
-          classes: "border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent",
+          classes:
+            "border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent",
           position: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
         },
         left: {
-          classes: "border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent",
+          classes:
+            "border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent",
           position: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
         },
         right: {
-          classes: "border-t-[6px] border-b-[6px] border-l-[6px] border-t-transparent border-b-transparent",
+          classes:
+            "border-t-[6px] border-b-[6px] border-l-[6px] border-t-transparent border-b-transparent",
           position: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
         },
       },
       lg: {
         top: {
-          classes: "border-l-[7px] border-r-[7px] border-b-[7px] border-l-transparent border-r-transparent",
+          classes:
+            "border-l-[7px] border-r-[7px] border-b-[7px] border-l-transparent border-r-transparent",
           position: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
         },
         bottom: {
-          classes: "border-l-[7px] border-r-[7px] border-t-[7px] border-l-transparent border-r-transparent",
+          classes:
+            "border-l-[7px] border-r-[7px] border-t-[7px] border-l-transparent border-r-transparent",
           position: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
         },
         left: {
-          classes: "border-t-[7px] border-b-[7px] border-r-[7px] border-t-transparent border-b-transparent",
+          classes:
+            "border-t-[7px] border-b-[7px] border-r-[7px] border-t-transparent border-b-transparent",
           position: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
         },
         right: {
-          classes: "border-t-[7px] border-b-[7px] border-l-[7px] border-t-transparent border-b-transparent",
+          classes:
+            "border-t-[7px] border-b-[7px] border-l-[7px] border-t-transparent border-b-transparent",
           position: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
         },
       },
