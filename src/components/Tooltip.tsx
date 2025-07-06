@@ -180,17 +180,17 @@ const Tooltip: React.FC<TooltipProps> = ({
         shadow: "border-b-white",
       },
       primary: {
-        solid: "border-b-blue-600",
-        bordered: "border-b-blue-600",
-        light: "border-b-blue-100",
-        flat: "border-b-blue-100", // Match the flat variant exactly
+        solid: "border-b-primary",
+        bordered: "border-b-primary",
+        light: "border-b-primary/10",
+        flat: "border-b-primary/10", // Match the flat variant exactly
         shadow: "border-b-white",
       },
       secondary: {
-        solid: "border-b-gray-600",
-        bordered: "border-b-gray-600",
-        light: "border-b-gray-100",
-        flat: "border-b-gray-100", // Match the flat variant exactly
+        solid: "border-b-secondary",
+        bordered: "border-b-secondary",
+        light: "border-b-secondary/10",
+        flat: "border-b-secondary/10", // Match the flat variant exactly
         shadow: "border-b-white",
       },
       success: {
