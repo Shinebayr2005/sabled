@@ -327,6 +327,8 @@ const Tooltip: React.FC<TooltipProps> = ({
         absolute z-20 rotate-45 
         ${sizeMap[size]} 
         ${getArrowBg()} 
+        ${getArrowBorderColor()}
+        ${getSizeClasses()}
         ${getVariantBorderStyle()}
         ${getBorderDirectionClass()}
         ${placementMap[actualPlacement]}
