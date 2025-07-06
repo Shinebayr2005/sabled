@@ -215,7 +215,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getArrowClasses = () => {
-    const baseClasses = `absolute w-0 h-0 z-20 ${getArrowBg()}`;
+    const baseClasses = `absolute w-0 h-0 z-20`;
 
     // Size-based triangle dimensions
     const sizeMap = {
@@ -480,6 +480,7 @@ const Tooltip: React.FC<TooltipProps> = ({
                 rounded-lg backdrop-blur-sm border break-words relative z-10
                 ${getColorClasses()}
                 ${getSizeClasses()}
+                ${getArrowBg()}
               `}
             >
               {content}
