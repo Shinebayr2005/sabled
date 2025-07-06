@@ -328,7 +328,6 @@ const Tooltip: React.FC<TooltipProps> = ({
         ${sizeMap[size]} 
         ${getArrowBg()} 
         ${getArrowBorderColor()}
-        ${getSizeClasses()}
         ${getVariantBorderStyle()}
         ${getBorderDirectionClass()}
         ${placementMap[actualPlacement]}
