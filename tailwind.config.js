@@ -1,6 +1,30 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./src/**/*.{ts,tsx}"],
+  safelist: [
+    // Tooltip arrow border colors - ensure these never get purged
+    'border-b-gray-800', 'border-t-gray-800', 'border-l-gray-800', 'border-r-gray-800',
+    'border-b-gray-600', 'border-t-gray-600', 'border-l-gray-600', 'border-r-gray-600',
+    'border-b-gray-300', 'border-t-gray-300', 'border-l-gray-300', 'border-r-gray-300',
+    'border-b-gray-100', 'border-t-gray-100', 'border-l-gray-100', 'border-r-gray-100',
+    'border-b-blue-600', 'border-t-blue-600', 'border-l-blue-600', 'border-r-blue-600',
+    'border-b-blue-100', 'border-t-blue-100', 'border-l-blue-100', 'border-r-blue-100',
+    'border-b-green-600', 'border-t-green-600', 'border-l-green-600', 'border-r-green-600',
+    'border-b-green-100', 'border-t-green-100', 'border-l-green-100', 'border-r-green-100',
+    'border-b-yellow-600', 'border-t-yellow-600', 'border-l-yellow-600', 'border-r-yellow-600',
+    'border-b-yellow-100', 'border-t-yellow-100', 'border-l-yellow-100', 'border-r-yellow-100',
+    'border-b-red-600', 'border-t-red-600', 'border-l-red-600', 'border-r-red-600',
+    'border-b-red-100', 'border-t-red-100', 'border-l-red-100', 'border-r-red-100',
+    'border-b-cyan-600', 'border-t-cyan-600', 'border-l-cyan-600', 'border-r-cyan-600',
+    'border-b-cyan-100', 'border-t-cyan-100', 'border-l-cyan-100', 'border-r-cyan-100',
+    'border-b-white', 'border-t-white', 'border-l-white', 'border-r-white',
+    // Tooltip arrow size classes
+    'border-l-[5px]', 'border-r-[5px]', 'border-t-[5px]', 'border-b-[5px]',
+    'border-l-[6px]', 'border-r-[6px]', 'border-t-[6px]', 'border-b-[6px]',
+    'border-l-[7px]', 'border-r-[7px]', 'border-t-[7px]', 'border-b-[7px]',
+    // Common utility classes
+    'drop-shadow-md',
+  ],
   theme: {
     extend: {
       colors: {

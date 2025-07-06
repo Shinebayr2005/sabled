@@ -163,73 +163,235 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getArrowTriangleColor = () => {
-    const baseColorMap = {
+    // Use complete Tailwind classes that won't be purged
+    const colorMap = {
       default: {
-        solid: "gray-800",
-        bordered: "gray-300", 
-        light: "gray-100",
-        flat: "gray-100",
-        shadow: "white",
+        solid: {
+          top: "border-b-gray-800",
+          bottom: "border-t-gray-800", 
+          left: "border-r-gray-800",
+          right: "border-l-gray-800",
+        },
+        bordered: {
+          top: "border-b-gray-300",
+          bottom: "border-t-gray-300",
+          left: "border-r-gray-300", 
+          right: "border-l-gray-300",
+        },
+        light: {
+          top: "border-b-gray-100",
+          bottom: "border-t-gray-100",
+          left: "border-r-gray-100",
+          right: "border-l-gray-100",
+        },
+        flat: {
+          top: "border-b-gray-100",
+          bottom: "border-t-gray-100",
+          left: "border-r-gray-100",
+          right: "border-l-gray-100",
+        },
+        shadow: {
+          top: "border-b-white",
+          bottom: "border-t-white",
+          left: "border-r-white",
+          right: "border-l-white",
+        },
       },
       primary: {
-        solid: "blue-600",
-        bordered: "blue-600",
-        light: "blue-100", 
-        flat: "blue-100",
-        shadow: "white",
+        solid: {
+          top: "border-b-blue-600",
+          bottom: "border-t-blue-600",
+          left: "border-r-blue-600",
+          right: "border-l-blue-600",
+        },
+        bordered: {
+          top: "border-b-blue-600",
+          bottom: "border-t-blue-600",
+          left: "border-r-blue-600",
+          right: "border-l-blue-600",
+        },
+        light: {
+          top: "border-b-blue-100",
+          bottom: "border-t-blue-100",
+          left: "border-r-blue-100",
+          right: "border-l-blue-100",
+        },
+        flat: {
+          top: "border-b-blue-100",
+          bottom: "border-t-blue-100",
+          left: "border-r-blue-100",
+          right: "border-l-blue-100",
+        },
+        shadow: {
+          top: "border-b-white",
+          bottom: "border-t-white",
+          left: "border-r-white",
+          right: "border-l-white",
+        },
       },
       secondary: {
-        solid: "gray-600",
-        bordered: "gray-600",
-        light: "gray-100",
-        flat: "gray-100", 
-        shadow: "white",
+        solid: {
+          top: "border-b-gray-600",
+          bottom: "border-t-gray-600",
+          left: "border-r-gray-600",
+          right: "border-l-gray-600",
+        },
+        bordered: {
+          top: "border-b-gray-600",
+          bottom: "border-t-gray-600",
+          left: "border-r-gray-600",
+          right: "border-l-gray-600",
+        },
+        light: {
+          top: "border-b-gray-100",
+          bottom: "border-t-gray-100",
+          left: "border-r-gray-100",
+          right: "border-l-gray-100",
+        },
+        flat: {
+          top: "border-b-gray-100",
+          bottom: "border-t-gray-100",
+          left: "border-r-gray-100",
+          right: "border-l-gray-100",
+        },
+        shadow: {
+          top: "border-b-white",
+          bottom: "border-t-white",
+          left: "border-r-white",
+          right: "border-l-white",
+        },
       },
       success: {
-        solid: "green-600",
-        bordered: "green-600",
-        light: "green-100",
-        flat: "green-100",
-        shadow: "white",
+        solid: {
+          top: "border-b-green-600",
+          bottom: "border-t-green-600",
+          left: "border-r-green-600",
+          right: "border-l-green-600",
+        },
+        bordered: {
+          top: "border-b-green-600",
+          bottom: "border-t-green-600",
+          left: "border-r-green-600",
+          right: "border-l-green-600",
+        },
+        light: {
+          top: "border-b-green-100",
+          bottom: "border-t-green-100",
+          left: "border-r-green-100",
+          right: "border-l-green-100",
+        },
+        flat: {
+          top: "border-b-green-100",
+          bottom: "border-t-green-100",
+          left: "border-r-green-100",
+          right: "border-l-green-100",
+        },
+        shadow: {
+          top: "border-b-white",
+          bottom: "border-t-white",
+          left: "border-r-white",
+          right: "border-l-white",
+        },
       },
       warning: {
-        solid: "yellow-600", 
-        bordered: "yellow-600",
-        light: "yellow-100",
-        flat: "yellow-100",
-        shadow: "white",
+        solid: {
+          top: "border-b-yellow-600",
+          bottom: "border-t-yellow-600",
+          left: "border-r-yellow-600",
+          right: "border-l-yellow-600",
+        },
+        bordered: {
+          top: "border-b-yellow-600",
+          bottom: "border-t-yellow-600",
+          left: "border-r-yellow-600",
+          right: "border-l-yellow-600",
+        },
+        light: {
+          top: "border-b-yellow-100",
+          bottom: "border-t-yellow-100",
+          left: "border-r-yellow-100",
+          right: "border-l-yellow-100",
+        },
+        flat: {
+          top: "border-b-yellow-100",
+          bottom: "border-t-yellow-100",
+          left: "border-r-yellow-100",
+          right: "border-l-yellow-100",
+        },
+        shadow: {
+          top: "border-b-white",
+          bottom: "border-t-white",
+          left: "border-r-white",
+          right: "border-l-white",
+        },
       },
       danger: {
-        solid: "red-600",
-        bordered: "red-600", 
-        light: "red-100",
-        flat: "red-100",
-        shadow: "white",
+        solid: {
+          top: "border-b-red-600",
+          bottom: "border-t-red-600",
+          left: "border-r-red-600",
+          right: "border-l-red-600",
+        },
+        bordered: {
+          top: "border-b-red-600",
+          bottom: "border-t-red-600",
+          left: "border-r-red-600",
+          right: "border-l-red-600",
+        },
+        light: {
+          top: "border-b-red-100",
+          bottom: "border-t-red-100",
+          left: "border-r-red-100",
+          right: "border-l-red-100",
+        },
+        flat: {
+          top: "border-b-red-100",
+          bottom: "border-t-red-100",
+          left: "border-r-red-100",
+          right: "border-l-red-100",
+        },
+        shadow: {
+          top: "border-b-white",
+          bottom: "border-t-white",
+          left: "border-r-white",
+          right: "border-l-white",
+        },
       },
       info: {
-        solid: "cyan-600",
-        bordered: "cyan-600",
-        light: "cyan-100", 
-        flat: "cyan-100",
-        shadow: "white",
+        solid: {
+          top: "border-b-cyan-600",
+          bottom: "border-t-cyan-600",
+          left: "border-r-cyan-600",
+          right: "border-l-cyan-600",
+        },
+        bordered: {
+          top: "border-b-cyan-600",
+          bottom: "border-t-cyan-600",
+          left: "border-r-cyan-600",
+          right: "border-l-cyan-600",
+        },
+        light: {
+          top: "border-b-cyan-100",
+          bottom: "border-t-cyan-100",
+          left: "border-r-cyan-100",
+          right: "border-l-cyan-100",
+        },
+        flat: {
+          top: "border-b-cyan-100",
+          bottom: "border-t-cyan-100",
+          left: "border-r-cyan-100",
+          right: "border-l-cyan-100",
+        },
+        shadow: {
+          top: "border-b-white",
+          bottom: "border-t-white",
+          left: "border-r-white",
+          right: "border-l-white",
+        },
       },
     };
 
-    const colorName = baseColorMap[color]?.[variant] || "gray-800";
-
-    // Return the border color class based on placement
-    switch (actualPlacement) {
-      case "top":
-        return `border-b-${colorName}`;
-      case "bottom":
-        return `border-t-${colorName}`;
-      case "left":
-        return `border-r-${colorName}`;
-      case "right":
-        return `border-l-${colorName}`;
-      default:
-        return `border-b-${colorName}`;
-    }
+    return colorMap[color]?.[variant]?.[actualPlacement] || colorMap.default.solid[actualPlacement];
   };
 
   const renderArrow = () => {
@@ -244,7 +406,7 @@ const Tooltip: React.FC<TooltipProps> = ({
     const arrowSize = arrowSizeMap[size];
     const base = "absolute w-0 h-0 z-20";
 
-    // Create triangle using CSS borders
+    // Create triangle using CSS borders with fixed Tailwind classes
     const triangleMap = {
       top: `border-l-[${arrowSize}px] border-r-[${arrowSize}px] border-b-[${arrowSize}px] border-l-transparent border-r-transparent`,
       bottom: `border-l-[${arrowSize}px] border-r-[${arrowSize}px] border-t-[${arrowSize}px] border-l-transparent border-r-transparent`,
@@ -263,9 +425,12 @@ const Tooltip: React.FC<TooltipProps> = ({
     const positionClass = placementMap[actualPlacement];
     const colorClass = getArrowTriangleColor();
 
+    // Add shadow for shadow variant
+    const shadowClass = variant === "shadow" ? "drop-shadow-md" : "";
+
     return (
       <div
-        className={`${base} ${positionClass} ${triangleClass} ${colorClass}`}
+        className={`${base} ${positionClass} ${triangleClass} ${colorClass} ${shadowClass}`}
         aria-hidden="true"
       />
     );
