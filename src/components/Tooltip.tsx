@@ -58,7 +58,8 @@ const Tooltip: React.FC<TooltipProps> = ({
   const [animationPhase, setAnimationPhase] = useState<
     "enter" | "exit" | "idle"
   >("idle");
-  const [actualPlacement, setActualPlacement] = useState<TooltipPlacement>(placement);
+  const [actualPlacement, setActualPlacement] =
+    useState<TooltipPlacement>(placement);
   const showTimeoutRef = useRef<number | null>(null);
   const hideTimeoutRef = useRef<number | null>(null);
   const animationTimeoutRef = useRef<number | null>(null);
@@ -102,7 +103,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-primary text-white border-primary",
         bordered: "bg-transparent text-primary border-primary border-2",
         light: "bg-primary/10 text-primary border-primary/20",
-        flat: "bg-blue-100 text-blue-800 border border-blue-200",
+        flat: "bg-primary/10 text-blue-800 border border-primary/20",
         shadow:
           "bg-white text-primary border-primary/20 shadow-lg shadow-primary/25",
       },
@@ -168,14 +169,14 @@ const Tooltip: React.FC<TooltipProps> = ({
       default: {
         solid: {
           top: "border-b-gray-800",
-          bottom: "border-t-gray-800", 
+          bottom: "border-t-gray-800",
           left: "border-r-gray-800",
           right: "border-l-gray-800",
         },
         bordered: {
           top: "border-b-gray-300",
           bottom: "border-t-gray-300",
-          left: "border-r-gray-300", 
+          left: "border-r-gray-300",
           right: "border-l-gray-300",
         },
         light: {
@@ -199,66 +200,66 @@ const Tooltip: React.FC<TooltipProps> = ({
       },
       primary: {
         solid: {
-          top: "border-b-blue-600",
-          bottom: "border-t-blue-600",
-          left: "border-r-blue-600",
-          right: "border-l-blue-600",
+          top: "border-b-primary",
+          bottom: "border-t-primary",
+          left: "border-r-primary",
+          right: "border-l-primary",
         },
         bordered: {
-          top: "border-b-blue-600",
-          bottom: "border-t-blue-600",
-          left: "border-r-blue-600",
-          right: "border-l-blue-600",
+          top: "border-b-primary",
+          bottom: "border-t-primary",
+          left: "border-r-primary",
+          right: "border-l-primary",
         },
         light: {
-          top: "border-b-blue-100",
-          bottom: "border-t-blue-100",
-          left: "border-r-blue-100",
-          right: "border-l-blue-100",
+          top: "border-b-primary",
+          bottom: "border-t-primary",
+          left: "border-r-primary",
+          right: "border-l-primary",
         },
         flat: {
-          top: "border-b-blue-100",
-          bottom: "border-t-blue-100",
-          left: "border-r-blue-100",
-          right: "border-l-blue-100",
+          top: "border-b-primary",
+          bottom: "border-t-primary",
+          left: "border-r-primary",
+          right: "border-l-primary",
         },
         shadow: {
-          top: "border-b-white",
-          bottom: "border-t-white",
-          left: "border-r-white",
-          right: "border-l-white",
+          top: "border-b-primary",
+          bottom: "border-t-primary",
+          left: "border-r-primary",
+          right: "border-l-primary",
         },
       },
       secondary: {
         solid: {
-          top: "border-b-gray-600",
-          bottom: "border-t-gray-600",
-          left: "border-r-gray-600",
-          right: "border-l-gray-600",
+          top: "border-b-secondary",
+          bottom: "border-t-secondary",
+          left: "border-r-secondary",
+          right: "border-l-secondary",
         },
         bordered: {
-          top: "border-b-gray-600",
-          bottom: "border-t-gray-600",
-          left: "border-r-gray-600",
-          right: "border-l-gray-600",
+          top: "border-b-secondary",
+          bottom: "border-t-secondary",
+          left: "border-r-secondary",
+          right: "border-l-secondary",
         },
         light: {
-          top: "border-b-gray-100",
-          bottom: "border-t-gray-100",
-          left: "border-r-gray-100",
-          right: "border-l-gray-100",
+          top: "border-b-secondary",
+          bottom: "border-t-secondary",
+          left: "border-r-secondary",
+          right: "border-l-secondary",
         },
         flat: {
-          top: "border-b-gray-100",
-          bottom: "border-t-gray-100",
-          left: "border-r-gray-100",
-          right: "border-l-gray-100",
+          top: "border-b-secondary",
+          bottom: "border-t-secondary",
+          left: "border-r-secondary",
+          right: "border-l-secondary",
         },
         shadow: {
-          top: "border-b-white",
-          bottom: "border-t-white",
-          left: "border-r-white",
-          right: "border-l-white",
+          top: "border-b-secondary",
+          bottom: "border-t-secondary",
+          left: "border-r-secondary",
+          right: "border-l-secondary",
         },
       },
       success: {
@@ -391,7 +392,10 @@ const Tooltip: React.FC<TooltipProps> = ({
       },
     };
 
-    return colorMap[color]?.[variant]?.[actualPlacement] || colorMap.default.solid[actualPlacement];
+    return (
+      colorMap[color]?.[variant]?.[actualPlacement] ||
+      colorMap.default.solid[actualPlacement]
+    );
   };
 
   const renderArrow = () => {
@@ -403,27 +407,33 @@ const Tooltip: React.FC<TooltipProps> = ({
     const arrowSizeClasses = {
       sm: {
         top: "border-l-[5px] border-r-[5px] border-b-[5px] border-l-transparent border-r-transparent",
-        bottom: "border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent",
+        bottom:
+          "border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent",
         left: "border-t-[5px] border-b-[5px] border-r-[5px] border-t-transparent border-b-transparent",
-        right: "border-t-[5px] border-b-[5px] border-l-[5px] border-t-transparent border-b-transparent",
+        right:
+          "border-t-[5px] border-b-[5px] border-l-[5px] border-t-transparent border-b-transparent",
       },
       md: {
         top: "border-l-[6px] border-r-[6px] border-b-[6px] border-l-transparent border-r-transparent",
-        bottom: "border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent",
+        bottom:
+          "border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent",
         left: "border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent",
-        right: "border-t-[6px] border-b-[6px] border-l-[6px] border-t-transparent border-b-transparent",
+        right:
+          "border-t-[6px] border-b-[6px] border-l-[6px] border-t-transparent border-b-transparent",
       },
       lg: {
         top: "border-l-[7px] border-r-[7px] border-b-[7px] border-l-transparent border-r-transparent",
-        bottom: "border-l-[7px] border-r-[7px] border-t-[7px] border-l-transparent border-r-transparent",
+        bottom:
+          "border-l-[7px] border-r-[7px] border-t-[7px] border-l-transparent border-r-transparent",
         left: "border-t-[7px] border-b-[7px] border-r-[7px] border-t-transparent border-b-transparent",
-        right: "border-t-[7px] border-b-[7px] border-l-[7px] border-t-transparent border-b-transparent",
+        right:
+          "border-t-[7px] border-b-[7px] border-l-[7px] border-t-transparent border-b-transparent",
       },
     };
 
     const placementMap = {
       top: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
-      bottom: "top-0 left-1/2 -translate-x-1/2 -translate-y-full", 
+      bottom: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
       left: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
       right: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
     };
@@ -566,9 +576,11 @@ const Tooltip: React.FC<TooltipProps> = ({
           ${getTransformOrigin()}
           ${className}
         `}
-        style={{ 
+        style={{
           maxWidth: maxWidth,
-          animationDuration: `${getAnimationDuration(animationPhase === "idle" ? "enter" : animationPhase)}ms`,
+          animationDuration: `${getAnimationDuration(
+            animationPhase === "idle" ? "enter" : animationPhase
+          )}ms`,
         }}
         ref={tooltipRef}
       >
@@ -601,10 +613,9 @@ const Tooltip: React.FC<TooltipProps> = ({
     >
       <span className="inline-block ">{children}</span>
 
-      {usePortal && typeof document !== 'undefined' 
+      {usePortal && typeof document !== "undefined"
         ? createPortal(renderTooltip(), document.body)
-        : renderTooltip()
-      }
+        : renderTooltip()}
     </span>
   );
 };
