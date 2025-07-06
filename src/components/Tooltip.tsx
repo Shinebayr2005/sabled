@@ -369,7 +369,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     // CSS Triangle approach - much cleaner
     const getTriangleClasses = () => {
-      const baseClasses = `absolute w-0 h-0 z-20 ${shadowClass}`;
+      const baseClasses = `absolute w-0 h-0 z-20 rotate-90 text-primary ${shadowClass}`;
 
       switch (actualPlacement) {
         case "top":
