@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useId } from "react";
+import { createPortal } from "react-dom";
 
 type TooltipPlacement = "top" | "bottom" | "left" | "right";
 type TooltipAnimation = "scale" | "fade" | "slide" | "bounce";
@@ -27,6 +28,10 @@ interface TooltipProps {
   className?: string;
   isDisabled?: boolean;
   maxWidth?: string;
+  animationDuration?: number;
+  exitDuration?: number;
+  usePortal?: boolean;
+  disableAutoPosition?: boolean;
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
@@ -43,22 +48,34 @@ const Tooltip: React.FC<TooltipProps> = ({
   className = "",
   isDisabled = false,
   maxWidth = "210px",
+  animationDuration,
+  exitDuration,
+  usePortal = false,
+  disableAutoPosition = false,
 }) => {
   const [visible, setVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationPhase, setAnimationPhase] = useState<
     "enter" | "exit" | "idle"
   >("idle");
+  const [actualPlacement, setActualPlacement] = useState<TooltipPlacement>(placement);
   const showTimeoutRef = useRef<number | null>(null);
   const hideTimeoutRef = useRef<number | null>(null);
   const animationTimeoutRef = useRef<number | null>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const tooltipId = useId();
 
   const getAnimationDuration = (phase: "enter" | "exit") => {
     if (phase === "exit") {
-      return 200; // All exit animations are 200ms
+      return exitDuration || 200; // Custom exit duration or default 200ms
     }
 
-    // Enter animation durations vary by type
+    if (animationDuration) {
+      return animationDuration; // Use custom duration if provided
+    }
+
+    // Default enter animation durations vary by type
     switch (animation) {
       case "fade":
         return 150;
@@ -145,63 +162,6 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   };
 
-  const getArrowColor = () => {
-    // Match the exact background colors from getColorClasses()
-    const arrowColorMap = {
-      default: {
-        solid: "border-t-gray-800", // matches bg-gray-800
-        bordered: "border-t-gray-300", // matches the border color
-        light: "border-t-gray-100", // matches bg-gray-100
-        flat: "border-t-gray-200", // matches bg-gray-200
-        shadow: "border-t-white", // matches bg-white
-      },
-      primary: {
-        solid: "border-t-primary", // matches bg-primary with CSS custom property
-        bordered: "border-t-primary", // matches the border color
-        light: "border-t-primary", // matches bg-primary/10 (light blue)
-        flat: "border-t-primary", // matches bg-primary/20 (light blue)
-        shadow: "border-t-white", // matches bg-white
-      },
-      secondary: {
-        solid: "border-t-secondary", // matches bg-secondary
-        bordered: "border-t-secondary", // matches the border color
-        light: "border-t-secondary/10", // matches bg-secondary/10
-        flat: "border-t-secondary/20", // matches bg-secondary/20
-        shadow: "border-t-white", // matches bg-white
-      },
-      success: {
-        solid: "border-t-green-600", // matches bg-green-600
-        bordered: "border-t-green-600", // matches the border color
-        light: "border-t-green-100", // matches bg-green-100
-        flat: "border-t-green-200", // matches bg-green-200
-        shadow: "border-t-white", // matches bg-white
-      },
-      warning: {
-        solid: "border-t-yellow-600", // matches bg-yellow-600
-        bordered: "border-t-yellow-600", // matches the border color
-        light: "border-t-yellow-100", // matches bg-yellow-100
-        flat: "border-t-yellow-200", // matches bg-yellow-200
-        shadow: "border-t-white", // matches bg-white
-      },
-      danger: {
-        solid: "border-t-red-600", // matches bg-red-600
-        bordered: "border-t-red-600", // matches the border color
-        light: "border-t-red-100", // matches bg-red-100
-        flat: "border-t-red-200", // matches bg-red-200
-        shadow: "border-t-white", // matches bg-white
-      },
-      info: {
-        solid: "border-t-cyan-600", // matches bg-cyan-600
-        bordered: "border-t-cyan-600", // matches the border color
-        light: "border-t-cyan-100", // matches bg-cyan-100
-        flat: "border-t-cyan-200", // matches bg-cyan-200
-        shadow: "border-t-white", // matches bg-white
-      },
-    };
-
-    return arrowColorMap[color][variant];
-  };
-
   const getArrowBg = () => {
     const bgMap = {
       default: {
@@ -257,70 +217,65 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     return bgMap[color]?.[variant] || "bg-gray-800";
   };
-  const getArrowClasses = () => {
-    const baseClasses = "absolute w-0 h-0 border-8 z-20";
-    const colorClass = getArrowColor();
 
-    // Match tooltip's exact styling for each variant
-    let arrowStyleClasses = "";
+  // Auto-positioning logic to prevent tooltip from going off-screen
+  const calculateOptimalPlacement = (): TooltipPlacement => {
+    if (disableAutoPosition || !triggerRef.current) return placement;
 
-    switch (variant) {
-      case "solid":
-        arrowStyleClasses = "backdrop-blur-sm";
-        break;
-      case "bordered":
-        arrowStyleClasses = "backdrop-blur-sm";
-        break;
-      case "light":
-        arrowStyleClasses = "backdrop-blur-sm";
-        break;
-      case "flat":
-        arrowStyleClasses = "backdrop-blur-sm";
-        break;
-      case "shadow":
-        // Shadow variant needs drop-shadow to match tooltip
-        const shadowClass =
-          color === "primary"
-            ? "drop-shadow-[0_4px_12px_rgba(var(--color-primary-rgb,59,130,246),0.25)]"
-            : color === "secondary"
-            ? "drop-shadow-[0_4px_12px_rgba(var(--color-secondary-rgb,75,85,99),0.25)]"
-            : color === "success"
-            ? "drop-shadow-[0_4px_12px_rgba(34,197,94,0.25)]"
-            : color === "warning"
-            ? "drop-shadow-[0_4px_12px_rgba(234,179,8,0.25)]"
-            : color === "danger"
-            ? "drop-shadow-[0_4px_12px_rgba(239,68,68,0.25)]"
-            : color === "info"
-            ? "drop-shadow-[0_4px_12px_rgba(6,182,212,0.25)]"
-            : "drop-shadow-lg";
-        arrowStyleClasses = `backdrop-blur-sm ${shadowClass}`;
-        break;
-      default:
-        arrowStyleClasses = "backdrop-blur-sm";
-    }
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const tooltipEstimatedWidth = 200; // Approximate tooltip width
+    const tooltipEstimatedHeight = 50; // Approximate tooltip height
+    const margin = 10; // Margin from viewport edges
+
+    // Check if the preferred placement fits
+    const spaceAbove = triggerRect.top;
+    const spaceBelow = viewportHeight - triggerRect.bottom;
+    const spaceLeft = triggerRect.left;
+    const spaceRight = viewportWidth - triggerRect.right;
 
     switch (placement) {
       case "top":
-        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${colorClass} border-x-transparent border-b-transparent ${arrowStyleClasses}`;
+        if (spaceAbove >= tooltipEstimatedHeight + margin) return "top";
+        if (spaceBelow >= tooltipEstimatedHeight + margin) return "bottom";
+        break;
       case "bottom":
-        return `${baseClasses} top-0 left-1/2 -translate-x-1/2 -translate-y-full ${colorClass.replace(
-          "border-t-",
-          "border-b-"
-        )} border-x-transparent border-t-transparent ${arrowStyleClasses}`;
+        if (spaceBelow >= tooltipEstimatedHeight + margin) return "bottom";
+        if (spaceAbove >= tooltipEstimatedHeight + margin) return "top";
+        break;
       case "left":
-        return `${baseClasses} right-0 top-1/2 -translate-y-1/2 translate-x-full ${colorClass.replace(
-          "border-t-",
-          "border-l-"
-        )} border-y-transparent border-r-transparent ${arrowStyleClasses}`;
+        if (spaceLeft >= tooltipEstimatedWidth + margin) return "left";
+        if (spaceRight >= tooltipEstimatedWidth + margin) return "right";
+        break;
       case "right":
-        return `${baseClasses} left-0 top-1/2 -translate-y-1/2 -translate-x-full ${colorClass.replace(
-          "border-t-",
-          "border-r-"
-        )} border-y-transparent border-l-transparent ${arrowStyleClasses}`;
-      default:
-        return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${colorClass} border-x-transparent border-b-transparent ${arrowStyleClasses}`;
+        if (spaceRight >= tooltipEstimatedWidth + margin) return "right";
+        if (spaceLeft >= tooltipEstimatedWidth + margin) return "left";
+        break;
     }
+
+    // Fallback: choose the side with the most space
+    const spaces = [
+      { placement: "top" as TooltipPlacement, space: spaceAbove },
+      { placement: "bottom" as TooltipPlacement, space: spaceBelow },
+      { placement: "left" as TooltipPlacement, space: spaceLeft },
+      { placement: "right" as TooltipPlacement, space: spaceRight },
+    ];
+
+    return spaces.reduce((best, current) => 
+      current.space > best.space ? current : best
+    ).placement;
   };
+
+  // Update actual placement when tooltip becomes visible
+  useEffect(() => {
+    if (visible && !disableAutoPosition) {
+      const optimalPlacement = calculateOptimalPlacement();
+      setActualPlacement(optimalPlacement);
+    } else {
+      setActualPlacement(placement);
+    }
+  }, [visible, placement, disableAutoPosition]);
 
   const renderArrow = () => {
     if (!showArrow) return null;
@@ -340,7 +295,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       right: "left-0 top-1/2 -translate-y-1/2 -translate-x-1/2",
     };
 
-    return <div className={`${base} ${placementMap[placement]}`} />;
+    return <div className={`${base} ${placementMap[actualPlacement]}`} />;
   };
 
   const show = () => {
@@ -418,11 +373,11 @@ const Tooltip: React.FC<TooltipProps> = ({
         case "fade":
           return "tooltip-fade";
         case "slide":
-          return placement === "top"
+          return actualPlacement === "top"
             ? "tooltip-slide-up"
-            : placement === "bottom"
+            : actualPlacement === "bottom"
             ? "tooltip-slide-down"
-            : placement === "left"
+            : actualPlacement === "left"
             ? "tooltip-slide-left"
             : "tooltip-slide-right";
         case "bounce":
@@ -437,7 +392,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getTransformOrigin = () => {
-    switch (placement) {
+    switch (actualPlacement) {
       case "top":
         return "tooltip-origin-top";
       case "bottom":
@@ -451,6 +406,43 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   };
 
+  const renderTooltip = () => {
+    if (!visible) return null;
+
+    return (
+      <div
+        id={tooltipId}
+        role="tooltip"
+        className={`
+          absolute z-50 pointer-events-none
+          min-w-max
+          ${positionClasses[actualPlacement]} 
+          ${getAnimationClasses()}
+          ${getTransformOrigin()}
+          ${className}
+        `}
+        style={{ 
+          maxWidth: maxWidth,
+          animationDuration: `${getAnimationDuration(animationPhase === "idle" ? "enter" : animationPhase)}ms`,
+        }}
+        ref={tooltipRef}
+      >
+        <div className="relative z-10">
+          {renderArrow()}
+          <div
+            className={`
+              rounded-lg backdrop-blur-sm border break-words relative z-10
+              ${getColorClasses()}
+              ${getSizeClasses()}
+            `}
+          >
+            {content}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <span
       className="relative inline-block max-w-max"
@@ -458,35 +450,15 @@ const Tooltip: React.FC<TooltipProps> = ({
       onMouseLeave={hide}
       onFocus={show}
       onBlur={hide}
+      ref={triggerRef}
+      aria-describedby={visible ? tooltipId : undefined}
     >
       <span className="inline-block ">{children}</span>
 
-      {visible && (
-        <div
-          className={`
-            absolute z-50 pointer-events-none
-            min-w-max
-            ${positionClasses[placement]} 
-            ${getAnimationClasses()}
-            ${getTransformOrigin()}
-            ${className}
-          `}
-          style={{ maxWidth: maxWidth }}
-        >
-          <div className="relative z-10">
-            {renderArrow()}
-            <div
-              className={`
-                rounded-lg backdrop-blur-sm border break-words relative z-10
-                ${getColorClasses()}
-                ${getSizeClasses()}
-              `}
-            >
-              {content}
-            </div>
-          </div>
-        </div>
-      )}
+      {usePortal && typeof document !== 'undefined' 
+        ? createPortal(renderTooltip(), document.body)
+        : renderTooltip()
+      }
     </span>
   );
 };
