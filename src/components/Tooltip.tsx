@@ -150,49 +150,49 @@ const Tooltip: React.FC<TooltipProps> = ({
     const bgMap = {
       default: {
         solid: "bg-gray-800",
-        bordered: "bg-white",
+        bordered: "bg-white border-gray-300",
         light: "bg-gray-100",
         flat: "bg-gray-200",
         shadow: "bg-white",
       },
       primary: {
         solid: "bg-primary",
-        bordered: "bg-white",
+        bordered: "bg-white border-primary",
         light: "bg-primary/10",
         flat: "bg-primary/20",
         shadow: "bg-white",
       },
       secondary: {
         solid: "bg-secondary",
-        bordered: "bg-white",
+        bordered: "bg-white border-secondary",
         light: "bg-secondary/10",
         flat: "bg-secondary/20",
         shadow: "bg-white",
       },
       success: {
         solid: "bg-green-600",
-        bordered: "bg-white",
+        bordered: "bg-white border-green-600",
         light: "bg-green-100",
         flat: "bg-green-200",
         shadow: "bg-white",
       },
       warning: {
         solid: "bg-yellow-600",
-        bordered: "bg-white",
+        bordered: "bg-white border-yellow-600",
         light: "bg-yellow-100",
         flat: "bg-yellow-200",
         shadow: "bg-white",
       },
       danger: {
         solid: "bg-red-600",
-        bordered: "bg-white",
+        bordered: "bg-white border-red-600",
         light: "bg-red-100",
         flat: "bg-red-200",
         shadow: "bg-white",
       },
       info: {
         solid: "bg-cyan-600",
-        bordered: "bg-white",
+        bordered: "bg-white border-cyan-600",
         light: "bg-cyan-100",
         flat: "bg-cyan-200",
         shadow: "bg-white",
@@ -233,7 +233,7 @@ const Tooltip: React.FC<TooltipProps> = ({
     const getArrowExtraStyles = () => {
       switch (variant) {
         case "bordered":
-          return "border border-current";
+          return "border-2 border-current";
         case "light":
         case "flat":
           return "border border-gray-200 shadow-sm";
