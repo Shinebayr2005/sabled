@@ -325,7 +325,9 @@ const Tooltip: React.FC<TooltipProps> = ({
       )} border-y-transparent border-l-transparent`,
     };
 
-    return `${baseClasses} ${positionMap[actualPlacement]} ${variantStyles}`;
+    return `${baseClasses} ${
+      positionMap[actualPlacement]
+    } ${variantStyles} ${getArrowBg()}`;
   };
 
   const renderArrow = () => {
@@ -480,7 +482,6 @@ const Tooltip: React.FC<TooltipProps> = ({
                 rounded-lg backdrop-blur-sm border break-words relative z-10
                 ${getColorClasses()}
                 ${getSizeClasses()}
-                ${getArrowBg()}
               `}
             >
               {content}
