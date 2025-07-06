@@ -288,22 +288,36 @@ const Tooltip: React.FC<TooltipProps> = ({
       right: "left-0 top-1/2 -translate-y-1/2 -translate-x-1/2",
     };
 
-    const getArrowExtraStyles = () => {
-      const arrowBorderColor = getArrowBorderColor();
-
+    const getVariantBorderStyle = () => {
       switch (variant) {
-        case "bordered":
-          return `border-b-2 border-none ${arrowBorderColor}`;
-        case "light":
-          return `border-r-2 border-none ${arrowBorderColor} shadow-sm`;
-        case "flat":
-          return `border-l-2 border-none ${arrowBorderColor} shadow-sm`;
-        case "shadow":
-          return `${arrowBorderColor} shadow-lg border-none`;
         case "solid":
-          return `border-t-2 border-none ${arrowBorderColor}`;
+          return "border-2 bg-primary";
+        case "bordered":
+          return "border-2 border-primary bg-white";
+        case "light":
+          return "border-2 border-primary bg-white shadow-sm";
+        case "flat":
+          return "border-2 border-primary bg-primary/20";
+        case "shadow":
+          return "border-2 border-primary bg-white shadow-md";
         default:
-          return `border-x-2 border-none ${arrowBorderColor}`;
+          return "border-2 border-primary bg-white";
+      }
+    };
+
+    const getBorderDirectionClass = () => {
+      // Only keep border on tip-facing side, hide others
+      switch (actualPlacement) {
+        case "top":
+          return "border-b-0 border-l-0 border-r-0";
+        case "bottom":
+          return "border-t-0 border-l-0 border-r-0";
+        case "left":
+          return "border-r-0 border-t-0 border-b-0";
+        case "right":
+          return "border-l-0 border-t-0 border-b-0";
+        default:
+          return "";
       }
     };
 
@@ -313,7 +327,8 @@ const Tooltip: React.FC<TooltipProps> = ({
         absolute z-20 rotate-45 
         ${sizeMap[size]} 
         ${getArrowBg()} 
-        ${getArrowExtraStyles()}
+        ${getVariantBorderStyle()}
+        ${getBorderDirectionClass()}
         ${placementMap[actualPlacement]}
       `}
         aria-hidden="true"
