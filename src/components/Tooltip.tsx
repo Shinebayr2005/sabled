@@ -211,49 +211,49 @@ const Tooltip: React.FC<TooltipProps> = ({
         bordered: "border-gray-300", // matches border color
         light: "border-gray-100", // matches bg-gray-100
         flat: "border-gray-200", // matches bg-gray-200
-        shadow: "border-white", // matches bg-white
+        shadow: "border-gray-800", // matches bg-white
       },
       primary: {
         solid: "border-primary", // matches bg-primary
         bordered: "border-primary", // matches border color
-        light: "border-primary/10", // matches bg-primary/10
-        flat: "border-primary/20", // matches bg-primary/20
-        shadow: "border-white", // matches bg-white
+        light: "border-primary", // matches bg-primary/10
+        flat: "border-primary", // matches bg-primary/20
+        shadow: "border-primary", // matches bg-white
       },
       secondary: {
-        solid: "border-secondary", // matches bg-secondary
-        bordered: "border-secondary", // matches border color
-        light: "border-secondary/10", // matches bg-secondary/10
-        flat: "border-secondary/20", // matches bg-secondary/20
-        shadow: "border-white", // matches bg-white
+        solid: "border-secondary/100", // matches bg-secondary
+        bordered: "border-secondary/100", // matches border color
+        light: "border-secondary", // matches bg-secondary/10
+        flat: "border-secondary", // matches bg-secondary/20
+        shadow: "border-secondary", // matches bg-white
       },
       success: {
         solid: "border-green-600", // matches bg-green-600
         bordered: "border-green-600", // matches border color
         light: "border-green-100", // matches bg-green-100
         flat: "border-green-200", // matches bg-green-200
-        shadow: "border-white", // matches bg-white
+        shadow: "border-green-600", // matches bg-white
       },
       warning: {
         solid: "border-yellow-600", // matches bg-yellow-600
         bordered: "border-yellow-600", // matches border color
         light: "border-yellow-100", // matches bg-yellow-100
         flat: "border-yellow-200", // matches bg-yellow-200
-        shadow: "border-white", // matches bg-white
+        shadow: "border-yellow-600", // matches bg-white
       },
       danger: {
         solid: "border-red-600", // matches bg-red-600
         bordered: "border-red-600", // matches border color
         light: "border-red-100", // matches bg-red-100
         flat: "border-red-200", // matches bg-red-200
-        shadow: "border-white", // matches bg-white
+        shadow: "border-red-600", // matches bg-white
       },
       info: {
         solid: "border-cyan-600", // matches bg-cyan-600
         bordered: "border-cyan-600", // matches border color
         light: "border-cyan-100", // matches bg-cyan-100
         flat: "border-cyan-200", // matches bg-cyan-200
-        shadow: "border-white", // matches bg-white
+        shadow: "border-cyan-600", // matches bg-white
       },
     };
 
@@ -293,8 +293,9 @@ const Tooltip: React.FC<TooltipProps> = ({
 
       switch (variant) {
         case "bordered":
-          return `border-2 ${arrowBorderColor}`;
+          return `border-l-2 border-b-2 ${arrowBorderColor}`;
         case "light":
+          return `border ${arrowBorderColor} shadow-sm`;
         case "flat":
           return `border ${arrowBorderColor} shadow-sm`;
         case "shadow":
