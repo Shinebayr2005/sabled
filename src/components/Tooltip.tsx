@@ -146,6 +146,62 @@ const Tooltip: React.FC<TooltipProps> = ({
     return colorMap[color][variant];
   };
 
+  const getArrowBg = () => {
+    const bgMap = {
+      default: {
+        solid: "bg-gray-800",
+        bordered: "bg-white",
+        light: "bg-gray-100",
+        flat: "bg-gray-200",
+        shadow: "bg-white",
+      },
+      primary: {
+        solid: "bg-primary",
+        bordered: "bg-white",
+        light: "bg-primary/10",
+        flat: "bg-primary/20",
+        shadow: "bg-white",
+      },
+      secondary: {
+        solid: "bg-secondary",
+        bordered: "bg-white",
+        light: "bg-secondary/10",
+        flat: "bg-secondary/20",
+        shadow: "bg-white",
+      },
+      success: {
+        solid: "bg-green-600",
+        bordered: "bg-white",
+        light: "bg-green-100",
+        flat: "bg-green-200",
+        shadow: "bg-white",
+      },
+      warning: {
+        solid: "bg-yellow-600",
+        bordered: "bg-white",
+        light: "bg-yellow-100",
+        flat: "bg-yellow-200",
+        shadow: "bg-white",
+      },
+      danger: {
+        solid: "bg-red-600",
+        bordered: "bg-white",
+        light: "bg-red-100",
+        flat: "bg-red-200",
+        shadow: "bg-white",
+      },
+      info: {
+        solid: "bg-cyan-600",
+        bordered: "bg-white",
+        light: "bg-cyan-100",
+        flat: "bg-cyan-200",
+        shadow: "bg-white",
+      },
+    };
+
+    return bgMap[color]?.[variant] || "bg-gray-800";
+  };
+
   const getSizeClasses = () => {
     switch (size) {
       case "sm":
@@ -159,7 +215,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getArrowClasses = () => {
-    const baseClasses = "absolute w-0 h-0 z-20";
+    const baseClasses = `absolute w-0 h-0 z-20 ${getArrowBg()}`;
 
     // Size-based triangle dimensions
     const sizeMap = {
