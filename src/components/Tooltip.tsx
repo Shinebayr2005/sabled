@@ -397,21 +397,28 @@ const Tooltip: React.FC<TooltipProps> = ({
   const renderArrow = () => {
     if (!showArrow) return null;
 
-    const arrowSizeMap = {
-      sm: 5,
-      md: 6, 
-      lg: 7,
-    };
-
-    const arrowSize = arrowSizeMap[size];
     const base = "absolute w-0 h-0 z-20";
 
-    // Create triangle using CSS borders with fixed Tailwind classes
-    const triangleMap = {
-      top: `border-l-[${arrowSize}px] border-r-[${arrowSize}px] border-b-[${arrowSize}px] border-l-transparent border-r-transparent`,
-      bottom: `border-l-[${arrowSize}px] border-r-[${arrowSize}px] border-t-[${arrowSize}px] border-l-transparent border-r-transparent`,
-      left: `border-t-[${arrowSize}px] border-b-[${arrowSize}px] border-r-[${arrowSize}px] border-t-transparent border-b-transparent`,
-      right: `border-t-[${arrowSize}px] border-b-[${arrowSize}px] border-l-[${arrowSize}px] border-t-transparent border-b-transparent`,
+    // Use static Tailwind classes instead of dynamic ones
+    const arrowSizeClasses = {
+      sm: {
+        top: "border-l-[5px] border-r-[5px] border-b-[5px] border-l-transparent border-r-transparent",
+        bottom: "border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent",
+        left: "border-t-[5px] border-b-[5px] border-r-[5px] border-t-transparent border-b-transparent",
+        right: "border-t-[5px] border-b-[5px] border-l-[5px] border-t-transparent border-b-transparent",
+      },
+      md: {
+        top: "border-l-[6px] border-r-[6px] border-b-[6px] border-l-transparent border-r-transparent",
+        bottom: "border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent",
+        left: "border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent",
+        right: "border-t-[6px] border-b-[6px] border-l-[6px] border-t-transparent border-b-transparent",
+      },
+      lg: {
+        top: "border-l-[7px] border-r-[7px] border-b-[7px] border-l-transparent border-r-transparent",
+        bottom: "border-l-[7px] border-r-[7px] border-t-[7px] border-l-transparent border-r-transparent",
+        left: "border-t-[7px] border-b-[7px] border-r-[7px] border-t-transparent border-b-transparent",
+        right: "border-t-[7px] border-b-[7px] border-l-[7px] border-t-transparent border-b-transparent",
+      },
     };
 
     const placementMap = {
@@ -421,7 +428,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       right: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
     };
 
-    const triangleClass = triangleMap[actualPlacement];
+    const triangleClass = arrowSizeClasses[size][actualPlacement];
     const positionClass = placementMap[actualPlacement];
     const colorClass = getArrowTriangleColor();
 
