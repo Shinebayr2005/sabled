@@ -402,7 +402,7 @@ const Tooltip: React.FC<TooltipProps> = ({
     // For primary colors with light/flat variants, use CSS custom properties
     if (color === "primary" && (variant === "light" || variant === "flat")) {
       return {
-        backgroundColor: "rgba(var(--primary-color), 0.1)",
+        backgroundColor: "rgb(var(--primary-color) / 0.1)",
       };
     }
     return {};
