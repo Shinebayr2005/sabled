@@ -150,49 +150,49 @@ const Tooltip: React.FC<TooltipProps> = ({
     const bgMap = {
       default: {
         solid: "bg-gray-800",
-        bordered: "bg-white border-gray-300",
+        bordered: "bg-white",
         light: "bg-gray-100",
         flat: "bg-gray-200",
         shadow: "bg-white",
       },
       primary: {
         solid: "bg-primary",
-        bordered: "bg-white border-primary",
+        bordered: "bg-white",
         light: "bg-primary/10",
         flat: "bg-primary/20",
         shadow: "bg-white",
       },
       secondary: {
         solid: "bg-secondary",
-        bordered: "bg-white border-secondary",
+        bordered: "bg-white",
         light: "bg-secondary/10",
         flat: "bg-secondary/20",
         shadow: "bg-white",
       },
       success: {
         solid: "bg-green-600",
-        bordered: "bg-white border-green-600",
+        bordered: "bg-white",
         light: "bg-green-100",
         flat: "bg-green-200",
         shadow: "bg-white",
       },
       warning: {
         solid: "bg-yellow-600",
-        bordered: "bg-white border-yellow-600",
+        bordered: "bg-white",
         light: "bg-yellow-100",
         flat: "bg-yellow-200",
         shadow: "bg-white",
       },
       danger: {
         solid: "bg-red-600",
-        bordered: "bg-white border-red-600",
+        bordered: "bg-white",
         light: "bg-red-100",
         flat: "bg-red-200",
         shadow: "bg-white",
       },
       info: {
         solid: "bg-cyan-600",
-        bordered: "bg-white border-cyan-600",
+        bordered: "bg-white",
         light: "bg-cyan-100",
         flat: "bg-cyan-200",
         shadow: "bg-white",
@@ -200,6 +200,64 @@ const Tooltip: React.FC<TooltipProps> = ({
     };
 
     return bgMap[color]?.[variant] || "bg-gray-800";
+  };
+
+  // Add this function after getArrowBg()
+  const getArrowBorderColor = () => {
+    // Match the exact background colors from getColorClasses()
+    const borderColorMap = {
+      default: {
+        solid: "border-gray-800", // matches bg-gray-800
+        bordered: "border-gray-300", // matches border color
+        light: "border-gray-100", // matches bg-gray-100
+        flat: "border-gray-200", // matches bg-gray-200
+        shadow: "border-white", // matches bg-white
+      },
+      primary: {
+        solid: "border-primary", // matches bg-primary
+        bordered: "border-primary", // matches border color
+        light: "border-primary/10", // matches bg-primary/10
+        flat: "border-primary/20", // matches bg-primary/20
+        shadow: "border-white", // matches bg-white
+      },
+      secondary: {
+        solid: "border-secondary", // matches bg-secondary
+        bordered: "border-secondary", // matches border color
+        light: "border-secondary/10", // matches bg-secondary/10
+        flat: "border-secondary/20", // matches bg-secondary/20
+        shadow: "border-white", // matches bg-white
+      },
+      success: {
+        solid: "border-green-600", // matches bg-green-600
+        bordered: "border-green-600", // matches border color
+        light: "border-green-100", // matches bg-green-100
+        flat: "border-green-200", // matches bg-green-200
+        shadow: "border-white", // matches bg-white
+      },
+      warning: {
+        solid: "border-yellow-600", // matches bg-yellow-600
+        bordered: "border-yellow-600", // matches border color
+        light: "border-yellow-100", // matches bg-yellow-100
+        flat: "border-yellow-200", // matches bg-yellow-200
+        shadow: "border-white", // matches bg-white
+      },
+      danger: {
+        solid: "border-red-600", // matches bg-red-600
+        bordered: "border-red-600", // matches border color
+        light: "border-red-100", // matches bg-red-100
+        flat: "border-red-200", // matches bg-red-200
+        shadow: "border-white", // matches bg-white
+      },
+      info: {
+        solid: "border-cyan-600", // matches bg-cyan-600
+        bordered: "border-cyan-600", // matches border color
+        light: "border-cyan-100", // matches bg-cyan-100
+        flat: "border-cyan-200", // matches bg-cyan-200
+        shadow: "border-white", // matches bg-white
+      },
+    };
+
+    return borderColorMap[color][variant] || "border-gray-800";
   };
 
   const getSizeClasses = () => {
@@ -231,16 +289,20 @@ const Tooltip: React.FC<TooltipProps> = ({
     };
 
     const getArrowExtraStyles = () => {
+      const arrowBorderColor = getArrowBorderColor();
+
       switch (variant) {
         case "bordered":
-          return "border-2 border-current";
+          return `border-2 ${arrowBorderColor}`;
         case "light":
         case "flat":
-          return "border border-gray-200 shadow-sm";
+          return `border ${arrowBorderColor} shadow-sm`;
         case "shadow":
-          return "shadow-lg";
+          return `${arrowBorderColor} shadow-lg`;
+        case "solid":
+          return `border ${arrowBorderColor}`;
         default:
-          return "";
+          return `border ${arrowBorderColor}`;
       }
     };
 
