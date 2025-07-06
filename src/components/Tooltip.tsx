@@ -214,125 +214,48 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   };
 
-  const getArrowClasses = () => {
-    const baseClasses = `absolute w-0 h-0 z-20`;
+  const renderArrow = () => {
+    if (!showArrow) return null;
 
-    // Size-based triangle dimensions
     const sizeMap = {
-      sm: "border-4",
-      md: "border-6",
-      lg: "border-8",
+      sm: "w-2 h-2",
+      md: "w-2.5 h-2.5",
+      lg: "w-3 h-3",
     };
 
-    const borderSize = sizeMap[size];
-
-    // Color mapping that EXACTLY matches tooltip backgrounds
-    const colorMap = {
-      default: {
-        solid: "border-b-gray-800",
-        bordered: "border-b-gray-300",
-        light: "border-b-gray-100",
-        flat: "border-b-gray-100", // Match the flat variant exactly
-        shadow: "border-b-white",
-      },
-      primary: {
-        solid: "border-b-primary",
-        bordered: "border-b-primary",
-        light: "border-b-primary/10",
-        flat: "border-b-primary/10", // Match the flat variant exactly
-        shadow: "border-b-white",
-      },
-      secondary: {
-        solid: "border-b-secondary",
-        bordered: "border-b-secondary",
-        light: "border-b-secondary/10",
-        flat: "border-b-secondary/10", // Match the flat variant exactly
-        shadow: "border-b-white",
-      },
-      success: {
-        solid: "border-b-green-600",
-        bordered: "border-b-green-600",
-        light: "border-b-green-100",
-        flat: "border-b-green-100", // Match the flat variant exactly
-        shadow: "border-b-white",
-      },
-      warning: {
-        solid: "border-b-yellow-600",
-        bordered: "border-b-yellow-600",
-        light: "border-b-yellow-100",
-        flat: "border-b-yellow-100", // Match the flat variant exactly
-        shadow: "border-b-white",
-      },
-      danger: {
-        solid: "border-b-red-600",
-        bordered: "border-b-red-600",
-        light: "border-b-red-100",
-        flat: "border-b-red-100", // Match the flat variant exactly
-        shadow: "border-b-white",
-      },
-      info: {
-        solid: "border-b-cyan-600",
-        bordered: "border-b-cyan-600",
-        light: "border-b-cyan-100",
-        flat: "border-b-cyan-100", // Match the flat variant exactly
-        shadow: "border-b-white",
-      },
+    const placementMap = {
+      top: "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2",
+      bottom: "top-0 left-1/2 -translate-x-1/2 -translate-y-1/2",
+      left: "right-0 top-1/2 -translate-y-1/2 translate-x-1/2",
+      right: "left-0 top-1/2 -translate-y-1/2 -translate-x-1/2",
     };
 
-    const arrowColor = colorMap[color][variant];
-
-    // Enhanced variant-specific styling for better visibility
-    const getVariantStyles = () => {
+    const getArrowExtraStyles = () => {
       switch (variant) {
         case "bordered":
-          return "drop-shadow-sm"; // Subtle shadow for bordered arrows
+          return "border border-current";
         case "light":
         case "flat":
-          return "drop-shadow-sm"; // Make light/flat arrows more visible
+          return "border border-gray-200 shadow-sm";
         case "shadow":
-          // Match the tooltip's shadow effect
-          const shadowColors = {
-            primary: "drop-shadow-[0_4px_6px_rgba(59,130,246,0.25)]",
-            secondary: "drop-shadow-lg",
-            success: "drop-shadow-[0_4px_6px_rgba(34,197,94,0.25)]",
-            warning: "drop-shadow-[0_4px_6px_rgba(234,179,8,0.25)]",
-            danger: "drop-shadow-[0_4px_6px_rgba(239,68,68,0.25)]",
-            info: "drop-shadow-[0_4px_6px_rgba(6,182,212,0.25)]",
-            default: "drop-shadow-lg",
-          };
-          return shadowColors[color] || "drop-shadow-lg";
+          return "shadow-lg";
         default:
           return "";
       }
     };
 
-    const variantStyles = getVariantStyles();
-
-    // Position and color based on actualPlacement (for smart positioning)
-    const positionMap = {
-      top: `bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${borderSize} ${arrowColor} border-x-transparent border-b-transparent`,
-      bottom: `top-0 left-1/2 -translate-x-1/2 -translate-y-full ${borderSize} ${arrowColor.replace(
-        "border-b-",
-        "border-t-"
-      )} border-x-transparent border-t-transparent`,
-      left: `right-0 top-1/2 -translate-y-1/2 translate-x-full ${borderSize} ${arrowColor.replace(
-        "border-b-",
-        "border-r-"
-      )} border-y-transparent border-r-transparent`,
-      right: `left-0 top-1/2 -translate-y-1/2 -translate-x-full ${borderSize} ${arrowColor.replace(
-        "border-b-",
-        "border-l-"
-      )} border-y-transparent border-l-transparent`,
-    };
-
-    return `${baseClasses} ${
-      positionMap[actualPlacement]
-    } ${variantStyles} ${getArrowBg()}`;
-  };
-
-  const renderArrow = () => {
-    if (!showArrow) return null;
-    return <div className={getArrowClasses()} aria-hidden="true" />;
+    return (
+      <div
+        className={`
+        absolute z-20 rotate-45 
+        ${sizeMap[size]} 
+        ${getArrowBg()} 
+        ${getArrowExtraStyles()}
+        ${placementMap[actualPlacement]}
+      `}
+        aria-hidden="true"
+      />
+    );
   };
 
   const show = () => {
