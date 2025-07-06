@@ -163,75 +163,71 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   };
 
-  const getArrowTriangleColor = () => {
-    // Use Tailwind v4 CSS theme custom properties for dynamic colors
+  const getArrowColorClass = () => {
+    // Use Tailwind v4 CSS custom properties for arrow border colors
     const colorMap = {
       primary: {
-        solid: "var(--color-primary, #463cd7)",
-        bordered: "var(--color-primary, #3c46d7)",
-        light: "var(--color-primary-100, #dfdcfc)",
-        flat: "var(--color-primary-100, #dcdcfc)",
-        shadow: "#ffffff",
+        solid: "border-b-[rgb(var(--color-primary))]",
+        bordered: "border-b-[rgb(var(--color-primary))]",
+        light: "border-b-[rgb(var(--color-primary-100))]",
+        flat: "border-b-[rgb(var(--color-primary-100))]",
+        shadow: "border-b-white",
       },
       secondary: {
-        solid: "var(--color-secondary, #4b5563)",
-        bordered: "var(--color-secondary, #4b5563)",
-        light: "var(--color-secondary-100, #f3f4f6)",
-        flat: "var(--color-secondary-100, #f3f4f6)",
-        shadow: "#ffffff",
+        solid: "border-b-[rgb(var(--color-secondary))]",
+        bordered: "border-b-[rgb(var(--color-secondary))]",
+        light: "border-b-[rgb(var(--color-secondary-100))]",
+        flat: "border-b-[rgb(var(--color-secondary-100))]",
+        shadow: "border-b-white",
       },
       success: {
-        solid: "var(--color-success, #16a34a)", // green-600
-        bordered: "var(--color-success, #16a34a)", // green-600
-        light: "var(--color-success-100, #dcfce7)", // green-100
-        flat: "var(--color-success-100, #dcfce7)", // green-100
-        shadow: "#ffffff",
+        solid: "border-b-[rgb(var(--color-success))]",
+        bordered: "border-b-[rgb(var(--color-success))]",
+        light: "border-b-[rgb(var(--color-success-100))]",
+        flat: "border-b-[rgb(var(--color-success-100))]",
+        shadow: "border-b-white",
       },
       warning: {
-        solid: "var(--color-warning, #ca8a04)", // yellow-600
-        bordered: "var(--color-warning, #ca8a04)", // yellow-600
-        light: "var(--color-warning-100, #fef3c7)", // yellow-100
-        flat: "var(--color-warning-100, #fef3c7)", // yellow-100
-        shadow: "#ffffff",
+        solid: "border-b-[rgb(var(--color-warning))]",
+        bordered: "border-b-[rgb(var(--color-warning))]",
+        light: "border-b-[rgb(var(--color-warning-100))]",
+        flat: "border-b-[rgb(var(--color-warning-100))]",
+        shadow: "border-b-white",
       },
       danger: {
-        solid: "var(--color-danger, #dc2626)", // red-600
-        bordered: "var(--color-danger, #dc2626)", // red-600
-        light: "var(--color-danger-100, #fee2e2)", // red-100
-        flat: "var(--color-danger-100, #fee2e2)", // red-100
-        shadow: "#ffffff",
+        solid: "border-b-[rgb(var(--color-danger))]",
+        bordered: "border-b-[rgb(var(--color-danger))]",
+        light: "border-b-[rgb(var(--color-danger-100))]",
+        flat: "border-b-[rgb(var(--color-danger-100))]",
+        shadow: "border-b-white",
       },
       info: {
-        solid: "var(--color-info, #06b6d4)", // cyan-600
-        bordered: "var(--color-info, #06b6d4)", // cyan-600
-        light: "var(--color-info-100, #cffafe)", // cyan-100
-        flat: "var(--color-info-100, #cffafe)", // cyan-100
-        shadow: "#ffffff",
+        solid: "border-b-[rgb(var(--color-info))]",
+        bordered: "border-b-[rgb(var(--color-info))]",
+        light: "border-b-[rgb(var(--color-info-100))]",
+        flat: "border-b-[rgb(var(--color-info-100))]",
+        shadow: "border-b-white",
       },
       default: {
-        solid: "var(--color-gray-800, #1f2937)", // gray-800
-        bordered: "var(--color-gray-300, #d1d5db)", // gray-300
-        light: "var(--color-gray-100, #f3f4f6)", // gray-100
-        flat: "var(--color-gray-100, #f3f4f6)", // gray-100
-        shadow: "#ffffff",
+        solid: "border-b-gray-800",
+        bordered: "border-b-gray-300",
+        light: "border-b-gray-100",
+        flat: "border-b-gray-100",
+        shadow: "border-b-white",
       },
     };
 
-    const arrowColor = colorMap[color]?.[variant] || colorMap.default.solid;
+    const baseColor = colorMap[color]?.[variant] || colorMap.default.solid;
 
     // Map placement to the correct border side for triangle
     const borderSideMap = {
-      top: "borderBottomColor",
-      bottom: "borderTopColor",
-      left: "borderRightColor",
-      right: "borderLeftColor",
+      top: baseColor,
+      bottom: baseColor.replace("border-b-", "border-t-"),
+      left: baseColor.replace("border-b-", "border-r-"),
+      right: baseColor.replace("border-b-", "border-l-"),
     };
 
-    const borderSide = borderSideMap[actualPlacement];
-
-    return {
-      [borderSide]: arrowColor,
-    };
+    return borderSideMap[actualPlacement];
   };
 
   const renderArrow = () => {
@@ -239,53 +235,72 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     const base = "absolute w-0 h-0 z-20";
 
-    // Use static Tailwind classes instead of dynamic ones
-    const arrowSizeClasses = {
+    // Declarative arrow direction and positioning map
+    const arrowDirectionMap = {
       sm: {
-        top: "border-l-[5px] border-r-[5px] border-b-[5px] border-l-transparent border-r-transparent",
-        bottom:
-          "border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent",
-        left: "border-t-[5px] border-b-[5px] border-r-[5px] border-t-transparent border-b-transparent",
-        right:
-          "border-t-[5px] border-b-[5px] border-l-[5px] border-t-transparent border-b-transparent",
+        top: {
+          classes: "border-l-[5px] border-r-[5px] border-b-[5px] border-l-transparent border-r-transparent",
+          position: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
+        },
+        bottom: {
+          classes: "border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent",
+          position: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
+        },
+        left: {
+          classes: "border-t-[5px] border-b-[5px] border-r-[5px] border-t-transparent border-b-transparent",
+          position: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
+        },
+        right: {
+          classes: "border-t-[5px] border-b-[5px] border-l-[5px] border-t-transparent border-b-transparent",
+          position: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
+        },
       },
       md: {
-        top: "border-l-[6px] border-r-[6px] border-b-[6px] border-l-transparent border-r-transparent",
-        bottom:
-          "border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent",
-        left: "border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent",
-        right:
-          "border-t-[6px] border-b-[6px] border-l-[6px] border-t-transparent border-b-transparent",
+        top: {
+          classes: "border-l-[6px] border-r-[6px] border-b-[6px] border-l-transparent border-r-transparent",
+          position: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
+        },
+        bottom: {
+          classes: "border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent",
+          position: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
+        },
+        left: {
+          classes: "border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent",
+          position: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
+        },
+        right: {
+          classes: "border-t-[6px] border-b-[6px] border-l-[6px] border-t-transparent border-b-transparent",
+          position: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
+        },
       },
       lg: {
-        top: "border-l-[7px] border-r-[7px] border-b-[7px] border-l-transparent border-r-transparent",
-        bottom:
-          "border-l-[7px] border-r-[7px] border-t-[7px] border-l-transparent border-r-transparent",
-        left: "border-t-[7px] border-b-[7px] border-r-[7px] border-t-transparent border-b-transparent",
-        right:
-          "border-t-[7px] border-b-[7px] border-l-[7px] border-t-transparent border-b-transparent",
+        top: {
+          classes: "border-l-[7px] border-r-[7px] border-b-[7px] border-l-transparent border-r-transparent",
+          position: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
+        },
+        bottom: {
+          classes: "border-l-[7px] border-r-[7px] border-t-[7px] border-l-transparent border-r-transparent",
+          position: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
+        },
+        left: {
+          classes: "border-t-[7px] border-b-[7px] border-r-[7px] border-t-transparent border-b-transparent",
+          position: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
+        },
+        right: {
+          classes: "border-t-[7px] border-b-[7px] border-l-[7px] border-t-transparent border-b-transparent",
+          position: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
+        },
       },
     };
 
-    const placementMap = {
-      top: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
-      bottom: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
-      left: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
-      right: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
-    };
-
-    const triangleClass = arrowSizeClasses[size][actualPlacement];
-    const positionClass = placementMap[actualPlacement];
-    const colorStyle = getArrowTriangleColor();
-
-    // Add shadow for shadow variant
+    const arrowConfig = arrowDirectionMap[size][actualPlacement];
+    const colorClass = getArrowColorClass();
     const shadowClass = variant === "shadow" ? "drop-shadow-md" : "";
 
     return (
       <div
-        className={`${base} ${positionClass} ${triangleClass} ${shadowClass}`}
+        className={`${base} ${arrowConfig.position} ${arrowConfig.classes} ${colorClass} ${shadowClass}`}
         aria-hidden="true"
-        style={colorStyle}
       />
     );
   };
