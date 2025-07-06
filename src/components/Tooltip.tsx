@@ -164,55 +164,55 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getArrowTriangleColor = () => {
-    // Use CSS custom properties for dynamic colors and fallback to static colors
+    // Use Tailwind v4 CSS theme custom properties for dynamic colors
     const colorMap = {
       primary: {
-        solid: "var(--primary-color, #2563eb)",
-        bordered: "var(--primary-color, #2563eb)", 
-        light: "var(--primary-light, #dbeafe)",
-        flat: "var(--primary-light, #dbeafe)",
+        solid: "var(--color-primary, #463cd7)",
+        bordered: "var(--color-primary, #3c46d7)",
+        light: "var(--color-primary-100, #dfdcfc)",
+        flat: "var(--color-primary-100, #dcdcfc)",
         shadow: "#ffffff",
       },
       secondary: {
-        solid: "var(--secondary-color, #4b5563)",
-        bordered: "var(--secondary-color, #4b5563)",
-        light: "#f3f4f6",
-        flat: "#f3f4f6",
+        solid: "var(--color-secondary, #4b5563)",
+        bordered: "var(--color-secondary, #4b5563)",
+        light: "var(--color-secondary-100, #f3f4f6)",
+        flat: "var(--color-secondary-100, #f3f4f6)",
         shadow: "#ffffff",
       },
       success: {
-        solid: "#16a34a", // green-600
-        bordered: "#16a34a", // green-600
-        light: "#dcfce7", // green-100
-        flat: "#dcfce7", // green-100
+        solid: "var(--color-success, #16a34a)", // green-600
+        bordered: "var(--color-success, #16a34a)", // green-600
+        light: "var(--color-success-100, #dcfce7)", // green-100
+        flat: "var(--color-success-100, #dcfce7)", // green-100
         shadow: "#ffffff",
       },
       warning: {
-        solid: "#ca8a04", // yellow-600
-        bordered: "#ca8a04", // yellow-600
-        light: "#fef3c7", // yellow-100
-        flat: "#fef3c7", // yellow-100
+        solid: "var(--color-warning, #ca8a04)", // yellow-600
+        bordered: "var(--color-warning, #ca8a04)", // yellow-600
+        light: "var(--color-warning-100, #fef3c7)", // yellow-100
+        flat: "var(--color-warning-100, #fef3c7)", // yellow-100
         shadow: "#ffffff",
       },
       danger: {
-        solid: "#dc2626", // red-600
-        bordered: "#dc2626", // red-600
-        light: "#fee2e2", // red-100
-        flat: "#fee2e2", // red-100
+        solid: "var(--color-danger, #dc2626)", // red-600
+        bordered: "var(--color-danger, #dc2626)", // red-600
+        light: "var(--color-danger-100, #fee2e2)", // red-100
+        flat: "var(--color-danger-100, #fee2e2)", // red-100
         shadow: "#ffffff",
       },
       info: {
-        solid: "#06b6d4", // cyan-600
-        bordered: "#06b6d4", // cyan-600
-        light: "#cffafe", // cyan-100
-        flat: "#cffafe", // cyan-100
+        solid: "var(--color-info, #06b6d4)", // cyan-600
+        bordered: "var(--color-info, #06b6d4)", // cyan-600
+        light: "var(--color-info-100, #cffafe)", // cyan-100
+        flat: "var(--color-info-100, #cffafe)", // cyan-100
         shadow: "#ffffff",
       },
       default: {
-        solid: "#1f2937", // gray-800
-        bordered: "#d1d5db", // gray-300
-        light: "#f3f4f6", // gray-100
-        flat: "#f3f4f6", // gray-100
+        solid: "var(--color-gray-800, #1f2937)", // gray-800
+        bordered: "var(--color-gray-300, #d1d5db)", // gray-300
+        light: "var(--color-gray-100, #f3f4f6)", // gray-100
+        flat: "var(--color-gray-100, #f3f4f6)", // gray-100
         shadow: "#ffffff",
       },
     };
@@ -399,10 +399,10 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getBackgroundStyle = () => {
-    // For primary colors with light/flat variants, use CSS custom properties
+    // For primary colors with light/flat variants, use Tailwind v4 CSS theme custom properties
     if (color === "primary" && (variant === "light" || variant === "flat")) {
       return {
-        backgroundColor: "rgb(var(--primary-color) / 0.1)",
+        backgroundColor: "var(--color-primary-100, #dcfce7)",
       };
     }
     return {};
