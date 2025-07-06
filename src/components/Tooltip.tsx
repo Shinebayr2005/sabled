@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useId } from "react";
-import { createPortal } from "react-dom";
 
 type TooltipPlacement = "top" | "bottom" | "left" | "right";
 type TooltipAnimation = "scale" | "fade" | "slide" | "bounce";
@@ -30,8 +29,6 @@ interface TooltipProps {
   maxWidth?: string;
   animationDuration?: number;
   exitDuration?: number;
-  usePortal?: boolean;
-  disableAutoPosition?: boolean;
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
@@ -50,8 +47,6 @@ const Tooltip: React.FC<TooltipProps> = ({
   maxWidth = "210px",
   animationDuration,
   exitDuration,
-  usePortal = false,
-  disableAutoPosition = false,
 }) => {
   const [visible, setVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -69,14 +64,14 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   const getAnimationDuration = (phase: "enter" | "exit") => {
     if (phase === "exit") {
-      return exitDuration || 200; // Custom exit duration or default 200ms
+      return exitDuration || 200;
     }
 
     if (animationDuration) {
-      return animationDuration; // Use custom duration if provided
+      return animationDuration;
     }
 
-    // Default enter animation durations vary by type
+    // Enter animation durations vary by type
     switch (animation) {
       case "fade":
         return 150;
@@ -111,14 +106,14 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-secondary text-white border-secondary",
         bordered: "bg-transparent text-secondary border-secondary border-2",
         light: "bg-secondary/10 text-secondary border-secondary/20",
-        flat: "bg-gray-100 text-gray-800 border border-gray-200",
+        flat: "bg-secondary/10 text-secondary border border-secondary/20",
         shadow: "bg-white text-secondary border-secondary/20 shadow-lg",
       },
       success: {
         solid: "bg-green-600 text-white border-green-700",
         bordered: "bg-transparent text-green-600 border-green-600 border-2",
         light: "bg-green-100 text-green-600 border-green-200",
-        flat: "bg-green-100 text-green-800 border border-green-200",
+        flat: "bg-green-100 text-green-600 border border-green-200",
         shadow:
           "bg-white text-green-600 border-green-200 shadow-lg shadow-green-500/25",
       },
@@ -126,7 +121,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-yellow-600 text-white border-yellow-700",
         bordered: "bg-transparent text-yellow-600 border-yellow-600 border-2",
         light: "bg-yellow-100 text-yellow-600 border-yellow-200",
-        flat: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+        flat: "bg-yellow-100 text-yellow-600 border border-yellow-200",
         shadow:
           "bg-white text-yellow-600 border-yellow-200 shadow-lg shadow-yellow-500/25",
       },
@@ -134,7 +129,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-red-600 text-white border-red-700",
         bordered: "bg-transparent text-red-600 border-red-600 border-2",
         light: "bg-red-100 text-red-600 border-red-200",
-        flat: "bg-red-100 text-red-800 border border-red-200",
+        flat: "bg-red-100 text-red-600 border border-red-200",
         shadow:
           "bg-white text-red-600 border-red-200 shadow-lg shadow-red-500/25",
       },
@@ -142,7 +137,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-cyan-600 text-white border-cyan-700",
         bordered: "bg-transparent text-cyan-600 border-cyan-600 border-2",
         light: "bg-cyan-100 text-cyan-600 border-cyan-200",
-        flat: "bg-cyan-100 text-cyan-800 border border-cyan-200",
+        flat: "bg-cyan-100 text-cyan-600 border border-cyan-200",
         shadow:
           "bg-white text-cyan-600 border-cyan-200 shadow-lg shadow-cyan-500/25",
       },
@@ -163,158 +158,123 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   };
 
-  const getArrowColorClass = () => {
-    // Use Tailwind v4 CSS custom properties for arrow border colors
+  const getArrowClasses = () => {
+    const baseClasses = "absolute w-0 h-0 z-20";
+
+    // Size-based triangle dimensions
+    const sizeMap = {
+      sm: "border-4",
+      md: "border-6",
+      lg: "border-8",
+    };
+
+    const borderSize = sizeMap[size];
+
+    // Color mapping that EXACTLY matches tooltip backgrounds
     const colorMap = {
+      default: {
+        solid: "border-b-gray-800",
+        bordered: "border-b-gray-300",
+        light: "border-b-gray-100",
+        flat: "border-b-gray-100", // Match the flat variant exactly
+        shadow: "border-b-white",
+      },
       primary: {
-        solid: "border-b-primary bg-primary",
-        bordered: "border-b-primary bg-transparent",
-        light: "border-b-primary/10 bg-transparent",
-        flat: "border-b-primary/10 bg-primary/10",
+        solid: "border-b-blue-600",
+        bordered: "border-b-blue-600",
+        light: "border-b-blue-100",
+        flat: "border-b-blue-100", // Match the flat variant exactly
         shadow: "border-b-white",
       },
       secondary: {
-        solid: "border-b-secondary bg-secondary",
-        bordered: "border-b-secondary bg-transparent",
-        light: "border-b-secondary-100 bg-transparent",
-        flat: "border-b-secondary-100 bg-secondary/10",
+        solid: "border-b-gray-600",
+        bordered: "border-b-gray-600",
+        light: "border-b-gray-100",
+        flat: "border-b-gray-100", // Match the flat variant exactly
         shadow: "border-b-white",
       },
       success: {
-        solid: "border-b-success bg-success",
-        bordered: "border-b-success bg-transparent",
-        light: "border-b-success bg-success/10",
-        flat: "border-b-success bg-success/10",
+        solid: "border-b-green-600",
+        bordered: "border-b-green-600",
+        light: "border-b-green-100",
+        flat: "border-b-green-100", // Match the flat variant exactly
         shadow: "border-b-white",
       },
       warning: {
-        solid: "border-b-warning bg-warning",
-        bordered: "border-b-warning bg-transparent",
-        light: "border-b-warning-100 bg-transparent",
-        flat: "border-b-warning-100 bg-warning/10",
+        solid: "border-b-yellow-600",
+        bordered: "border-b-yellow-600",
+        light: "border-b-yellow-100",
+        flat: "border-b-yellow-100", // Match the flat variant exactly
         shadow: "border-b-white",
       },
       danger: {
-        solid: "border-b-danger bg-danger",
-        bordered: "border-b-danger bg-transparent",
-        light: "border-b-danger-100 bg-transparent",
-        flat: "border-b-danger-100 bg-danger/10",
+        solid: "border-b-red-600",
+        bordered: "border-b-red-600",
+        light: "border-b-red-100",
+        flat: "border-b-red-100", // Match the flat variant exactly
         shadow: "border-b-white",
       },
       info: {
-        solid: "border-b-cyan bg-cyan",
-        bordered: "border-b-cyan bg-transparent",
-        light: "border-b-cyan-100 bg-transparent",
-        flat: "border-b-cyan-100 bg-cyan/10",
-        shadow: "border-b-white",
-      },
-      default: {
-        solid: "border-b-gray-800 bg-gray-800",
-        bordered: "border-b-gray-300 bg-transparent",
-        light: "border-b-gray-100 bg-transparent",
-        flat: "border-b-gray-100 bg-gray-100",
+        solid: "border-b-cyan-600",
+        bordered: "border-b-cyan-600",
+        light: "border-b-cyan-100",
+        flat: "border-b-cyan-100", // Match the flat variant exactly
         shadow: "border-b-white",
       },
     };
 
-    const baseColor = colorMap[color]?.[variant] || colorMap.default.solid;
+    const arrowColor = colorMap[color][variant];
 
-    // Map placement to the correct border side for triangle
-    const borderSideMap = {
-      top: baseColor,
-      bottom: baseColor.replace("border-b-", "border-t-"),
-      left: baseColor.replace("border-b-", "border-r-"),
-      right: baseColor.replace("border-b-", "border-l-"),
+    // Enhanced variant-specific styling for better visibility
+    const getVariantStyles = () => {
+      switch (variant) {
+        case "bordered":
+          return "drop-shadow-sm"; // Subtle shadow for bordered arrows
+        case "light":
+        case "flat":
+          return "drop-shadow-sm"; // Make light/flat arrows more visible
+        case "shadow":
+          // Match the tooltip's shadow effect
+          const shadowColors = {
+            primary: "drop-shadow-[0_4px_6px_rgba(59,130,246,0.25)]",
+            secondary: "drop-shadow-lg",
+            success: "drop-shadow-[0_4px_6px_rgba(34,197,94,0.25)]",
+            warning: "drop-shadow-[0_4px_6px_rgba(234,179,8,0.25)]",
+            danger: "drop-shadow-[0_4px_6px_rgba(239,68,68,0.25)]",
+            info: "drop-shadow-[0_4px_6px_rgba(6,182,212,0.25)]",
+            default: "drop-shadow-lg",
+          };
+          return shadowColors[color] || "drop-shadow-lg";
+        default:
+          return "";
+      }
     };
 
-    return borderSideMap[actualPlacement];
+    const variantStyles = getVariantStyles();
+
+    // Position and color based on actualPlacement (for smart positioning)
+    const positionMap = {
+      top: `bottom-0 left-1/2 -translate-x-1/2 translate-y-full ${borderSize} ${arrowColor} border-x-transparent border-b-transparent`,
+      bottom: `top-0 left-1/2 -translate-x-1/2 -translate-y-full ${borderSize} ${arrowColor.replace(
+        "border-b-",
+        "border-t-"
+      )} border-x-transparent border-t-transparent`,
+      left: `right-0 top-1/2 -translate-y-1/2 translate-x-full ${borderSize} ${arrowColor.replace(
+        "border-b-",
+        "border-r-"
+      )} border-y-transparent border-r-transparent`,
+      right: `left-0 top-1/2 -translate-y-1/2 -translate-x-full ${borderSize} ${arrowColor.replace(
+        "border-b-",
+        "border-l-"
+      )} border-y-transparent border-l-transparent`,
+    };
+
+    return `${baseClasses} ${positionMap[actualPlacement]} ${variantStyles}`;
   };
 
   const renderArrow = () => {
     if (!showArrow) return null;
-
-    const base = "absolute w-0 h-0 z-20";
-
-    // Declarative arrow direction and positioning map
-    const arrowDirectionMap = {
-      sm: {
-        top: {
-          classes:
-            "border-l-[5px] border-r-[5px] border-b-[5px] border-l-transparent border-r-transparent",
-          position: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
-        },
-        bottom: {
-          classes:
-            "border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent",
-          position: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
-        },
-        left: {
-          classes:
-            "border-t-[5px] border-b-[5px] border-r-[5px] border-t-transparent border-b-transparent",
-          position: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
-        },
-        right: {
-          classes:
-            "border-t-[5px] border-b-[5px] border-l-[5px] border-t-transparent border-b-transparent",
-          position: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
-        },
-      },
-      md: {
-        top: {
-          classes:
-            "border-l-[6px] border-r-[6px] border-b-[6px] border-l-transparent border-r-transparent",
-          position: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
-        },
-        bottom: {
-          classes:
-            "border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent",
-          position: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
-        },
-        left: {
-          classes:
-            "border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent",
-          position: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
-        },
-        right: {
-          classes:
-            "border-t-[6px] border-b-[6px] border-l-[6px] border-t-transparent border-b-transparent",
-          position: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
-        },
-      },
-      lg: {
-        top: {
-          classes:
-            "border-l-[7px] border-r-[7px] border-b-[7px] border-l-transparent border-r-transparent",
-          position: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
-        },
-        bottom: {
-          classes:
-            "border-l-[7px] border-r-[7px] border-t-[7px] border-l-transparent border-r-transparent",
-          position: "top-0 left-1/2 -translate-x-1/2 -translate-y-full",
-        },
-        left: {
-          classes:
-            "border-t-[7px] border-b-[7px] border-r-[7px] border-t-transparent border-b-transparent",
-          position: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
-        },
-        right: {
-          classes:
-            "border-t-[7px] border-b-[7px] border-l-[7px] border-t-transparent border-b-transparent",
-          position: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
-        },
-      },
-    };
-
-    const arrowConfig = arrowDirectionMap[size][actualPlacement];
-    const colorClass = getArrowColorClass();
-    const shadowClass = variant === "shadow" ? "drop-shadow-md" : "";
-
-    return (
-      <div
-        className={`${base} ${arrowConfig.position} ${arrowConfig.classes} ${colorClass} ${shadowClass}`}
-        aria-hidden="true"
-      />
-    );
+    return <div className={getArrowClasses()} aria-hidden="true" />;
   };
 
   const show = () => {
@@ -425,57 +385,6 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   };
 
-  const getBackgroundStyle = () => {
-    // For primary colors with light/flat variants, use Tailwind v4 CSS theme custom properties
-    if (color === "primary" && (variant === "light" || variant === "flat")) {
-      return {
-        backgroundColor: "var(--color-primary-100, #dcfce7)",
-      };
-    }
-    return {};
-  };
-
-  const renderTooltip = () => {
-    if (!visible) return null;
-
-    return (
-      <div
-        id={tooltipId}
-        role="tooltip"
-        className={`
-          absolute z-50 pointer-events-none
-          min-w-max
-          ${positionClasses[actualPlacement]} 
-          ${getAnimationClasses()}
-          ${getTransformOrigin()}
-          ${className}
-        `}
-        style={{
-          maxWidth: maxWidth,
-          animationDuration: `${getAnimationDuration(
-            animationPhase === "idle" ? "enter" : animationPhase
-          )}ms`,
-        }}
-        ref={tooltipRef}
-      >
-        <div className="relative z-10">
-          {renderArrow()}
-          <div
-            className={`
-              rounded-lg border break-words relative z-10
-              ${variant === "flat" ? "" : "backdrop-blur-sm"}
-              ${getColorClasses()}
-              ${getSizeClasses()}
-            `}
-            style={getBackgroundStyle()}
-          >
-            {content}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <span
       className="relative inline-block max-w-max"
@@ -486,11 +395,42 @@ const Tooltip: React.FC<TooltipProps> = ({
       ref={triggerRef}
       aria-describedby={visible ? tooltipId : undefined}
     >
-      <span className="inline-block ">{children}</span>
+      <span className="inline-block">{children}</span>
 
-      {usePortal && typeof document !== "undefined"
-        ? createPortal(renderTooltip(), document.body)
-        : renderTooltip()}
+      {visible && (
+        <div
+          id={tooltipId}
+          role="tooltip"
+          className={`
+            absolute z-50 pointer-events-none
+            min-w-max
+            ${positionClasses[actualPlacement]} 
+            ${getAnimationClasses()}
+            ${getTransformOrigin()}
+            ${className}
+          `}
+          style={{
+            maxWidth: maxWidth,
+            animationDuration: `${getAnimationDuration(
+              animationPhase === "idle" ? "enter" : animationPhase
+            )}ms`,
+          }}
+          ref={tooltipRef}
+        >
+          <div className="relative z-10">
+            {renderArrow()}
+            <div
+              className={`
+                rounded-lg backdrop-blur-sm border break-words relative z-10
+                ${getColorClasses()}
+                ${getSizeClasses()}
+              `}
+            >
+              {content}
+            </div>
+          </div>
+        </div>
+      )}
     </span>
   );
 };
