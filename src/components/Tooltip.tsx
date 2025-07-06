@@ -277,6 +277,63 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   }, [visible, placement, disableAutoPosition]);
 
+  const getArrowExtraStyles = () => {
+    switch (variant) {
+      case "bordered":
+        // Add border to match tooltip border
+        return color === "default" 
+          ? "border border-gray-300"
+          : color === "primary"
+          ? "border border-primary"
+          : color === "secondary"
+          ? "border border-secondary"
+          : color === "success"
+          ? "border border-green-600"
+          : color === "warning"
+          ? "border border-yellow-600"
+          : color === "danger"
+          ? "border border-red-600"
+          : color === "info"
+          ? "border border-cyan-600"
+          : "border border-gray-300";
+      case "light":
+      case "flat":
+        // Add subtle border and shadow for visibility
+        return color === "default"
+          ? "border border-gray-200 shadow-sm"
+          : color === "primary"
+          ? "border border-primary/20 shadow-sm"
+          : color === "secondary"
+          ? "border border-secondary/20 shadow-sm"
+          : color === "success"
+          ? "border border-green-200 shadow-sm"
+          : color === "warning"
+          ? "border border-yellow-200 shadow-sm"
+          : color === "danger"
+          ? "border border-red-200 shadow-sm"
+          : color === "info"
+          ? "border border-cyan-200 shadow-sm"
+          : "border border-gray-200 shadow-sm";
+      case "shadow":
+        // Add subtle shadow to match tooltip shadow
+        return color === "primary"
+          ? "shadow-sm shadow-primary/25"
+          : color === "secondary"
+          ? "shadow-sm shadow-secondary/25"
+          : color === "success"
+          ? "shadow-sm shadow-green-500/25"
+          : color === "warning"
+          ? "shadow-sm shadow-yellow-500/25"
+          : color === "danger"
+          ? "shadow-sm shadow-red-500/25"
+          : color === "info"
+          ? "shadow-sm shadow-cyan-500/25"
+          : "shadow-sm";
+      default:
+        return "";
+    }
+  };
+
   const renderArrow = () => {
     if (!showArrow) return null;
 
@@ -286,7 +343,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       lg: "w-3 h-3",
     };
 
-    const base = `absolute rotate-45 ${sizeMap[size]} ${getArrowBg()} z-20`;
+    const base = `absolute rotate-45 ${sizeMap[size]} ${getArrowBg()} ${getArrowExtraStyles()} z-20`;
 
     const placementMap = {
       top: "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2",
