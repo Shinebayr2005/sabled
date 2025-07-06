@@ -293,17 +293,17 @@ const Tooltip: React.FC<TooltipProps> = ({
 
       switch (variant) {
         case "bordered":
-          return `border-r-2 border-l-2 ${arrowBorderColor}`;
+          return `border-b-2 ${arrowBorderColor}`;
         case "light":
-          return `border ${arrowBorderColor} shadow-sm`;
+          return `border-r-2 ${arrowBorderColor} shadow-sm`;
         case "flat":
-          return `border ${arrowBorderColor} shadow-sm`;
+          return `border-l-2 ${arrowBorderColor} shadow-sm`;
         case "shadow":
           return `${arrowBorderColor} shadow-lg`;
         case "solid":
-          return `border ${arrowBorderColor}`;
+          return `border-t-2 ${arrowBorderColor}`;
         default:
-          return `border ${arrowBorderColor}`;
+          return `border-x-2 ${arrowBorderColor}`;
       }
     };
 
