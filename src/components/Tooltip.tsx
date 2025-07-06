@@ -95,14 +95,14 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-gray-800 text-white border-gray-700",
         bordered: "bg-transparent text-gray-800 border-gray-300 border-2",
         light: "bg-gray-100 text-gray-800 border-gray-200",
-        flat: "bg-gray-200 text-gray-800 border-transparent",
+        flat: "bg-gray-100 text-gray-800 border border-gray-200",
         shadow: "bg-white text-gray-800 border-gray-200 shadow-lg",
       },
       primary: {
         solid: "bg-primary text-white border-primary",
         bordered: "bg-transparent text-primary border-primary border-2",
         light: "bg-primary/10 text-primary border-primary/20",
-        flat: "bg-primary/20 text-primary border-transparent",
+        flat: "bg-blue-100 text-blue-800 border border-blue-200",
         shadow:
           "bg-white text-primary border-primary/20 shadow-lg shadow-primary/25",
       },
@@ -110,14 +110,14 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-secondary text-white border-secondary",
         bordered: "bg-transparent text-secondary border-secondary border-2",
         light: "bg-secondary/10 text-secondary border-secondary/20",
-        flat: "bg-secondary/20 text-secondary border-transparent",
+        flat: "bg-gray-100 text-gray-800 border border-gray-200",
         shadow: "bg-white text-secondary border-secondary/20 shadow-lg",
       },
       success: {
         solid: "bg-green-600 text-white border-green-700",
         bordered: "bg-transparent text-green-600 border-green-600 border-2",
         light: "bg-green-100 text-green-600 border-green-200",
-        flat: "bg-green-200 text-green-600 border-transparent",
+        flat: "bg-green-100 text-green-800 border border-green-200",
         shadow:
           "bg-white text-green-600 border-green-200 shadow-lg shadow-green-500/25",
       },
@@ -125,7 +125,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-yellow-600 text-white border-yellow-700",
         bordered: "bg-transparent text-yellow-600 border-yellow-600 border-2",
         light: "bg-yellow-100 text-yellow-600 border-yellow-200",
-        flat: "bg-yellow-200 text-yellow-600 border-transparent",
+        flat: "bg-yellow-100 text-yellow-800 border border-yellow-200",
         shadow:
           "bg-white text-yellow-600 border-yellow-200 shadow-lg shadow-yellow-500/25",
       },
@@ -133,7 +133,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-red-600 text-white border-red-700",
         bordered: "bg-transparent text-red-600 border-red-600 border-2",
         light: "bg-red-100 text-red-600 border-red-200",
-        flat: "bg-red-200 text-red-600 border-transparent",
+        flat: "bg-red-100 text-red-800 border border-red-200",
         shadow:
           "bg-white text-red-600 border-red-200 shadow-lg shadow-red-500/25",
       },
@@ -141,7 +141,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-cyan-600 text-white border-cyan-700",
         bordered: "bg-transparent text-cyan-600 border-cyan-600 border-2",
         light: "bg-cyan-100 text-cyan-600 border-cyan-200",
-        flat: "bg-cyan-200 text-cyan-600 border-transparent",
+        flat: "bg-cyan-100 text-cyan-800 border border-cyan-200",
         shadow:
           "bg-white text-cyan-600 border-cyan-200 shadow-lg shadow-cyan-500/25",
       },
@@ -162,197 +162,113 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   };
 
-  const getArrowBg = () => {
-    const bgMap = {
+  const getArrowTriangleColor = () => {
+    const baseColorMap = {
       default: {
-        solid: "bg-gray-800",
-        bordered: "bg-white",
-        light: "bg-gray-100",
-        flat: "bg-gray-200",
-        shadow: "bg-white",
+        solid: "gray-800",
+        bordered: "gray-300", 
+        light: "gray-100",
+        flat: "gray-100",
+        shadow: "white",
       },
       primary: {
-        solid: "bg-primary",
-        bordered: "bg-white",
-        light: "bg-primary/10",
-        flat: "bg-primary/20",
-        shadow: "bg-white",
+        solid: "blue-600",
+        bordered: "blue-600",
+        light: "blue-100", 
+        flat: "blue-100",
+        shadow: "white",
       },
       secondary: {
-        solid: "bg-secondary",
-        bordered: "bg-white",
-        light: "bg-secondary/10",
-        flat: "bg-secondary/20",
-        shadow: "bg-white",
+        solid: "gray-600",
+        bordered: "gray-600",
+        light: "gray-100",
+        flat: "gray-100", 
+        shadow: "white",
       },
       success: {
-        solid: "bg-green-600",
-        bordered: "bg-white",
-        light: "bg-green-100",
-        flat: "bg-green-200",
-        shadow: "bg-white",
+        solid: "green-600",
+        bordered: "green-600",
+        light: "green-100",
+        flat: "green-100",
+        shadow: "white",
       },
       warning: {
-        solid: "bg-yellow-600",
-        bordered: "bg-white",
-        light: "bg-yellow-100",
-        flat: "bg-yellow-200",
-        shadow: "bg-white",
+        solid: "yellow-600", 
+        bordered: "yellow-600",
+        light: "yellow-100",
+        flat: "yellow-100",
+        shadow: "white",
       },
       danger: {
-        solid: "bg-red-600",
-        bordered: "bg-white",
-        light: "bg-red-100",
-        flat: "bg-red-200",
-        shadow: "bg-white",
+        solid: "red-600",
+        bordered: "red-600", 
+        light: "red-100",
+        flat: "red-100",
+        shadow: "white",
       },
       info: {
-        solid: "bg-cyan-600",
-        bordered: "bg-white",
-        light: "bg-cyan-100",
-        flat: "bg-cyan-200",
-        shadow: "bg-white",
+        solid: "cyan-600",
+        bordered: "cyan-600",
+        light: "cyan-100", 
+        flat: "cyan-100",
+        shadow: "white",
       },
     };
 
-    return bgMap[color]?.[variant] || "bg-gray-800";
-  };
+    const colorName = baseColorMap[color]?.[variant] || "gray-800";
 
-  // Auto-positioning logic to prevent tooltip from going off-screen
-  const calculateOptimalPlacement = (): TooltipPlacement => {
-    if (disableAutoPosition || !triggerRef.current) return placement;
-
-    const triggerRect = triggerRef.current.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const tooltipEstimatedWidth = 200; // Approximate tooltip width
-    const tooltipEstimatedHeight = 50; // Approximate tooltip height
-    const margin = 10; // Margin from viewport edges
-
-    // Check if the preferred placement fits
-    const spaceAbove = triggerRect.top;
-    const spaceBelow = viewportHeight - triggerRect.bottom;
-    const spaceLeft = triggerRect.left;
-    const spaceRight = viewportWidth - triggerRect.right;
-
-    switch (placement) {
+    // Return the border color class based on placement
+    switch (actualPlacement) {
       case "top":
-        if (spaceAbove >= tooltipEstimatedHeight + margin) return "top";
-        if (spaceBelow >= tooltipEstimatedHeight + margin) return "bottom";
-        break;
+        return `border-b-${colorName}`;
       case "bottom":
-        if (spaceBelow >= tooltipEstimatedHeight + margin) return "bottom";
-        if (spaceAbove >= tooltipEstimatedHeight + margin) return "top";
-        break;
+        return `border-t-${colorName}`;
       case "left":
-        if (spaceLeft >= tooltipEstimatedWidth + margin) return "left";
-        if (spaceRight >= tooltipEstimatedWidth + margin) return "right";
-        break;
+        return `border-r-${colorName}`;
       case "right":
-        if (spaceRight >= tooltipEstimatedWidth + margin) return "right";
-        if (spaceLeft >= tooltipEstimatedWidth + margin) return "left";
-        break;
-    }
-
-    // Fallback: choose the side with the most space
-    const spaces = [
-      { placement: "top" as TooltipPlacement, space: spaceAbove },
-      { placement: "bottom" as TooltipPlacement, space: spaceBelow },
-      { placement: "left" as TooltipPlacement, space: spaceLeft },
-      { placement: "right" as TooltipPlacement, space: spaceRight },
-    ];
-
-    return spaces.reduce((best, current) => 
-      current.space > best.space ? current : best
-    ).placement;
-  };
-
-  // Update actual placement when tooltip becomes visible
-  useEffect(() => {
-    if (visible && !disableAutoPosition) {
-      const optimalPlacement = calculateOptimalPlacement();
-      setActualPlacement(optimalPlacement);
-    } else {
-      setActualPlacement(placement);
-    }
-  }, [visible, placement, disableAutoPosition]);
-
-  const getArrowExtraStyles = () => {
-    switch (variant) {
-      case "bordered":
-        // Add border to match tooltip border
-        return color === "default" 
-          ? "border border-gray-300"
-          : color === "primary"
-          ? "border border-primary"
-          : color === "secondary"
-          ? "border border-secondary"
-          : color === "success"
-          ? "border border-green-600"
-          : color === "warning"
-          ? "border border-yellow-600"
-          : color === "danger"
-          ? "border border-red-600"
-          : color === "info"
-          ? "border border-cyan-600"
-          : "border border-gray-300";
-      case "light":
-      case "flat":
-        // Add subtle border and shadow for visibility
-        return color === "default"
-          ? "border border-gray-200 shadow-sm"
-          : color === "primary"
-          ? "border border-primary/20 shadow-sm"
-          : color === "secondary"
-          ? "border border-secondary/20 shadow-sm"
-          : color === "success"
-          ? "border border-green-200 shadow-sm"
-          : color === "warning"
-          ? "border border-yellow-200 shadow-sm"
-          : color === "danger"
-          ? "border border-red-200 shadow-sm"
-          : color === "info"
-          ? "border border-cyan-200 shadow-sm"
-          : "border border-gray-200 shadow-sm";
-      case "shadow":
-        // Add subtle shadow to match tooltip shadow
-        return color === "primary"
-          ? "shadow-sm shadow-primary/25"
-          : color === "secondary"
-          ? "shadow-sm shadow-secondary/25"
-          : color === "success"
-          ? "shadow-sm shadow-green-500/25"
-          : color === "warning"
-          ? "shadow-sm shadow-yellow-500/25"
-          : color === "danger"
-          ? "shadow-sm shadow-red-500/25"
-          : color === "info"
-          ? "shadow-sm shadow-cyan-500/25"
-          : "shadow-sm";
+        return `border-l-${colorName}`;
       default:
-        return "";
+        return `border-b-${colorName}`;
     }
   };
 
   const renderArrow = () => {
     if (!showArrow) return null;
 
-    const sizeMap = {
-      sm: "w-2 h-2",
-      md: "w-2.5 h-2.5",
-      lg: "w-3 h-3",
+    const arrowSizeMap = {
+      sm: 5,
+      md: 6, 
+      lg: 7,
     };
 
-    const base = `absolute rotate-45 ${sizeMap[size]} ${getArrowBg()} ${getArrowExtraStyles()} z-20`;
+    const arrowSize = arrowSizeMap[size];
+    const base = "absolute w-0 h-0 z-20";
+
+    // Create triangle using CSS borders
+    const triangleMap = {
+      top: `border-l-[${arrowSize}px] border-r-[${arrowSize}px] border-b-[${arrowSize}px] border-l-transparent border-r-transparent`,
+      bottom: `border-l-[${arrowSize}px] border-r-[${arrowSize}px] border-t-[${arrowSize}px] border-l-transparent border-r-transparent`,
+      left: `border-t-[${arrowSize}px] border-b-[${arrowSize}px] border-r-[${arrowSize}px] border-t-transparent border-b-transparent`,
+      right: `border-t-[${arrowSize}px] border-b-[${arrowSize}px] border-l-[${arrowSize}px] border-t-transparent border-b-transparent`,
+    };
 
     const placementMap = {
-      top: "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2",
-      bottom: "top-0 left-1/2 -translate-x-1/2 -translate-y-1/2",
-      left: "right-0 top-1/2 -translate-y-1/2 translate-x-1/2",
-      right: "left-0 top-1/2 -translate-y-1/2 -translate-x-1/2",
+      top: "bottom-0 left-1/2 -translate-x-1/2 translate-y-full",
+      bottom: "top-0 left-1/2 -translate-x-1/2 -translate-y-full", 
+      left: "right-0 top-1/2 -translate-y-1/2 translate-x-full",
+      right: "left-0 top-1/2 -translate-y-1/2 -translate-x-full",
     };
 
-    return <div className={`${base} ${placementMap[actualPlacement]}`} />;
+    const triangleClass = triangleMap[actualPlacement];
+    const positionClass = placementMap[actualPlacement];
+    const colorClass = getArrowTriangleColor();
+
+    return (
+      <div
+        className={`${base} ${positionClass} ${triangleClass} ${colorClass}`}
+        aria-hidden="true"
+      />
+    );
   };
 
   const show = () => {
@@ -488,7 +404,8 @@ const Tooltip: React.FC<TooltipProps> = ({
           {renderArrow()}
           <div
             className={`
-              rounded-lg backdrop-blur-sm border break-words relative z-10
+              rounded-lg border break-words relative z-10
+              ${variant === "flat" ? "" : "backdrop-blur-sm"}
               ${getColorClasses()}
               ${getSizeClasses()}
             `}
