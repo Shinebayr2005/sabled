@@ -103,7 +103,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         solid: "bg-primary text-white border-primary",
         bordered: "bg-transparent text-primary border-primary border-2",
         light: "bg-primary/10 text-primary border-primary/20",
-        flat: "bg-primary/10 text-blue-800 border border-primary/20",
+        flat: "bg-primary/10 text-primary border border-primary/20",
         shadow:
           "bg-white text-primary border-primary/20 shadow-lg shadow-primary/25",
       },
@@ -164,238 +164,74 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   const getArrowTriangleColor = () => {
-    // Use complete Tailwind classes that won't be purged
+    // Use CSS custom properties for dynamic colors and fallback to static colors
     const colorMap = {
-      default: {
-        solid: {
-          top: "border-b-gray-800",
-          bottom: "border-t-gray-800",
-          left: "border-r-gray-800",
-          right: "border-l-gray-800",
-        },
-        bordered: {
-          top: "border-b-gray-300",
-          bottom: "border-t-gray-300",
-          left: "border-r-gray-300",
-          right: "border-l-gray-300",
-        },
-        light: {
-          top: "border-b-gray-100",
-          bottom: "border-t-gray-100",
-          left: "border-r-gray-100",
-          right: "border-l-gray-100",
-        },
-        flat: {
-          top: "border-b-gray-100",
-          bottom: "border-t-gray-100",
-          left: "border-r-gray-100",
-          right: "border-l-gray-100",
-        },
-        shadow: {
-          top: "border-b-white",
-          bottom: "border-t-white",
-          left: "border-r-white",
-          right: "border-l-white",
-        },
-      },
       primary: {
-        solid: {
-          top: "border-b-primary",
-          bottom: "border-t-primary",
-          left: "border-r-primary",
-          right: "border-l-primary",
-        },
-        bordered: {
-          top: "border-b-primary",
-          bottom: "border-t-primary",
-          left: "border-r-primary",
-          right: "border-l-primary",
-        },
-        light: {
-          top: "border-b-primary",
-          bottom: "border-t-primary",
-          left: "border-r-primary",
-          right: "border-l-primary",
-        },
-        flat: {
-          top: "border-b-primary",
-          bottom: "border-t-primary",
-          left: "border-r-primary",
-          right: "border-l-primary",
-        },
-        shadow: {
-          top: "border-b-primary",
-          bottom: "border-t-primary",
-          left: "border-r-primary",
-          right: "border-l-primary",
-        },
+        solid: "var(--primary-color, #2563eb)",
+        bordered: "var(--primary-color, #2563eb)", 
+        light: "var(--primary-light, #dbeafe)",
+        flat: "var(--primary-light, #dbeafe)",
+        shadow: "#ffffff",
       },
       secondary: {
-        solid: {
-          top: "border-b-secondary",
-          bottom: "border-t-secondary",
-          left: "border-r-secondary",
-          right: "border-l-secondary",
-        },
-        bordered: {
-          top: "border-b-secondary",
-          bottom: "border-t-secondary",
-          left: "border-r-secondary",
-          right: "border-l-secondary",
-        },
-        light: {
-          top: "border-b-secondary",
-          bottom: "border-t-secondary",
-          left: "border-r-secondary",
-          right: "border-l-secondary",
-        },
-        flat: {
-          top: "border-b-secondary",
-          bottom: "border-t-secondary",
-          left: "border-r-secondary",
-          right: "border-l-secondary",
-        },
-        shadow: {
-          top: "border-b-secondary",
-          bottom: "border-t-secondary",
-          left: "border-r-secondary",
-          right: "border-l-secondary",
-        },
+        solid: "var(--secondary-color, #4b5563)",
+        bordered: "var(--secondary-color, #4b5563)",
+        light: "#f3f4f6",
+        flat: "#f3f4f6",
+        shadow: "#ffffff",
       },
       success: {
-        solid: {
-          top: "border-b-green-600",
-          bottom: "border-t-green-600",
-          left: "border-r-green-600",
-          right: "border-l-green-600",
-        },
-        bordered: {
-          top: "border-b-green-600",
-          bottom: "border-t-green-600",
-          left: "border-r-green-600",
-          right: "border-l-green-600",
-        },
-        light: {
-          top: "border-b-green-100",
-          bottom: "border-t-green-100",
-          left: "border-r-green-100",
-          right: "border-l-green-100",
-        },
-        flat: {
-          top: "border-b-green-100",
-          bottom: "border-t-green-100",
-          left: "border-r-green-100",
-          right: "border-l-green-100",
-        },
-        shadow: {
-          top: "border-b-white",
-          bottom: "border-t-white",
-          left: "border-r-white",
-          right: "border-l-white",
-        },
+        solid: "#16a34a", // green-600
+        bordered: "#16a34a", // green-600
+        light: "#dcfce7", // green-100
+        flat: "#dcfce7", // green-100
+        shadow: "#ffffff",
       },
       warning: {
-        solid: {
-          top: "border-b-yellow-600",
-          bottom: "border-t-yellow-600",
-          left: "border-r-yellow-600",
-          right: "border-l-yellow-600",
-        },
-        bordered: {
-          top: "border-b-yellow-600",
-          bottom: "border-t-yellow-600",
-          left: "border-r-yellow-600",
-          right: "border-l-yellow-600",
-        },
-        light: {
-          top: "border-b-yellow-100",
-          bottom: "border-t-yellow-100",
-          left: "border-r-yellow-100",
-          right: "border-l-yellow-100",
-        },
-        flat: {
-          top: "border-b-yellow-100",
-          bottom: "border-t-yellow-100",
-          left: "border-r-yellow-100",
-          right: "border-l-yellow-100",
-        },
-        shadow: {
-          top: "border-b-white",
-          bottom: "border-t-white",
-          left: "border-r-white",
-          right: "border-l-white",
-        },
+        solid: "#ca8a04", // yellow-600
+        bordered: "#ca8a04", // yellow-600
+        light: "#fef3c7", // yellow-100
+        flat: "#fef3c7", // yellow-100
+        shadow: "#ffffff",
       },
       danger: {
-        solid: {
-          top: "border-b-red-600",
-          bottom: "border-t-red-600",
-          left: "border-r-red-600",
-          right: "border-l-red-600",
-        },
-        bordered: {
-          top: "border-b-red-600",
-          bottom: "border-t-red-600",
-          left: "border-r-red-600",
-          right: "border-l-red-600",
-        },
-        light: {
-          top: "border-b-red-100",
-          bottom: "border-t-red-100",
-          left: "border-r-red-100",
-          right: "border-l-red-100",
-        },
-        flat: {
-          top: "border-b-red-100",
-          bottom: "border-t-red-100",
-          left: "border-r-red-100",
-          right: "border-l-red-100",
-        },
-        shadow: {
-          top: "border-b-white",
-          bottom: "border-t-white",
-          left: "border-r-white",
-          right: "border-l-white",
-        },
+        solid: "#dc2626", // red-600
+        bordered: "#dc2626", // red-600
+        light: "#fee2e2", // red-100
+        flat: "#fee2e2", // red-100
+        shadow: "#ffffff",
       },
       info: {
-        solid: {
-          top: "border-b-cyan-600",
-          bottom: "border-t-cyan-600",
-          left: "border-r-cyan-600",
-          right: "border-l-cyan-600",
-        },
-        bordered: {
-          top: "border-b-cyan-600",
-          bottom: "border-t-cyan-600",
-          left: "border-r-cyan-600",
-          right: "border-l-cyan-600",
-        },
-        light: {
-          top: "border-b-cyan-100",
-          bottom: "border-t-cyan-100",
-          left: "border-r-cyan-100",
-          right: "border-l-cyan-100",
-        },
-        flat: {
-          top: "border-b-cyan-100",
-          bottom: "border-t-cyan-100",
-          left: "border-r-cyan-100",
-          right: "border-l-cyan-100",
-        },
-        shadow: {
-          top: "border-b-white",
-          bottom: "border-t-white",
-          left: "border-r-white",
-          right: "border-l-white",
-        },
+        solid: "#06b6d4", // cyan-600
+        bordered: "#06b6d4", // cyan-600
+        light: "#cffafe", // cyan-100
+        flat: "#cffafe", // cyan-100
+        shadow: "#ffffff",
+      },
+      default: {
+        solid: "#1f2937", // gray-800
+        bordered: "#d1d5db", // gray-300
+        light: "#f3f4f6", // gray-100
+        flat: "#f3f4f6", // gray-100
+        shadow: "#ffffff",
       },
     };
 
-    return (
-      colorMap[color]?.[variant]?.[actualPlacement] ||
-      colorMap.default.solid[actualPlacement]
-    );
+    const arrowColor = colorMap[color]?.[variant] || colorMap.default.solid;
+
+    // Map placement to the correct border side for triangle
+    const borderSideMap = {
+      top: "borderBottomColor",
+      bottom: "borderTopColor",
+      left: "borderRightColor",
+      right: "borderLeftColor",
+    };
+
+    const borderSide = borderSideMap[actualPlacement];
+
+    return {
+      [borderSide]: arrowColor,
+    };
   };
 
   const renderArrow = () => {
@@ -440,15 +276,16 @@ const Tooltip: React.FC<TooltipProps> = ({
 
     const triangleClass = arrowSizeClasses[size][actualPlacement];
     const positionClass = placementMap[actualPlacement];
-    const colorClass = getArrowTriangleColor();
+    const colorStyle = getArrowTriangleColor();
 
     // Add shadow for shadow variant
     const shadowClass = variant === "shadow" ? "drop-shadow-md" : "";
 
     return (
       <div
-        className={`${base} ${positionClass} ${triangleClass} ${colorClass} ${shadowClass}`}
+        className={`${base} ${positionClass} ${triangleClass} ${shadowClass}`}
         aria-hidden="true"
+        style={colorStyle}
       />
     );
   };
@@ -561,6 +398,16 @@ const Tooltip: React.FC<TooltipProps> = ({
     }
   };
 
+  const getBackgroundStyle = () => {
+    // For primary colors with light/flat variants, use CSS custom properties
+    if (color === "primary" && (variant === "light" || variant === "flat")) {
+      return {
+        backgroundColor: "rgba(var(--primary-color), 0.1)",
+      };
+    }
+    return {};
+  };
+
   const renderTooltip = () => {
     if (!visible) return null;
 
@@ -593,6 +440,7 @@ const Tooltip: React.FC<TooltipProps> = ({
               ${getColorClasses()}
               ${getSizeClasses()}
             `}
+            style={getBackgroundStyle()}
           >
             {content}
           </div>
