@@ -275,66 +275,117 @@ const Tooltip: React.FC<TooltipProps> = ({
   const renderArrow = () => {
     if (!showArrow) return null;
 
+    // Size mapping for triangle borders
     const sizeMap = {
-      sm: "w-2 h-2",
-      md: "w-2.5 h-2.5",
-      lg: "w-3 h-3",
+      sm: "4", // 4px triangle
+      md: "6", // 6px triangle
+      lg: "8", // 8px triangle
     };
 
-    const placementMap = {
-      top: "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2",
-      bottom: "top-0 left-1/2 -translate-x-1/2 -translate-y-1/2",
-      left: "right-0 top-1/2 -translate-y-1/2 translate-x-1/2",
-      right: "left-0 top-1/2 -translate-y-1/2 -translate-x-1/2",
+    const triangleSize = sizeMap[size];
+
+    // Get arrow color that matches tooltip exactly
+    const getArrowTriangleColor = () => {
+      const colorMap = {
+        default: {
+          solid: "gray-800",
+          bordered: "gray-300",
+          light: "gray-100",
+          flat: "gray-100",
+          shadow: "white",
+        },
+        primary: {
+          solid: "primary",
+          bordered: "primary",
+          light: "primary/10",
+          flat: "primary/10",
+          shadow: "white",
+        },
+        secondary: {
+          solid: "secondary",
+          bordered: "secondary",
+          light: "secondary/10",
+          flat: "secondary/10",
+          shadow: "white",
+        },
+        success: {
+          solid: "green-600",
+          bordered: "green-600",
+          light: "green-100",
+          flat: "green-100",
+          shadow: "white",
+        },
+        warning: {
+          solid: "yellow-600",
+          bordered: "yellow-600",
+          light: "yellow-100",
+          flat: "yellow-100",
+          shadow: "white",
+        },
+        danger: {
+          solid: "red-600",
+          bordered: "red-600",
+          light: "red-100",
+          flat: "red-100",
+          shadow: "white",
+        },
+        info: {
+          solid: "cyan-600",
+          bordered: "cyan-600",
+          light: "cyan-100",
+          flat: "cyan-100",
+          shadow: "white",
+        },
+      };
+
+      return colorMap[color][variant];
     };
 
-    const getVariantBorderStyle = () => {
-      switch (variant) {
-        case "solid":
-          return "border-2 bg-primary";
-        case "bordered":
-          return "border-2 border-primary bg-white";
-        case "light":
-          return "border-2 border-primary bg-white shadow-sm";
-        case "flat":
-          return "border-2 border-primary bg-primary/20";
-        case "shadow":
-          return "border-2 border-primary bg-white shadow-md";
-        default:
-          return "border-2 border-primary bg-white";
+    const arrowColor = getArrowTriangleColor();
+
+    // Enhanced shadow for better visibility
+    const getShadowClass = () => {
+      if (variant === "shadow") {
+        const shadowMap = {
+          primary: "drop-shadow-[0_4px_6px_rgba(59,130,246,0.25)]",
+          secondary: "drop-shadow-lg",
+          success: "drop-shadow-[0_4px_6px_rgba(34,197,94,0.25)]",
+          warning: "drop-shadow-[0_4px_6px_rgba(234,179,8,0.25)]",
+          danger: "drop-shadow-[0_4px_6px_rgba(239,68,68,0.25)]",
+          info: "drop-shadow-[0_4px_6px_rgba(6,182,212,0.25)]",
+          default: "drop-shadow-lg",
+        };
+        return shadowMap[color] || "drop-shadow-lg";
       }
+
+      if (variant === "light" || variant === "flat") {
+        return "drop-shadow-sm"; // Subtle shadow for visibility
+      }
+
+      return "";
     };
 
-    const getBorderDirectionClass = () => {
-      // Only keep border on tip-facing side, hide others
+    const shadowClass = getShadowClass();
+
+    // CSS Triangle approach - much cleaner
+    const getTriangleClasses = () => {
+      const baseClasses = `absolute w-0 h-0 z-20 ${shadowClass}`;
+
       switch (actualPlacement) {
         case "top":
-          return "border-b-0 border-l-0 border-r-0";
+          return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full border-l-[${triangleSize}px] border-r-[${triangleSize}px] border-b-[${triangleSize}px] border-l-transparent border-r-transparent border-b-${arrowColor}`;
         case "bottom":
-          return "border-t-0 border-l-0 border-r-0";
+          return `${baseClasses} top-0 left-1/2 -translate-x-1/2 -translate-y-full border-l-[${triangleSize}px] border-r-[${triangleSize}px] border-t-[${triangleSize}px] border-l-transparent border-r-transparent border-t-${arrowColor}`;
         case "left":
-          return "border-r-0 border-t-0 border-b-0";
+          return `${baseClasses} right-0 top-1/2 -translate-y-1/2 translate-x-full border-t-[${triangleSize}px] border-b-[${triangleSize}px] border-r-[${triangleSize}px] border-t-transparent border-b-transparent border-r-${arrowColor}`;
         case "right":
-          return "border-l-0 border-t-0 border-b-0";
+          return `${baseClasses} left-0 top-1/2 -translate-y-1/2 -translate-x-full border-t-[${triangleSize}px] border-b-[${triangleSize}px] border-l-[${triangleSize}px] border-t-transparent border-b-transparent border-l-${arrowColor}`;
         default:
-          return "";
+          return `${baseClasses} bottom-0 left-1/2 -translate-x-1/2 translate-y-full border-l-[${triangleSize}px] border-r-[${triangleSize}px] border-b-[${triangleSize}px] border-l-transparent border-r-transparent border-b-${arrowColor}`;
       }
     };
 
-    return (
-      <div
-        className={`
-        absolute z-20 rotate-45 
-        ${sizeMap[size]} 
-        ${getArrowBg()} 
-        ${getArrowBorderColor()}
-        ${getVariantBorderStyle()}
-        ${getBorderDirectionClass()}
-        ${placementMap[actualPlacement]}
-      `}
-        aria-hidden="true"
-      />
-    );
+    return <div className={getTriangleClasses()} aria-hidden="true" />;
   };
 
   const show = () => {
