@@ -174,15 +174,16 @@ const Progress: React.FC<ProgressProps> = (props) => {
               className={getColorClasses().replace("bg-", "text-")}
               style={{
                 strokeDasharray: isIndeterminate
-                  ? `${circumference * 0.25} ${circumference}`
+                  ? `${circumference * 0.25} ${circumference * 0.75}`
                   : circumference,
                 strokeDashoffset: isIndeterminate ? 0 : strokeDashoffset,
                 transition: isIndeterminate
                   ? "none"
                   : "stroke-dashoffset 0.5s ease-in-out",
                 animation: isIndeterminate
-                  ? "spin 1s linear infinite"
+                  ? "circularProgress 1.4s ease-in-out infinite"
                   : undefined,
+                transformOrigin: "center",
               }}
             />
           </svg>
