@@ -331,7 +331,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
             ${
               isVertical
                 ? `w-full ${variant !== "bordered" && getRadiusClasses()}`
-                : `${heightClasses} ${getRadiusClasses()}`
+                : `${heightClasses} ${variant !== "bordered" && getRadiusClasses()}`
             }
             ${!disableAnimation ? "transition-all duration-500 ease-out" : ""}
             ${isIndeterminate ? "animate-pulse" : ""}
