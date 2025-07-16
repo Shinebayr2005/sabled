@@ -70,37 +70,37 @@ const Progress: React.FC<ProgressProps> = (props) => {
         solid: "bg-gray-900",
         bordered: "bg-gray-900",
         light: "bg-gray-100 text-gray-700",
-        flat: "bg-gray-500/70",
+        flat: "bg-gray-400",
       },
       primary: {
         solid: "bg-primary",
         bordered: "bg-primary",
         light: "bg-primary/10 text-primary",
-        flat: "bg-primary/70",
+        flat: "bg-primary",
       },
       secondary: {
         solid: "bg-secondary",
         bordered: "bg-secondary",
         light: "bg-secondary/10 text-secondary",
-        flat: "bg-secondary/70",
+        flat: "bg-secondary",
       },
       success: {
         solid: "bg-green-600",
         bordered: "bg-green-600",
         light: "bg-green-100 text-green-700",
-        flat: "bg-green-500/70",
+        flat: "bg-green-600",
       },
       warning: {
         solid: "bg-yellow-500",
         bordered: "bg-yellow-500",
         light: "bg-yellow-100 text-yellow-700",
-        flat: "bg-yellow-500/70",
+        flat: "bg-yellow-500",
       },
       danger: {
         solid: "bg-red-600",
         bordered: "bg-red-600",
         light: "bg-red-100 text-red-700",
-        flat: "bg-red-500/70",
+        flat: "bg-red-600",
       },
     };
 
@@ -151,11 +151,22 @@ const Progress: React.FC<ProgressProps> = (props) => {
   };
 
   const getTrackClasses = () => {
+    const getBorderColor = () => {
+      switch (color) {
+        case "primary": return "border-primary";
+        case "secondary": return "border-secondary";
+        case "success": return "border-green-600";
+        case "warning": return "border-yellow-500";
+        case "danger": return "border-red-600";
+        default: return "border-gray-900";
+      }
+    };
+
     const trackMap = {
       solid: "bg-gray-200",
-      bordered: "bg-gray-50 border-2 border-gray-300 shadow-inner",
+      bordered: `bg-gray-50 border-2 ${getBorderColor()}`,
       light: "bg-gray-50",
-      flat: "bg-gray-200/50 backdrop-blur-sm",
+      flat: "bg-gray-100",
     };
     return trackMap[variant];
   };
@@ -305,8 +316,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
         }
         ${getTrackClasses()}
         overflow-hidden relative
-        ${variant === "bordered" ? "shadow-sm" : ""}
-        ${variant === "flat" ? "border border-gray-200/60" : ""}
+        ${variant === "flat" ? "bg-opacity-20" : ""}
       `}
       >
         <div
@@ -326,8 +336,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
             }
             relative overflow-hidden
             ${variant === "solid" ? "shadow-sm" : ""}
-            ${variant === "bordered" ? "shadow-inner" : ""}
-            ${variant === "flat" ? "backdrop-blur-sm" : ""}
+            ${variant === "flat" ? "opacity-70" : ""}
           `}
           style={{
             [isVertical ? "height" : "width"]: isIndeterminate
@@ -347,7 +356,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
                 : variant === "bordered"
                 ? "bg-gradient-to-r from-transparent via-white/30 to-transparent"
                 : variant === "flat"
-                ? "bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                ? "bg-gradient-to-r from-transparent via-white/15 to-transparent"
                 : ""
             }`} />
           )}
