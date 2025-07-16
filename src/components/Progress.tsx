@@ -117,14 +117,14 @@ const Progress: React.FC<ProgressProps> = (props) => {
       },
       primary: {
         solid: "text-primary",
-        bordered: "text-primary", 
+        bordered: "text-primary",
         light: "text-primary",
         flat: "text-primary",
       },
       secondary: {
         solid: "text-secondary",
         bordered: "text-secondary",
-        light: "text-secondary", 
+        light: "text-secondary",
         flat: "text-secondary",
       },
       success: {
@@ -153,12 +153,18 @@ const Progress: React.FC<ProgressProps> = (props) => {
   const getTrackClasses = () => {
     const getBorderColor = () => {
       switch (color) {
-        case "primary": return "border-primary";
-        case "secondary": return "border-secondary";
-        case "success": return "border-green-600";
-        case "warning": return "border-yellow-500";
-        case "danger": return "border-red-600";
-        default: return "border-gray-900";
+        case "primary":
+          return "border-primary";
+        case "secondary":
+          return "border-secondary";
+        case "success":
+          return "border-green-600";
+        case "warning":
+          return "border-yellow-500";
+        case "danger":
+          return "border-red-600";
+        default:
+          return "border-gray-900";
       }
     };
 
@@ -324,7 +330,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
             ${getColorClasses()}
             ${
               isVertical
-                ? `w-full ${getRadiusClasses()}`
+                ? `w-full ${variant !== "bordered" && getRadiusClasses()}`
                 : `${heightClasses} ${getRadiusClasses()}`
             }
             ${!disableAnimation ? "transition-all duration-500 ease-out" : ""}
@@ -350,15 +356,17 @@ const Progress: React.FC<ProgressProps> = (props) => {
           }}
         >
           {!isIndeterminate && !disableAnimation && (
-            <div className={`absolute inset-0 ${
-              variant === "solid" 
-                ? "bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse opacity-60"
-                : variant === "bordered"
-                ? "bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                : variant === "flat"
-                ? "bg-gradient-to-r from-transparent via-white/15 to-transparent"
-                : ""
-            }`} />
+            <div
+              className={`absolute inset-0 ${
+                variant === "solid"
+                  ? "bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse opacity-60"
+                  : variant === "bordered"
+                  ? "bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                  : variant === "flat"
+                  ? "bg-gradient-to-r from-transparent via-white/15 to-transparent"
+                  : ""
+              }`}
+            />
           )}
         </div>
       </div>
