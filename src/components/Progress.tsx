@@ -67,38 +67,38 @@ const Progress: React.FC<ProgressProps> = (props) => {
   const getColorClasses = () => {
     const colorMap = {
       default: {
-        solid: "bg-gray-500",
-        bordered: "bg-gray-500", // Remove border from here
-        light: "bg-gray-100 text-gray-700",
-        flat: "bg-gray-200/80",
+        solid: "bg-slate-500",
+        bordered: "bg-slate-500",
+        light: "bg-slate-100 text-slate-700",
+        flat: "bg-slate-200/80",
       },
       primary: {
-        solid: "bg-blue-500",
-        bordered: "bg-blue-500", // Remove border from here
-        light: "bg-blue-100 text-blue-700",
-        flat: "bg-blue-200/80",
+        solid: "bg-primary/100",
+        bordered: "bg-primary/100",
+        light: "bg-primary/10 text-primary/100",
+        flat: "bg-primary/80",
       },
       secondary: {
-        solid: "bg-purple-500",
-        bordered: "bg-purple-500", // Remove border from here
-        light: "bg-purple-100 text-purple-700",
-        flat: "bg-purple-200/80",
+        solid: "bg-violet-500",
+        bordered: "bg-violet-500",
+        light: "bg-violet-100 text-violet-700",
+        flat: "bg-violet-200/80",
       },
       success: {
-        solid: "bg-emerald-500",
-        bordered: "bg-emerald-500", // Remove border from here
-        light: "bg-emerald-100 text-emerald-700",
-        flat: "bg-emerald-200/80",
+        solid: "bg-green-500",
+        bordered: "bg-green-500",
+        light: "bg-green-100 text-green-700",
+        flat: "bg-green-200/80",
       },
       warning: {
-        solid: "bg-amber-500",
-        bordered: "bg-amber-500", // Remove border from here
-        light: "bg-amber-100 text-amber-700",
-        flat: "bg-amber-200/80",
+        solid: "bg-yellow-500",
+        bordered: "bg-yellow-500",
+        light: "bg-yellow-100 text-yellow-700",
+        flat: "bg-yellow-200/80",
       },
       danger: {
         solid: "bg-red-500",
-        bordered: "bg-red-500", // Remove border from here
+        bordered: "bg-red-500",
         light: "bg-red-100 text-red-700",
         flat: "bg-red-200/80",
       },
@@ -169,7 +169,9 @@ const Progress: React.FC<ProgressProps> = (props) => {
               stroke={trackStroke || "currentColor"}
               strokeWidth={strokeWidth}
               fill="none"
-              className={variant === "bordered" ? "text-gray-300" : "text-gray-200"}
+              className={
+                variant === "bordered" ? "text-gray-300" : "text-gray-200"
+              }
               opacity={variant === "light" ? "0.3" : "1"}
             />
 
@@ -272,7 +274,11 @@ const Progress: React.FC<ProgressProps> = (props) => {
             }
             ${!disableAnimation ? "transition-all duration-500 ease-out" : ""}
             ${isIndeterminate ? "animate-pulse" : ""}
-            ${isStriped ? "bg-gradient-to-r from-current to-transparent bg-[length:1rem_1rem] animate-[stripes_1s_linear_infinite]" : ""}
+            ${
+              isStriped
+                ? "bg-gradient-to-r from-current to-transparent bg-[length:1rem_1rem] animate-[stripes_1s_linear_infinite]"
+                : ""
+            }
             relative overflow-hidden
             ${variant === "solid" ? "shadow-sm" : ""}
           `}
@@ -282,7 +288,9 @@ const Progress: React.FC<ProgressProps> = (props) => {
               : `${percentage}%`,
             animation: isIndeterminate
               ? "progressIndeterminate 2s ease-in-out infinite"
-              : isStriped ? "stripes 1s linear infinite" : undefined,
+              : isStriped
+              ? "stripes 1s linear infinite"
+              : undefined,
           }}
         >
           {!isIndeterminate && !disableAnimation && variant === "solid" && (
