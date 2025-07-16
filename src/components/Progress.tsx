@@ -107,6 +107,49 @@ const Progress: React.FC<ProgressProps> = (props) => {
     return colorMap[color][variant];
   };
 
+  const getCircularColorClasses = () => {
+    const colorMap = {
+      default: {
+        solid: "text-gray-900",
+        bordered: "text-gray-900",
+        light: "text-gray-700",
+        flat: "text-gray-500",
+      },
+      primary: {
+        solid: "text-primary",
+        bordered: "text-primary", 
+        light: "text-primary",
+        flat: "text-primary",
+      },
+      secondary: {
+        solid: "text-secondary",
+        bordered: "text-secondary",
+        light: "text-secondary", 
+        flat: "text-secondary",
+      },
+      success: {
+        solid: "text-green-600",
+        bordered: "text-green-600",
+        light: "text-green-700",
+        flat: "text-green-500",
+      },
+      warning: {
+        solid: "text-yellow-500",
+        bordered: "text-yellow-500",
+        light: "text-yellow-700",
+        flat: "text-yellow-500",
+      },
+      danger: {
+        solid: "text-red-600",
+        bordered: "text-red-600",
+        light: "text-red-700",
+        flat: "text-red-500",
+      },
+    };
+
+    return colorMap[color][variant];
+  };
+
   const getTrackClasses = () => {
     const trackMap = {
       solid: "bg-gray-200",
@@ -184,7 +227,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
               strokeWidth={strokeWidth}
               fill="none"
               strokeLinecap="round"
-              className={getColorClasses().replace("bg-", "text-")}
+              className={getCircularColorClasses()}
               style={{
                 strokeDasharray: isIndeterminate
                   ? `${circumference * 0.25} ${circumference * 0.75}`
