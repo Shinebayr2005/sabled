@@ -197,8 +197,8 @@ const Button: React.FC<ButtonProps> = ({
 
   const focusClasses = {
     default: "focus:ring-gray-500",
-    primary: "focus:ring-primary/100",
-    secondary: "focus:ring-secondary/100",
+    primary: "focus:ring-primary",
+    secondary: "focus:ring-secondary",
     success: "focus:ring-green-500",
     warning: "focus:ring-yellow-500",
     danger: "focus:ring-red-500",
