@@ -95,15 +95,15 @@ const Button: React.FC<ButtonProps> = ({
     },
     secondary: {
       solid:
-        "bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800",
-      flat: "bg-purple-100 text-purple-700 hover:bg-purple-200 active:bg-purple-300",
+        "bg-secondary text-white hover:bg-secondary active:bg-secondary/80",
+      flat: "bg-secondary/10 text-secondary hover:bg-secondary/20 active:bg-secondary/30",
       faded:
-        "bg-purple-50 text-purple-600 border border-purple-200 hover:bg-purple-100",
+        "bg-secondary/5 text-secondary border border-secondary/20 hover:bg-secondary/10",
       shadow:
-        "bg-purple-600 text-white shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40",
+        "bg-secondary text-white shadow-lg shadow-secondary/25 hover:shadow-secondary/40",
       bordered:
-        "bg-transparent text-purple-600 border-2 border-purple-300 hover:border-purple-400",
-      ghost: "bg-transparent text-purple-600 hover:bg-purple-50",
+        "bg-transparent text-secondary border-2 border-secondary/30 hover:border-secondary/40",
+      ghost: "bg-transparent text-secondary hover:bg-secondary/5",
     },
     success: {
       solid: "bg-green-600 text-white hover:bg-green-700 active:bg-green-800",
@@ -147,8 +147,10 @@ const Button: React.FC<ButtonProps> = ({
         : "rgba(255, 255, 255, 0.4)";
     }
     // Use Tailwind's text color utility to get the ripple color for "primary" and others
-    if (color === "primary") return "rgba(var(--tw-color-primary, 59,130,246), 0.3)";
-    if (color === "secondary") return "rgba(147, 51, 234, 0.3)";
+    if (color === "primary")
+      return "rgba(var(--tw-color-primary, 59,130,246), 0.3)";
+    if (color === "secondary")
+      return "rgba(var(--tw-color-secondary, 147, 51, 234) 0.3)";
     if (color === "danger") return "rgba(239, 68, 68, 0.3)";
     if (color === "success") return "rgba(34, 197, 94, 0.3)";
     if (color === "warning") return "rgba(245, 158, 11, 0.3)";
@@ -196,7 +198,7 @@ const Button: React.FC<ButtonProps> = ({
   const focusClasses = {
     default: "focus:ring-gray-500",
     primary: "focus:ring-primary",
-    secondary: "focus:ring-purple-500",
+    secondary: "focus:ring-secondary",
     success: "focus:ring-green-500",
     warning: "focus:ring-yellow-500",
     danger: "focus:ring-red-500",
