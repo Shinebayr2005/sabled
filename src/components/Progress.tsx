@@ -68,37 +68,37 @@ const Progress: React.FC<ProgressProps> = (props) => {
     const colorMap = {
       default: {
         solid: "bg-gray-500",
-        bordered: "border-2 border-gray-500 bg-gray-50",
+        bordered: "bg-gray-500", // Remove border from here
         light: "bg-gray-100 text-gray-700",
         flat: "bg-gray-200/80",
       },
       primary: {
         solid: "bg-blue-500",
-        bordered: "border-2 border-blue-500 bg-blue-50",
+        bordered: "bg-blue-500", // Remove border from here
         light: "bg-blue-100 text-blue-700",
         flat: "bg-blue-200/80",
       },
       secondary: {
         solid: "bg-purple-500",
-        bordered: "border-2 border-purple-500 bg-purple-50",
+        bordered: "bg-purple-500", // Remove border from here
         light: "bg-purple-100 text-purple-700",
         flat: "bg-purple-200/80",
       },
       success: {
         solid: "bg-emerald-500",
-        bordered: "border-2 border-emerald-500 bg-emerald-50",
+        bordered: "bg-emerald-500", // Remove border from here
         light: "bg-emerald-100 text-emerald-700",
         flat: "bg-emerald-200/80",
       },
       warning: {
         solid: "bg-amber-500",
-        bordered: "border-2 border-amber-500 bg-amber-50",
+        bordered: "bg-amber-500", // Remove border from here
         light: "bg-amber-100 text-amber-700",
         flat: "bg-amber-200/80",
       },
       danger: {
         solid: "bg-red-500",
-        bordered: "border-2 border-red-500 bg-red-50",
+        bordered: "bg-red-500", // Remove border from here
         light: "bg-red-100 text-red-700",
         flat: "bg-red-200/80",
       },
@@ -110,7 +110,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
   const getTrackClasses = () => {
     const trackMap = {
       solid: "bg-gray-200",
-      bordered: "bg-gray-100 border border-gray-200",
+      bordered: "bg-white border-2 border-gray-300", // Add border to track
       light: "bg-gray-50",
       flat: "bg-gray-100",
     };
@@ -260,7 +260,6 @@ const Progress: React.FC<ProgressProps> = (props) => {
         }
         ${getTrackClasses()}
         overflow-hidden shadow-sm relative
-        ${variant === "bordered" ? "border" : ""}
       `}
       >
         <div
@@ -276,7 +275,6 @@ const Progress: React.FC<ProgressProps> = (props) => {
             ${isStriped ? "bg-gradient-to-r from-current to-transparent bg-[length:1rem_1rem] animate-[stripes_1s_linear_infinite]" : ""}
             relative overflow-hidden
             ${variant === "solid" ? "shadow-sm" : ""}
-            ${variant === "bordered" ? "m-0.5" : ""}
           `}
           style={{
             [isVertical ? "height" : "width"]: isIndeterminate
