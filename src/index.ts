@@ -7,6 +7,7 @@ export { default as Textarea } from "./components/Textarea";
 export { default as Select } from "./components/Select";
 export { default as Checkbox } from "./components/Checkbox";
 export { default as Radio } from "./components/Radio";
+export { default as RadioGroup } from "./components/RadioGroup";
 export { default as Card } from "./components/Card";
 export { default as Modal } from "./components/Modal";
 export { default as Badge } from "./components/Badge";
