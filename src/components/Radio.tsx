@@ -34,6 +34,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
       description,
       isDisabled,
       className = "",
+      onChange,
       ...props
     },
     ref
@@ -52,7 +53,11 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
     const finalVariant = variant || groupContext?.variant || "solid";
     const finalDisabled = isDisabled || groupContext?.disabled || false;
     const finalInvalid = groupContext?.isInvalid || false;
-    const isChecked = groupContext ? groupContext.value === value : false;
+
+    // Determine if checked
+    const isChecked = groupContext
+      ? groupContext.value === value
+      : props.checked || false;
 
     const getSizeClasses = () => {
       const sizeMap = {
@@ -83,94 +88,106 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
 
       const colorMap = {
         default: {
-          solid: `border-gray-300 ${
-            isChecked ? "bg-gray-600 border-gray-600" : ""
+          solid: `border-gray-300 transition-all duration-200 ${
+            isChecked ? "bg-gray-600 border-gray-600" : "hover:border-gray-400"
           }`,
-          bordered: `border-gray-300 ${isChecked ? "border-gray-600" : ""}`,
-          light: `border-gray-300 bg-gray-50 ${
-            isChecked ? "bg-gray-100 border-gray-400" : ""
+          bordered: `border-gray-300 transition-all duration-200 ${
+            isChecked ? "border-gray-600 bg-gray-50" : "hover:border-gray-400"
+          }`,
+          light: `border-gray-300 bg-gray-50 transition-all duration-200 ${
+            isChecked ? "bg-gray-100 border-gray-400" : "hover:bg-gray-100"
           }`,
           dot: isChecked
             ? finalVariant === "solid"
               ? "bg-white"
               : "bg-gray-600"
             : "bg-transparent",
-          focus: "focus:ring-gray-500/20",
+          focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20 focus-visible:ring-offset-2",
         },
         primary: {
-          solid: `border-gray-300 ${
-            isChecked ? "bg-blue-600 border-blue-600" : ""
+          solid: `border-gray-300 transition-all duration-200 ${
+            isChecked ? "bg-blue-600 border-blue-600" : "hover:border-blue-300"
           }`,
-          bordered: `border-gray-300 ${isChecked ? "border-blue-600" : ""}`,
-          light: `border-gray-300 bg-blue-50 ${
-            isChecked ? "bg-blue-100 border-blue-400" : ""
+          bordered: `border-gray-300 transition-all duration-200 ${
+            isChecked ? "border-blue-600 bg-blue-50" : "hover:border-blue-300"
+          }`,
+          light: `border-gray-300 bg-blue-50 transition-all duration-200 ${
+            isChecked ? "bg-blue-100 border-blue-400" : "hover:bg-blue-100"
           }`,
           dot: isChecked
             ? finalVariant === "solid"
               ? "bg-white"
               : "bg-blue-600"
             : "bg-transparent",
-          focus: "focus:ring-blue-500/20",
+          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:ring-offset-2",
         },
         secondary: {
-          solid: `border-gray-300 ${
-            isChecked ? "bg-purple-600 border-purple-600" : ""
+          solid: `border-gray-300 transition-all duration-200 ${
+            isChecked ? "bg-purple-600 border-purple-600" : "hover:border-purple-300"
           }`,
-          bordered: `border-gray-300 ${isChecked ? "border-purple-600" : ""}`,
-          light: `border-gray-300 bg-purple-50 ${
-            isChecked ? "bg-purple-100 border-purple-400" : ""
+          bordered: `border-gray-300 transition-all duration-200 ${
+            isChecked ? "border-purple-600 bg-purple-50" : "hover:border-purple-300"
+          }`,
+          light: `border-gray-300 bg-purple-50 transition-all duration-200 ${
+            isChecked ? "bg-purple-100 border-purple-400" : "hover:bg-purple-100"
           }`,
           dot: isChecked
             ? finalVariant === "solid"
               ? "bg-white"
               : "bg-purple-600"
             : "bg-transparent",
-          focus: "focus:ring-purple-500/20",
+          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20 focus-visible:ring-offset-2",
         },
         success: {
-          solid: `border-gray-300 ${
-            isChecked ? "bg-green-600 border-green-600" : ""
+          solid: `border-gray-300 transition-all duration-200 ${
+            isChecked ? "bg-green-600 border-green-600" : "hover:border-green-300"
           }`,
-          bordered: `border-gray-300 ${isChecked ? "border-green-600" : ""}`,
-          light: `border-gray-300 bg-green-50 ${
-            isChecked ? "bg-green-100 border-green-400" : ""
+          bordered: `border-gray-300 transition-all duration-200 ${
+            isChecked ? "border-green-600 bg-green-50" : "hover:border-green-300"
+          }`,
+          light: `border-gray-300 bg-green-50 transition-all duration-200 ${
+            isChecked ? "bg-green-100 border-green-400" : "hover:bg-green-100"
           }`,
           dot: isChecked
             ? finalVariant === "solid"
               ? "bg-white"
               : "bg-green-600"
             : "bg-transparent",
-          focus: "focus:ring-green-500/20",
+          focus: "focus-visible:ring-2 focus-visible:ring-green-500/20 focus-visible:ring-offset-2",
         },
         warning: {
-          solid: `border-gray-300 ${
-            isChecked ? "bg-yellow-500 border-yellow-500" : ""
+          solid: `border-gray-300 transition-all duration-200 ${
+            isChecked ? "bg-yellow-500 border-yellow-500" : "hover:border-yellow-300"
           }`,
-          bordered: `border-gray-300 ${isChecked ? "border-yellow-500" : ""}`,
-          light: `border-gray-300 bg-yellow-50 ${
-            isChecked ? "bg-yellow-100 border-yellow-400" : ""
+          bordered: `border-gray-300 transition-all duration-200 ${
+            isChecked ? "border-yellow-500 bg-yellow-50" : "hover:border-yellow-300"
+          }`,
+          light: `border-gray-300 bg-yellow-50 transition-all duration-200 ${
+            isChecked ? "bg-yellow-100 border-yellow-400" : "hover:bg-yellow-100"
           }`,
           dot: isChecked
             ? finalVariant === "solid"
               ? "bg-white"
               : "bg-yellow-500"
             : "bg-transparent",
-          focus: "focus:ring-yellow-500/20",
+          focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20 focus-visible:ring-offset-2",
         },
         danger: {
-          solid: `border-red-300 ${
-            isChecked ? "bg-red-600 border-red-600" : ""
+          solid: `border-red-300 transition-all duration-200 ${
+            isChecked ? "bg-red-600 border-red-600" : "hover:border-red-400"
           }`,
-          bordered: `border-red-300 ${isChecked ? "border-red-600" : ""}`,
-          light: `border-red-300 bg-red-50 ${
-            isChecked ? "bg-red-100 border-red-400" : ""
+          bordered: `border-red-300 transition-all duration-200 ${
+            isChecked ? "border-red-600 bg-red-50" : "hover:border-red-400"
+          }`,
+          light: `border-red-300 bg-red-50 transition-all duration-200 ${
+            isChecked ? "bg-red-100 border-red-400" : "hover:bg-red-100"
           }`,
           dot: isChecked
             ? finalVariant === "solid"
               ? "bg-white"
               : "bg-red-600"
             : "bg-transparent",
-          focus: "focus:ring-red-500/20",
+          focus: "focus-visible:ring-2 focus-visible:ring-red-500/20 focus-visible:ring-offset-2",
         },
       };
 
@@ -183,12 +200,16 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (groupContext?.onChange) {
         groupContext.onChange(e.target.value);
+      } else if (onChange) {
+        onChange(e);
       }
     };
 
     const handleClick = () => {
-      if (!finalDisabled && groupContext?.onChange) {
-        groupContext.onChange(value);
+      if (!finalDisabled) {
+        if (groupContext?.onChange) {
+          groupContext.onChange(value);
+        }
       }
     };
 
@@ -204,7 +225,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             checked={isChecked}
             disabled={finalDisabled}
             onChange={handleChange}
-            className="sr-only"
+            className="sr-only peer"
             {...props}
           />
 
@@ -214,17 +235,25 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             ${sizeClasses.radio}
             ${colorClasses[finalVariant]}
             ${colorClasses.focus}
-            ${
-              finalDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-            }
+            ${finalDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
             border-2 rounded-full
-            transition-all duration-200 ease-in-out
             ${isChecked ? "scale-105" : "scale-100"}
             hover:scale-105 active:scale-95
             flex items-center justify-center
             relative overflow-hidden
+            transition-transform duration-150 ease-in-out
           `}
             onClick={handleClick}
+            role="radio"
+            aria-checked={isChecked}
+            aria-disabled={finalDisabled}
+            tabIndex={finalDisabled ? -1 : 0}
+            onKeyDown={(e) => {
+              if ((e.key === "Enter" || e.key === " ") && !finalDisabled) {
+                e.preventDefault();
+                handleClick();
+              }
+            }}
           >
             {/* Inner dot */}
             <div
@@ -263,7 +292,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
               ${finalDisabled ? "opacity-50 cursor-not-allowed" : ""}
               ${finalInvalid ? "text-red-600" : "text-gray-700"}
               transition-colors duration-200
-              block
+              block select-none
             `}
               onClick={handleClick}
             >

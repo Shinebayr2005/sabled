@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useId } from 'react';
 
 type RadioGroupOrientation = 'horizontal' | 'vertical';
 type RadioGroupSize = 'sm' | 'md' | 'lg';
@@ -50,7 +50,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   value,
   defaultValue,
   onChange,
-  name = `radio-group-${Math.random().toString(36).substr(2, 9)}`,
+  name,
   orientation = 'vertical',
   size = 'md',
   color = 'primary',
@@ -64,10 +64,15 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   className = ''
 }) => {
   const [internalValue, setInternalValue] = useState(defaultValue || '');
-  const currentValue = value !== undefined ? value : internalValue;
+  const groupId = useId();
+  const groupName = name || `radio-group-${groupId}`;
+  
+  // Determine current value (controlled vs uncontrolled)
+  const isControlled = value !== undefined;
+  const currentValue = isControlled ? value : internalValue;
 
   const handleChange = (newValue: string) => {
-    if (value === undefined) {
+    if (!isControlled) {
       setInternalValue(newValue);
     }
     onChange?.(newValue);
@@ -76,7 +81,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   const contextValue: RadioGroupContextType = {
     value: currentValue,
     onChange: handleChange,
-    name,
+    name: groupName,
     size,
     color,
     variant,
@@ -94,8 +99,12 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
       <div className={`w-full ${className}`}>
         {/* Group Label */}
         {label && (
-          <div className="mb-2">
-            <label className={`block text-sm font-medium ${isInvalid ? 'text-red-600' : 'text-gray-700'}`}>
+          <div className="mb-3">
+            <label 
+              className={`block text-sm font-medium transition-colors duration-200 ${
+                isInvalid ? 'text-red-600' : 'text-gray-700'
+              }`}
+            >
               {label}
               {isRequired && <span className="text-red-500 ml-1">*</span>}
             </label>
@@ -112,13 +121,19 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
           aria-label={label}
           aria-required={isRequired}
           aria-invalid={isInvalid}
+          aria-describedby={errorMessage ? `${groupName}-error` : undefined}
         >
           {children}
         </div>
 
         {/* Error Message */}
         {isInvalid && errorMessage && (
-          <p className="mt-2 text-xs text-red-600">{errorMessage}</p>
+          <p 
+            id={`${groupName}-error`}
+            className="mt-2 text-xs text-red-600 transition-colors duration-200"
+          >
+            {errorMessage}
+          </p>
         )}
       </div>
     </RadioGroupContext.Provider>
