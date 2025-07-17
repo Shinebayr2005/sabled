@@ -54,7 +54,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
     const finalDisabled = isDisabled || groupContext?.disabled || false;
     const finalInvalid = groupContext?.isInvalid || false;
 
-    // Determine if checked
+    // Determine if checked - Fixed logic here
     const isChecked = groupContext
       ? groupContext.value === value
       : props.checked || false;
@@ -317,15 +317,19 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
     const sizeClasses = getSizeClasses();
     const colorClasses = getColorClasses();
 
+    // Fixed event handlers
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (groupContext?.onChange) {
-        groupContext.onChange(e.target.value);
-      } else if (onChange) {
-        onChange(e);
+      if (!finalDisabled) {
+        if (groupContext?.onChange) {
+          groupContext.onChange(value);
+        } else if (onChange) {
+          onChange(e);
+        }
       }
     };
 
-    const handleClick = () => {
+    const handleClick = (e: React.MouseEvent) => {
+      e.preventDefault();
       if (!finalDisabled) {
         if (groupContext?.onChange) {
           groupContext.onChange(value);
@@ -345,7 +349,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             checked={isChecked}
             disabled={finalDisabled}
             onChange={handleChange}
-            className="sr-only peer"
+            className="sr-only"
             {...props}
           />
 
@@ -375,7 +379,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             onKeyDown={(e) => {
               if ((e.key === "Enter" || e.key === " ") && !finalDisabled) {
                 e.preventDefault();
-                handleClick();
+                handleClick(e as any);
               }
             }}
           >

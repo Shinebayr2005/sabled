@@ -72,6 +72,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   const currentValue = isControlled ? value : internalValue;
 
   const handleChange = (newValue: string) => {
+    console.log('RadioGroup handleChange:', newValue); // Debug log
     if (!isControlled) {
       setInternalValue(newValue);
     }
@@ -89,12 +90,13 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
     isInvalid
   };
 
+  console.log('RadioGroup context value:', contextValue); // Debug log
+
   const orientationClasses = {
     horizontal: 'flex flex-row flex-wrap gap-4',
     vertical: 'flex flex-col gap-3'
   };
 
-  // Add variant-specific spacing
   const variantSpacing = {
     solid: 'gap-3',
     bordered: 'gap-3',
