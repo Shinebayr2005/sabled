@@ -122,36 +122,36 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
         primary: {
           solid: {
             base: "border-2 border-gray-300 bg-white",
-            checked: "border-primary bg-primary",
+            checked: "bg-primary text-white border-primary", // Same as Button
             hover: "hover:border-primary/90 hover:bg-primary/5",
             dot: "bg-white",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
           },
           bordered: {
             base: "border-2 border-gray-300 bg-white",
-            checked: "border-primary bg-transparent",
+            checked: "border-primary bg-transparent text-primary", // Match Button bordered
             hover: "hover:border-primary/80 hover:bg-primary/5",
             dot: "bg-primary",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
           },
           light: {
             base: "border-2 border-primary/20 bg-primary/10",
-            checked: "border-primary/30 bg-primary/20",
+            checked: "border-primary/30 bg-primary/20 text-primary", // Match Button flat
             hover: "hover:border-primary/25 hover:bg-primary/15",
             dot: "bg-primary",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
           },
           ghost: {
             base: "border-2 border-transparent bg-transparent",
-            checked: "border-transparent bg-primary/10",
+            checked: "border-transparent bg-primary/10 text-primary", // Match Button ghost
             hover: "hover:bg-primary/5",
             dot: "bg-primary",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
           },
           flat: {
-            base: "border-0 bg-primary/5",
-            checked: "bg-primary/10",
-            hover: "hover:bg-primary/10",
+            base: "border-0 bg-primary/10", // Match Button flat base
+            checked: "bg-primary/20 text-primary",
+            hover: "hover:bg-primary/15",
             dot: "bg-primary",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
           },
@@ -159,36 +159,36 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
         secondary: {
           solid: {
             base: "border-2 border-gray-300 bg-white",
-            checked: "border-secondary bg-secondary",
-            hover: "hover:border-secondary hover:bg-secondary/5",
+            checked: "bg-secondary text-white border-secondary", // Same as Button
+            hover: "hover:border-secondary/90 hover:bg-secondary/5",
             dot: "bg-white",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
           },
           bordered: {
             base: "border-2 border-gray-300 bg-white",
-            checked: "border-secondary/30 bg-transparent",
-            hover: "hover:border-secondary/40 hover:bg-secondary/5",
+            checked: "border-secondary bg-transparent text-secondary",
+            hover: "hover:border-secondary/80 hover:bg-secondary/5",
             dot: "bg-secondary",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
           },
           light: {
             base: "border-2 border-secondary/20 bg-secondary/10",
-            checked: "border-secondary/30 bg-secondary/20",
+            checked: "border-secondary/30 bg-secondary/20 text-secondary",
             hover: "hover:border-secondary/25 hover:bg-secondary/15",
             dot: "bg-secondary",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
           },
           ghost: {
             base: "border-2 border-transparent bg-transparent",
-            checked: "border-transparent bg-secondary/5",
+            checked: "border-transparent bg-secondary/10 text-secondary",
             hover: "hover:bg-secondary/5",
             dot: "bg-secondary",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
           },
           flat: {
-            base: "border-0 bg-secondary/5",
-            checked: "bg-secondary/10",
-            hover: "hover:bg-secondary/10",
+            base: "border-0 bg-secondary/10",
+            checked: "bg-secondary/20 text-secondary",
+            hover: "hover:bg-secondary/15",
             dot: "bg-secondary",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
           },
