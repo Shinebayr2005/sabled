@@ -45,9 +45,6 @@ const Confirm: React.FC<ConfirmProps> = ({
   useEffect(() => {
     // Trigger fade-in animation on mount
     setVisible(true);
-    
-    // Remove the scroll handling from here since it's handled in utils
-    
   }, []);
 
   const handleClose = (action?: () => void) => {
@@ -56,9 +53,8 @@ const Confirm: React.FC<ConfirmProps> = ({
 
     // Execute the action after the animation ends
     setTimeout(() => {
-      // Remove scroll handling from here too
       if (action) action();
-    }, 300); // Match the transition duration
+    }, 300);
   };
 
   // Handle escape key press
@@ -133,18 +129,18 @@ const Confirm: React.FC<ConfirmProps> = ({
         visible ? "opacity-100" : "opacity-0"
       } ${overlayClassName}`}
       onClick={(e) => {
-        // Close modal when clicking on overlay (not the modal content)
         if (e.target === e.currentTarget && closable) {
           handleClose(onCancel);
         }
       }}
+      style={{ touchAction: 'none' }} // Prevent touch scrolling on mobile
     >
       <div
         className={`bg-white border border-gray-200 p-6 rounded-lg transform transition-transform duration-300 max-h-[90vh] overflow-y-auto ${
           visible ? "scale-100" : "scale-90"
         } ${className}`}
         style={{ width: widthStyle }}
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+        onClick={(e) => e.stopPropagation()}
       >
         {closable && (
           <button

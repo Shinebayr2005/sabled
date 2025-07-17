@@ -49,21 +49,28 @@ const confirm = ({
 
   // Disable body scroll when modal opens
   const originalOverflow = document.body.style.overflow;
+  const originalPaddingRight = document.body.style.paddingRight;
+  
+  // Get scrollbar width
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+  
+  // Prevent scroll and compensate for scrollbar
   document.body.style.overflow = 'hidden';
+  document.body.style.paddingRight = `${scrollbarWidth}px`;
 
   // Create a root for rendering
   const root = ReactDOM.createRoot(wrapper);
 
   const cleanup = () => {
-    // Re-enable body scroll before cleanup
+    // Re-enable body scroll and restore padding
     document.body.style.overflow = originalOverflow;
+    document.body.style.paddingRight = originalPaddingRight;
     
     root.unmount();
 
-    if (typeof document === "undefined") {
-      return;
+    if (document.body.contains(wrapper)) {
+      document.body.removeChild(wrapper);
     }
-    document.body.removeChild(wrapper);
   };
 
   // Handle confirm and cancel actions
@@ -81,46 +88,13 @@ const confirm = ({
     cleanup();
   };
 
-  // Handle escape key press
-  const handleEscapeKey = (event: KeyboardEvent) => {
-    if (event.key === 'Escape' && closable) {
-      handleCancel();
-    }
-  };
-
-  document.addEventListener('keydown', handleEscapeKey);
-
-  // Clean up event listener when modal is closed
-  const originalCleanup = cleanup;
-  const enhancedCleanup = () => {
-    document.removeEventListener('keydown', handleEscapeKey);
-    originalCleanup();
-  };
-
-  // Update cleanup references
-  const enhancedHandleConfirm = () => {
-    document.removeEventListener('keydown', handleEscapeKey);
-    if (onConfirm) {
-      onConfirm();
-    }
-    originalCleanup();
-  };
-
-  const enhancedHandleCancel = () => {
-    document.removeEventListener('keydown', handleEscapeKey);
-    if (onCancel) {
-      onCancel();
-    }
-    originalCleanup();
-  };
-
-  // Render the ConfirmDialog
+  // Render the ConfirmDialog (remove escape key handling from utils)
   root.render(
     <Confirm
       title={title}
       content={content}
-      onConfirm={enhancedHandleConfirm}
-      onCancel={enhancedHandleCancel}
+      onConfirm={handleConfirm}
+      onCancel={handleCancel}
       confirmText={confirmText}
       cancelText={cancelText}
       confirmColor={confirmColor}
