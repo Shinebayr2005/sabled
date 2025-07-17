@@ -2,17 +2,10 @@ import React, { forwardRef } from "react";
 import { useRadioGroup } from "./RadioGroup";
 
 type RadioSize = "sm" | "md" | "lg";
-type RadioColor =
-  | "default"
-  | "primary"
-  | "secondary"
-  | "success"
-  | "warning"
-  | "danger";
-type RadioVariant = "solid" | "bordered" | "light";
+type RadioColor = "default" | "primary" | "secondary" | "success" | "warning" | "danger";
+type RadioVariant = "solid" | "bordered" | "light" | "ghost" | "flat";
 
-interface RadioProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "type"> {
+interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "type"> {
   value: string;
   children?: React.ReactNode;
   size?: RadioSize;
@@ -23,296 +16,420 @@ interface RadioProps
   className?: string;
 }
 
-const Radio = forwardRef<HTMLInputElement, RadioProps>(
-  (
-    {
-      value,
-      children,
-      size,
-      color,
-      variant,
-      description,
-      isDisabled,
-      className = "",
-      onChange,
-      ...props
-    },
-    ref
-  ) => {
-    // Try to get context from RadioGroup
-    let groupContext;
-    try {
-      groupContext = useRadioGroup();
-    } catch {
-      groupContext = null;
-    }
+const Radio = forwardRef<HTMLInputElement, RadioProps>(({
+  value,
+  children,
+  size,
+  color,
+  variant,
+  description,
+  isDisabled,
+  className = "",
+  onChange,
+  ...props
+}, ref) => {
+  // Try to get context from RadioGroup
+  let groupContext;
+  try {
+    groupContext = useRadioGroup();
+  } catch {
+    groupContext = null;
+  }
 
-    // Use group context or fallback to individual props
-    const finalSize = size || groupContext?.size || "md";
-    const finalColor = color || groupContext?.color || "primary";
-    const finalVariant = variant || groupContext?.variant || "solid";
-    const finalDisabled = isDisabled || groupContext?.disabled || false;
-    const finalInvalid = groupContext?.isInvalid || false;
+  // Use group context or fallback to individual props
+  const finalSize = size || groupContext?.size || "md";
+  const finalColor = color || groupContext?.color || "primary";
+  const finalVariant = variant || groupContext?.variant || "solid";
+  const finalDisabled = isDisabled || groupContext?.disabled || false;
+  const finalInvalid = groupContext?.isInvalid || false;
 
-    // Determine if checked
-    const isChecked = groupContext
-      ? groupContext.value === value
-      : props.checked || false;
+  // Determine if checked
+  const isChecked = groupContext ? groupContext.value === value : props.checked || false;
 
-    const getSizeClasses = () => {
-      const sizeMap = {
-        sm: {
-          radio: "w-4 h-4",
-          text: "text-sm",
-          spacing: "ml-2",
-          dot: "w-2 h-2",
-        },
-        md: {
-          radio: "w-5 h-5",
-          text: "text-sm",
-          spacing: "ml-3",
-          dot: "w-2.5 h-2.5",
-        },
-        lg: {
-          radio: "w-6 h-6",
-          text: "text-base",
-          spacing: "ml-3",
-          dot: "w-3 h-3",
-        },
-      };
-      return sizeMap[finalSize];
-    };
-
-    const getColorClasses = () => {
-      const baseColor = finalInvalid ? "danger" : finalColor;
-
-      const colorMap = {
-        default: {
-          solid: `border-gray-300 transition-all duration-200 ${
-            isChecked ? "bg-gray-600 border-gray-600" : "hover:border-gray-400"
-          }`,
-          bordered: `border-gray-300 transition-all duration-200 ${
-            isChecked ? "border-gray-600 bg-gray-50" : "hover:border-gray-400"
-          }`,
-          light: `border-gray-300 bg-gray-50 transition-all duration-200 ${
-            isChecked ? "bg-gray-100 border-gray-400" : "hover:bg-gray-100"
-          }`,
-          dot: isChecked
-            ? finalVariant === "solid"
-              ? "bg-white"
-              : "bg-gray-600"
-            : "bg-transparent",
-          focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20 focus-visible:ring-offset-2",
-        },
-        primary: {
-          solid: `border-gray-300 transition-all duration-200 ${
-            isChecked ? "bg-blue-600 border-blue-600" : "hover:border-blue-300"
-          }`,
-          bordered: `border-gray-300 transition-all duration-200 ${
-            isChecked ? "border-blue-600 bg-blue-50" : "hover:border-blue-300"
-          }`,
-          light: `border-gray-300 bg-blue-50 transition-all duration-200 ${
-            isChecked ? "bg-blue-100 border-blue-400" : "hover:bg-blue-100"
-          }`,
-          dot: isChecked
-            ? finalVariant === "solid"
-              ? "bg-white"
-              : "bg-blue-600"
-            : "bg-transparent",
-          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:ring-offset-2",
-        },
-        secondary: {
-          solid: `border-gray-300 transition-all duration-200 ${
-            isChecked ? "bg-purple-600 border-purple-600" : "hover:border-purple-300"
-          }`,
-          bordered: `border-gray-300 transition-all duration-200 ${
-            isChecked ? "border-purple-600 bg-purple-50" : "hover:border-purple-300"
-          }`,
-          light: `border-gray-300 bg-purple-50 transition-all duration-200 ${
-            isChecked ? "bg-purple-100 border-purple-400" : "hover:bg-purple-100"
-          }`,
-          dot: isChecked
-            ? finalVariant === "solid"
-              ? "bg-white"
-              : "bg-purple-600"
-            : "bg-transparent",
-          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20 focus-visible:ring-offset-2",
-        },
-        success: {
-          solid: `border-gray-300 transition-all duration-200 ${
-            isChecked ? "bg-green-600 border-green-600" : "hover:border-green-300"
-          }`,
-          bordered: `border-gray-300 transition-all duration-200 ${
-            isChecked ? "border-green-600 bg-green-50" : "hover:border-green-300"
-          }`,
-          light: `border-gray-300 bg-green-50 transition-all duration-200 ${
-            isChecked ? "bg-green-100 border-green-400" : "hover:bg-green-100"
-          }`,
-          dot: isChecked
-            ? finalVariant === "solid"
-              ? "bg-white"
-              : "bg-green-600"
-            : "bg-transparent",
-          focus: "focus-visible:ring-2 focus-visible:ring-green-500/20 focus-visible:ring-offset-2",
-        },
-        warning: {
-          solid: `border-gray-300 transition-all duration-200 ${
-            isChecked ? "bg-yellow-500 border-yellow-500" : "hover:border-yellow-300"
-          }`,
-          bordered: `border-gray-300 transition-all duration-200 ${
-            isChecked ? "border-yellow-500 bg-yellow-50" : "hover:border-yellow-300"
-          }`,
-          light: `border-gray-300 bg-yellow-50 transition-all duration-200 ${
-            isChecked ? "bg-yellow-100 border-yellow-400" : "hover:bg-yellow-100"
-          }`,
-          dot: isChecked
-            ? finalVariant === "solid"
-              ? "bg-white"
-              : "bg-yellow-500"
-            : "bg-transparent",
-          focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20 focus-visible:ring-offset-2",
-        },
-        danger: {
-          solid: `border-red-300 transition-all duration-200 ${
-            isChecked ? "bg-red-600 border-red-600" : "hover:border-red-400"
-          }`,
-          bordered: `border-red-300 transition-all duration-200 ${
-            isChecked ? "border-red-600 bg-red-50" : "hover:border-red-400"
-          }`,
-          light: `border-red-300 bg-red-50 transition-all duration-200 ${
-            isChecked ? "bg-red-100 border-red-400" : "hover:bg-red-100"
-          }`,
-          dot: isChecked
-            ? finalVariant === "solid"
-              ? "bg-white"
-              : "bg-red-600"
-            : "bg-transparent",
-          focus: "focus-visible:ring-2 focus-visible:ring-red-500/20 focus-visible:ring-offset-2",
-        },
-      };
-
-      return colorMap[baseColor];
-    };
-
-    const sizeClasses = getSizeClasses();
-    const colorClasses = getColorClasses();
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (groupContext?.onChange) {
-        groupContext.onChange(e.target.value);
-      } else if (onChange) {
-        onChange(e);
+  const getSizeClasses = () => {
+    const sizeMap = {
+      sm: {
+        radio: "w-4 h-4",
+        text: "text-sm",
+        spacing: "ml-2",
+        dot: "w-1.5 h-1.5",
+        padding: "p-0.5"
+      },
+      md: {
+        radio: "w-5 h-5",
+        text: "text-sm",
+        spacing: "ml-3",
+        dot: "w-2 h-2",
+        padding: "p-1"
+      },
+      lg: {
+        radio: "w-6 h-6",
+        text: "text-base",
+        spacing: "ml-3",
+        dot: "w-2.5 h-2.5",
+        padding: "p-1"
       }
     };
+    return sizeMap[finalSize];
+  };
 
-    const handleClick = () => {
-      if (!finalDisabled) {
-        if (groupContext?.onChange) {
-          groupContext.onChange(value);
+  const getColorClasses = () => {
+    const baseColor = finalInvalid ? "danger" : finalColor;
+    
+    const colorVariants = {
+      default: {
+        solid: {
+          base: "border-2 border-gray-300 bg-white",
+          checked: "border-gray-600 bg-gray-600",
+          hover: "hover:border-gray-400 hover:bg-gray-50",
+          dot: "bg-white",
+          focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20"
+        },
+        bordered: {
+          base: "border-2 border-gray-300 bg-white",
+          checked: "border-gray-600 bg-gray-50",
+          hover: "hover:border-gray-400 hover:bg-gray-50",
+          dot: "bg-gray-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20"
+        },
+        light: {
+          base: "border-2 border-gray-200 bg-gray-50",
+          checked: "border-gray-400 bg-gray-100",
+          hover: "hover:border-gray-300 hover:bg-gray-100",
+          dot: "bg-gray-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20"
+        },
+        ghost: {
+          base: "border-2 border-transparent bg-transparent",
+          checked: "border-gray-400 bg-gray-100",
+          hover: "hover:border-gray-200 hover:bg-gray-50",
+          dot: "bg-gray-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20"
+        },
+        flat: {
+          base: "border-0 bg-gray-100",
+          checked: "bg-gray-200",
+          hover: "hover:bg-gray-150",
+          dot: "bg-gray-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20"
+        }
+      },
+      primary: {
+        solid: {
+          base: "border-2 border-gray-300 bg-white",
+          checked: "border-blue-600 bg-blue-600",
+          hover: "hover:border-blue-300 hover:bg-blue-50",
+          dot: "bg-white",
+          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20"
+        },
+        bordered: {
+          base: "border-2 border-gray-300 bg-white",
+          checked: "border-blue-600 bg-blue-50",
+          hover: "hover:border-blue-300 hover:bg-blue-25",
+          dot: "bg-blue-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20"
+        },
+        light: {
+          base: "border-2 border-blue-200 bg-blue-50",
+          checked: "border-blue-400 bg-blue-100",
+          hover: "hover:border-blue-300 hover:bg-blue-75",
+          dot: "bg-blue-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20"
+        },
+        ghost: {
+          base: "border-2 border-transparent bg-transparent",
+          checked: "border-blue-400 bg-blue-100",
+          hover: "hover:border-blue-200 hover:bg-blue-50",
+          dot: "bg-blue-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20"
+        },
+        flat: {
+          base: "border-0 bg-blue-100",
+          checked: "bg-blue-200",
+          hover: "hover:bg-blue-150",
+          dot: "bg-blue-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20"
+        }
+      },
+      secondary: {
+        solid: {
+          base: "border-2 border-gray-300 bg-white",
+          checked: "border-purple-600 bg-purple-600",
+          hover: "hover:border-purple-300 hover:bg-purple-50",
+          dot: "bg-white",
+          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20"
+        },
+        bordered: {
+          base: "border-2 border-gray-300 bg-white",
+          checked: "border-purple-600 bg-purple-50",
+          hover: "hover:border-purple-300 hover:bg-purple-25",
+          dot: "bg-purple-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20"
+        },
+        light: {
+          base: "border-2 border-purple-200 bg-purple-50",
+          checked: "border-purple-400 bg-purple-100",
+          hover: "hover:border-purple-300 hover:bg-purple-75",
+          dot: "bg-purple-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20"
+        },
+        ghost: {
+          base: "border-2 border-transparent bg-transparent",
+          checked: "border-purple-400 bg-purple-100",
+          hover: "hover:border-purple-200 hover:bg-purple-50",
+          dot: "bg-purple-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20"
+        },
+        flat: {
+          base: "border-0 bg-purple-100",
+          checked: "bg-purple-200",
+          hover: "hover:bg-purple-150",
+          dot: "bg-purple-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20"
+        }
+      },
+      success: {
+        solid: {
+          base: "border-2 border-gray-300 bg-white",
+          checked: "border-green-600 bg-green-600",
+          hover: "hover:border-green-300 hover:bg-green-50",
+          dot: "bg-white",
+          focus: "focus-visible:ring-2 focus-visible:ring-green-500/20"
+        },
+        bordered: {
+          base: "border-2 border-gray-300 bg-white",
+          checked: "border-green-600 bg-green-50",
+          hover: "hover:border-green-300 hover:bg-green-25",
+          dot: "bg-green-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-green-500/20"
+        },
+        light: {
+          base: "border-2 border-green-200 bg-green-50",
+          checked: "border-green-400 bg-green-100",
+          hover: "hover:border-green-300 hover:bg-green-75",
+          dot: "bg-green-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-green-500/20"
+        },
+        ghost: {
+          base: "border-2 border-transparent bg-transparent",
+          checked: "border-green-400 bg-green-100",
+          hover: "hover:border-green-200 hover:bg-green-50",
+          dot: "bg-green-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-green-500/20"
+        },
+        flat: {
+          base: "border-0 bg-green-100",
+          checked: "bg-green-200",
+          hover: "hover:bg-green-150",
+          dot: "bg-green-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-green-500/20"
+        }
+      },
+      warning: {
+        solid: {
+          base: "border-2 border-gray-300 bg-white",
+          checked: "border-amber-500 bg-amber-500",
+          hover: "hover:border-amber-300 hover:bg-amber-50",
+          dot: "bg-white",
+          focus: "focus-visible:ring-2 focus-visible:ring-amber-500/20"
+        },
+        bordered: {
+          base: "border-2 border-gray-300 bg-white",
+          checked: "border-amber-500 bg-amber-50",
+          hover: "hover:border-amber-300 hover:bg-amber-25",
+          dot: "bg-amber-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-amber-500/20"
+        },
+        light: {
+          base: "border-2 border-amber-200 bg-amber-50",
+          checked: "border-amber-400 bg-amber-100",
+          hover: "hover:border-amber-300 hover:bg-amber-75",
+          dot: "bg-amber-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-amber-500/20"
+        },
+        ghost: {
+          base: "border-2 border-transparent bg-transparent",
+          checked: "border-amber-400 bg-amber-100",
+          hover: "hover:border-amber-200 hover:bg-amber-50",
+          dot: "bg-amber-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-amber-500/20"
+        },
+        flat: {
+          base: "border-0 bg-amber-100",
+          checked: "bg-amber-200",
+          hover: "hover:bg-amber-150",
+          dot: "bg-amber-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-amber-500/20"
+        }
+      },
+      danger: {
+        solid: {
+          base: "border-2 border-red-300 bg-white",
+          checked: "border-red-600 bg-red-600",
+          hover: "hover:border-red-400 hover:bg-red-50",
+          dot: "bg-white",
+          focus: "focus-visible:ring-2 focus-visible:ring-red-500/20"
+        },
+        bordered: {
+          base: "border-2 border-red-300 bg-white",
+          checked: "border-red-600 bg-red-50",
+          hover: "hover:border-red-400 hover:bg-red-25",
+          dot: "bg-red-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-red-500/20"
+        },
+        light: {
+          base: "border-2 border-red-200 bg-red-50",
+          checked: "border-red-400 bg-red-100",
+          hover: "hover:border-red-300 hover:bg-red-75",
+          dot: "bg-red-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-red-500/20"
+        },
+        ghost: {
+          base: "border-2 border-transparent bg-transparent",
+          checked: "border-red-400 bg-red-100",
+          hover: "hover:border-red-200 hover:bg-red-50",
+          dot: "bg-red-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-red-500/20"
+        },
+        flat: {
+          base: "border-0 bg-red-100",
+          checked: "bg-red-200",
+          hover: "hover:bg-red-150",
+          dot: "bg-red-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-red-500/20"
         }
       }
     };
 
-    return (
-      <div className={`flex items-start ${className}`}>
-        <div className="relative flex items-center">
-          {/* Hidden native radio */}
-          <input
-            ref={ref}
-            type="radio"
-            name={groupContext?.name}
-            value={value}
-            checked={isChecked}
-            disabled={finalDisabled}
-            onChange={handleChange}
-            className="sr-only peer"
-            {...props}
-          />
+    return colorVariants[baseColor][finalVariant];
+  };
 
-          {/* Custom radio */}
-          <div
-            className={`
+  const sizeClasses = getSizeClasses();
+  const colorClasses = getColorClasses();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (groupContext?.onChange) {
+      groupContext.onChange(e.target.value);
+    } else if (onChange) {
+      onChange(e);
+    }
+  };
+
+  const handleClick = () => {
+    if (!finalDisabled) {
+      if (groupContext?.onChange) {
+        groupContext.onChange(value);
+      }
+    }
+  };
+
+  return (
+    <div className={`flex items-start ${className}`}>
+      <div className="relative flex items-center">
+        {/* Hidden native radio */}
+        <input
+          ref={ref}
+          type="radio"
+          name={groupContext?.name}
+          value={value}
+          checked={isChecked}
+          disabled={finalDisabled}
+          onChange={handleChange}
+          className="sr-only peer"
+          {...props}
+        />
+
+        {/* Custom radio */}
+        <div
+          className={`
             ${sizeClasses.radio}
-            ${colorClasses[finalVariant]}
+            ${colorClasses.base}
+            ${isChecked ? colorClasses.checked : colorClasses.hover}
             ${colorClasses.focus}
             ${finalDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-            border-2 rounded-full
+            rounded-full
             ${isChecked ? "scale-105" : "scale-100"}
             hover:scale-105 active:scale-95
             flex items-center justify-center
             relative overflow-hidden
-            transition-transform duration-150 ease-in-out
+            transition-all duration-200 ease-in-out
+            shadow-sm
           `}
-            onClick={handleClick}
-            role="radio"
-            aria-checked={isChecked}
-            aria-disabled={finalDisabled}
-            tabIndex={finalDisabled ? -1 : 0}
-            onKeyDown={(e) => {
-              if ((e.key === "Enter" || e.key === " ") && !finalDisabled) {
-                e.preventDefault();
-                handleClick();
-              }
-            }}
-          >
-            {/* Inner dot */}
-            <div
-              className={`
+          onClick={handleClick}
+          role="radio"
+          aria-checked={isChecked}
+          aria-disabled={finalDisabled}
+          tabIndex={finalDisabled ? -1 : 0}
+          onKeyDown={(e) => {
+            if ((e.key === "Enter" || e.key === " ") && !finalDisabled) {
+              e.preventDefault();
+              handleClick();
+            }
+          }}
+        >
+          {/* Inner dot */}
+          <div
+            className={`
               ${sizeClasses.dot}
               ${colorClasses.dot}
               rounded-full
               transition-all duration-200 ease-in-out
               ${isChecked ? "scale-100 opacity-100" : "scale-0 opacity-0"}
             `}
-            />
+          />
 
-            {/* Ripple effect */}
-            {isChecked && (
-              <div
-                className={`
+          {/* Ripple effect */}
+          {isChecked && (
+            <div
+              className={`
                 absolute inset-0 rounded-full
                 animate-ping opacity-75
-                ${finalVariant === "solid" ? "bg-white/50" : "bg-current/30"}
+                ${finalVariant === "solid" ? "bg-white/30" : "bg-current/30"}
               `}
-                style={{
-                  animationDuration: "0.6s",
-                  animationIterationCount: "1",
-                }}
-              />
-            )}
-          </div>
-        </div>
+              style={{
+                animationDuration: "0.6s",
+                animationIterationCount: "1",
+              }}
+            />
+          )}
 
-        {/* Label */}
-        {children && (
-          <div className={sizeClasses.spacing}>
-            <label
-              className={`
+          {/* Selection ring for bordered variant */}
+          {isChecked && finalVariant === "bordered" && (
+            <div className="absolute inset-1 rounded-full border-2 border-current opacity-50" />
+          )}
+        </div>
+      </div>
+
+      {/* Label */}
+      {children && (
+        <div className={sizeClasses.spacing}>
+          <label
+            className={`
               ${sizeClasses.text} font-medium cursor-pointer
               ${finalDisabled ? "opacity-50 cursor-not-allowed" : ""}
               ${finalInvalid ? "text-red-600" : "text-gray-700"}
               transition-colors duration-200
               block select-none
+              leading-tight
             `}
-              onClick={handleClick}
+            onClick={handleClick}
+          >
+            {children}
+          </label>
+          {description && (
+            <p
+              className={`text-xs text-gray-500 mt-0.5 leading-snug ${
+                finalDisabled ? "opacity-50" : ""
+              }`}
             >
-              {children}
-            </label>
-            {description && (
-              <p
-                className={`text-xs text-gray-500 mt-0.5 ${
-                  finalDisabled ? "opacity-50" : ""
-                }`}
-              >
-                {description}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
-    );
-  }
-);
+              {description}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+});
 
 Radio.displayName = "Radio";
 
