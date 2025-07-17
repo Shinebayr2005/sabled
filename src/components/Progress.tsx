@@ -69,37 +69,37 @@ const Progress: React.FC<ProgressProps> = (props) => {
       default: {
         solid: "bg-gray-900",
         bordered: "bg-gray-900",
-        light: "bg-gray-100 text-gray-700",
+        light: "bg-gray-600",
         flat: "bg-gray-400",
       },
       primary: {
         solid: "bg-primary",
         bordered: "bg-primary",
-        light: "bg-primary/10 text-primary",
+        light: "bg-primary",
         flat: "bg-primary",
       },
       secondary: {
         solid: "bg-secondary",
         bordered: "bg-secondary",
-        light: "bg-secondary/10 text-secondary",
+        light: "bg-secondary",
         flat: "bg-secondary",
       },
       success: {
         solid: "bg-green-600",
         bordered: "bg-green-600",
-        light: "bg-green-100 text-green-700",
+        light: "bg-green-600",
         flat: "bg-green-600",
       },
       warning: {
         solid: "bg-yellow-500",
         bordered: "bg-yellow-500",
-        light: "bg-yellow-100 text-yellow-700",
+        light: "bg-yellow-500",
         flat: "bg-yellow-500",
       },
       danger: {
         solid: "bg-red-600",
         bordered: "bg-red-600",
-        light: "bg-red-100 text-red-700",
+        light: "bg-red-600",
         flat: "bg-red-600",
       },
     };
@@ -168,10 +168,21 @@ const Progress: React.FC<ProgressProps> = (props) => {
       }
     };
 
+    const getLightTrackColor = () => {
+      switch (color) {
+        case "primary": return "bg-primary/10";
+        case "secondary": return "bg-secondary/10";
+        case "success": return "bg-green-100";
+        case "warning": return "bg-yellow-100";
+        case "danger": return "bg-red-100";
+        default: return "bg-gray-100";
+      }
+    };
+
     const trackMap = {
       solid: "bg-gray-200",
       bordered: `bg-gray-50 border-1 ${getBorderColor()}`,
-      light: "bg-gray-50",
+      light: getLightTrackColor(),
       flat: "bg-gray-100",
     };
     return trackMap[variant];
@@ -343,6 +354,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
             relative overflow-hidden
             ${variant === "solid" ? "shadow-sm" : ""}
             ${variant === "flat" ? "opacity-70" : ""}
+            ${variant === "light" ? "opacity-85" : ""}
           `}
           style={{
             [isVertical ? "height" : "width"]: isIndeterminate
