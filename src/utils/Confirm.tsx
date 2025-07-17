@@ -47,24 +47,43 @@ const confirm = ({
   const wrapper = document.createElement("div");
   document.body.appendChild(wrapper);
 
-  // Disable body scroll when modal opens
-  const originalOverflow = document.body.style.overflow;
-  const originalPaddingRight = document.body.style.paddingRight;
+  // Store original styles
+  const originalBodyOverflow = document.body.style.overflow;
+  const originalBodyPosition = document.body.style.position;
+  const originalBodyTop = document.body.style.top;
+  const originalBodyLeft = document.body.style.left;
+  const originalBodyRight = document.body.style.right;
+  const originalBodyWidth = document.body.style.width;
+  const originalDocumentElementOverflow = document.documentElement.style.overflow;
   
-  // Get scrollbar width
-  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+  // Get current scroll position
+  const scrollY = window.scrollY;
+  const scrollX = window.scrollX;
   
-  // Prevent scroll and compensate for scrollbar
+  // Prevent scroll completely
   document.body.style.overflow = 'hidden';
-  document.body.style.paddingRight = `${scrollbarWidth}px`;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.left = `-${scrollX}px`;
+  document.body.style.right = '0';
+  document.body.style.width = '100%';
+  document.documentElement.style.overflow = 'hidden';
 
   // Create a root for rendering
   const root = ReactDOM.createRoot(wrapper);
 
   const cleanup = () => {
-    // Re-enable body scroll and restore padding
-    document.body.style.overflow = originalOverflow;
-    document.body.style.paddingRight = originalPaddingRight;
+    // Restore original styles
+    document.body.style.overflow = originalBodyOverflow;
+    document.body.style.position = originalBodyPosition;
+    document.body.style.top = originalBodyTop;
+    document.body.style.left = originalBodyLeft;
+    document.body.style.right = originalBodyRight;
+    document.body.style.width = originalBodyWidth;
+    document.documentElement.style.overflow = originalDocumentElementOverflow;
+    
+    // Restore scroll position
+    window.scrollTo(scrollX, scrollY);
     
     root.unmount();
 
@@ -88,7 +107,7 @@ const confirm = ({
     cleanup();
   };
 
-  // Render the ConfirmDialog (remove escape key handling from utils)
+  // Render the ConfirmDialog
   root.render(
     <Confirm
       title={title}

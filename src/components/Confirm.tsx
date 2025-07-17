@@ -133,7 +133,13 @@ const Confirm: React.FC<ConfirmProps> = ({
           handleClose(onCancel);
         }
       }}
-      style={{ touchAction: 'none' }} // Prevent touch scrolling on mobile
+      style={{ 
+        touchAction: 'none',
+        overscrollBehavior: 'none',
+        overflow: 'hidden'
+      }}
+      onWheel={(e) => e.preventDefault()}
+      onTouchMove={(e) => e.preventDefault()}
     >
       <div
         className={`bg-white border border-gray-200 p-6 rounded-lg transform transition-transform duration-300 max-h-[90vh] overflow-y-auto ${
@@ -141,6 +147,8 @@ const Confirm: React.FC<ConfirmProps> = ({
         } ${className}`}
         style={{ width: widthStyle }}
         onClick={(e) => e.stopPropagation()}
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
       >
         {closable && (
           <button
