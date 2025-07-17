@@ -45,6 +45,9 @@ const Confirm: React.FC<ConfirmProps> = ({
   useEffect(() => {
     // Trigger fade-in animation on mount
     setVisible(true);
+    
+    // Remove the scroll handling from here since it's handled in utils
+    
   }, []);
 
   const handleClose = (action?: () => void) => {
@@ -53,9 +56,24 @@ const Confirm: React.FC<ConfirmProps> = ({
 
     // Execute the action after the animation ends
     setTimeout(() => {
+      // Remove scroll handling from here too
       if (action) action();
     }, 300); // Match the transition duration
   };
+
+  // Handle escape key press
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && closable) {
+        handleClose(onCancel);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [closable, onCancel]);
 
   const getTypeIcon = () => {
     if (!showIcon) return null;
@@ -114,12 +132,19 @@ const Confirm: React.FC<ConfirmProps> = ({
       className={`fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/50 z-50 transition-opacity duration-300 ${
         visible ? "opacity-100" : "opacity-0"
       } ${overlayClassName}`}
+      onClick={(e) => {
+        // Close modal when clicking on overlay (not the modal content)
+        if (e.target === e.currentTarget && closable) {
+          handleClose(onCancel);
+        }
+      }}
     >
       <div
-        className={`bg-white border border-gray-200 p-6 rounded-lg transform transition-transform duration-300 ${
+        className={`bg-white border border-gray-200 p-6 rounded-lg transform transition-transform duration-300 max-h-[90vh] overflow-y-auto ${
           visible ? "scale-100" : "scale-90"
         } ${className}`}
         style={{ width: widthStyle }}
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
       >
         {closable && (
           <button

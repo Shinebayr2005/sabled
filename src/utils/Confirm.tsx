@@ -47,10 +47,17 @@ const confirm = ({
   const wrapper = document.createElement("div");
   document.body.appendChild(wrapper);
 
+  // Disable body scroll when modal opens
+  const originalOverflow = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
+
   // Create a root for rendering
   const root = ReactDOM.createRoot(wrapper);
 
   const cleanup = () => {
+    // Re-enable body scroll before cleanup
+    document.body.style.overflow = originalOverflow;
+    
     root.unmount();
 
     if (typeof document === "undefined") {
@@ -74,13 +81,46 @@ const confirm = ({
     cleanup();
   };
 
+  // Handle escape key press
+  const handleEscapeKey = (event: KeyboardEvent) => {
+    if (event.key === 'Escape' && closable) {
+      handleCancel();
+    }
+  };
+
+  document.addEventListener('keydown', handleEscapeKey);
+
+  // Clean up event listener when modal is closed
+  const originalCleanup = cleanup;
+  const enhancedCleanup = () => {
+    document.removeEventListener('keydown', handleEscapeKey);
+    originalCleanup();
+  };
+
+  // Update cleanup references
+  const enhancedHandleConfirm = () => {
+    document.removeEventListener('keydown', handleEscapeKey);
+    if (onConfirm) {
+      onConfirm();
+    }
+    originalCleanup();
+  };
+
+  const enhancedHandleCancel = () => {
+    document.removeEventListener('keydown', handleEscapeKey);
+    if (onCancel) {
+      onCancel();
+    }
+    originalCleanup();
+  };
+
   // Render the ConfirmDialog
   root.render(
     <Confirm
       title={title}
       content={content}
-      onConfirm={handleConfirm}
-      onCancel={handleCancel}
+      onConfirm={enhancedHandleConfirm}
+      onCancel={enhancedHandleCancel}
       confirmText={confirmText}
       cancelText={cancelText}
       confirmColor={confirmColor}
