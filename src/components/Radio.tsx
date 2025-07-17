@@ -2,7 +2,13 @@ import React, { forwardRef } from "react";
 import { useRadioGroup } from "./RadioGroup";
 
 type RadioSize = "sm" | "md" | "lg";
-type RadioColor = "default" | "primary" | "secondary" | "success" | "warning" | "danger";
+type RadioColor =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger";
 type RadioVariant = "solid" | "bordered" | "light" | "ghost" | "flat";
 
 interface RadioProps
@@ -79,7 +85,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
 
     const getColorClasses = () => {
       const baseColor = finalInvalid ? "danger" : finalColor;
-      
+
       // Color system matching your Button component exactly
       const colorVariants = {
         default: {
@@ -122,8 +128,8 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
         primary: {
           solid: {
             base: "border-2 border-gray-300 bg-white",
-            checked: "bg-primary text-white border-primary", // Same as Button
-            hover: "hover:border-primary/90 hover:bg-primary/5",
+            checked: "border-primary bg-primary", // Removed text-white since it's a radio dot
+            hover: "hover:border-primary/70 hover:bg-primary/5", // Better hover state
             dot: "bg-white",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
           },
@@ -351,21 +357,19 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
           {/* Custom radio */}
           <div
             className={`
-            ${sizeClasses.radio}
-            ${colorClasses.base}
-            ${isChecked ? colorClasses.checked : colorClasses.hover}
-            ${colorClasses.focus}
-            ${
-              finalDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-            }
-            rounded-full
-            ${isChecked ? "scale-105" : "scale-100"}
-            hover:scale-105 active:scale-95
-            flex items-center justify-center
-            relative overflow-hidden
-            transition-all duration-200 ease-in-out
-            shadow-sm
-          `}
+  ${sizeClasses.radio}
+  ${isChecked ? colorClasses.checked : colorClasses.base}
+  ${!isChecked ? colorClasses.hover : ""}
+  ${colorClasses.focus}
+  ${finalDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+  rounded-full
+  ${isChecked ? "scale-105" : "scale-100"}
+  hover:scale-105 active:scale-95
+  flex items-center justify-center
+  relative overflow-hidden
+  transition-all duration-200 ease-in-out
+  shadow-sm
+`}
             onClick={handleClick}
             role="radio"
             aria-checked={isChecked}
