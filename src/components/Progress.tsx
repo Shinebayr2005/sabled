@@ -170,7 +170,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
 
     const trackMap = {
       solid: "bg-gray-200",
-      bordered: `bg-gray-50 border-2 ${getBorderColor()}`,
+      bordered: `bg-gray-50 border-1 ${getBorderColor()}`,
       light: "bg-gray-50",
       flat: "bg-gray-100",
     };
