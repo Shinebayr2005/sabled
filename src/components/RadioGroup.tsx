@@ -72,7 +72,6 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   const currentValue = isControlled ? value : internalValue;
 
   const handleChange = (newValue: string) => {
-    console.log('RadioGroup handleChange:', newValue); // Debug log
     if (!isControlled) {
       setInternalValue(newValue);
     }
@@ -90,8 +89,6 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
     isInvalid
   };
 
-  console.log('RadioGroup context value:', contextValue); // Debug log
-
   const orientationClasses = {
     horizontal: 'flex flex-row flex-wrap gap-4',
     vertical: 'flex flex-col gap-3'
@@ -103,6 +100,16 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
     light: 'gap-2',
     ghost: 'gap-2',
     flat: 'gap-2'
+  };
+
+  // Focus ring classes matching Button component
+  const focusClasses = {
+    default: "focus-within:ring-gray-500",
+    primary: "focus-within:ring-primary",
+    secondary: "focus-within:ring-secondary",
+    success: "focus-within:ring-green-500",
+    warning: "focus-within:ring-yellow-500",
+    danger: "focus-within:ring-red-500",
   };
 
   return (
@@ -130,6 +137,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
           className={`
             ${orientationClasses[orientation]} 
             ${orientation === 'vertical' ? variantSpacing[variant] : 'gap-4'}
+            ${focusClasses[color]}
           `}
           role="radiogroup" 
           aria-label={label}
