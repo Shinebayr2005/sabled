@@ -53,21 +53,18 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(({
         text: "text-sm",
         spacing: "ml-2",
         dot: "w-1.5 h-1.5",
-        padding: "p-0.5"
       },
       md: {
         radio: "w-5 h-5",
         text: "text-sm",
         spacing: "ml-3",
         dot: "w-2 h-2",
-        padding: "p-1"
       },
       lg: {
         radio: "w-6 h-6",
         text: "text-base",
         spacing: "ml-3",
         dot: "w-2.5 h-2.5",
-        padding: "p-1"
       }
     };
     return sizeMap[finalSize];
@@ -117,89 +114,89 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(({
       primary: {
         solid: {
           base: "border-2 border-gray-300 bg-white",
-          checked: "border-blue-600 bg-blue-600",
-          hover: "hover:border-blue-300 hover:bg-blue-50",
+          checked: "border-primary bg-primary",
+          hover: "hover:border-primary/60 hover:bg-primary/5",
           dot: "bg-white",
-          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20"
+          focus: "focus-visible:ring-2 focus-visible:ring-primary/20"
         },
         bordered: {
           base: "border-2 border-gray-300 bg-white",
-          checked: "border-blue-600 bg-blue-50",
-          hover: "hover:border-blue-300 hover:bg-blue-25",
-          dot: "bg-blue-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20"
+          checked: "border-primary bg-primary/10",
+          hover: "hover:border-primary/60 hover:bg-primary/5",
+          dot: "bg-primary",
+          focus: "focus-visible:ring-2 focus-visible:ring-primary/20"
         },
         light: {
-          base: "border-2 border-blue-200 bg-blue-50",
-          checked: "border-blue-400 bg-blue-100",
-          hover: "hover:border-blue-300 hover:bg-blue-75",
-          dot: "bg-blue-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20"
+          base: "border-2 border-primary/30 bg-primary/10",
+          checked: "border-primary/60 bg-primary/20",
+          hover: "hover:border-primary/50 hover:bg-primary/15",
+          dot: "bg-primary",
+          focus: "focus-visible:ring-2 focus-visible:ring-primary/20"
         },
         ghost: {
           base: "border-2 border-transparent bg-transparent",
-          checked: "border-blue-400 bg-blue-100",
-          hover: "hover:border-blue-200 hover:bg-blue-50",
-          dot: "bg-blue-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20"
+          checked: "border-primary/50 bg-primary/15",
+          hover: "hover:border-primary/30 hover:bg-primary/10",
+          dot: "bg-primary",
+          focus: "focus-visible:ring-2 focus-visible:ring-primary/20"
         },
         flat: {
-          base: "border-0 bg-blue-100",
-          checked: "bg-blue-200",
-          hover: "hover:bg-blue-150",
-          dot: "bg-blue-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-blue-500/20"
+          base: "border-0 bg-primary/10",
+          checked: "bg-primary/20",
+          hover: "hover:bg-primary/15",
+          dot: "bg-primary",
+          focus: "focus-visible:ring-2 focus-visible:ring-primary/20"
         }
       },
       secondary: {
         solid: {
           base: "border-2 border-gray-300 bg-white",
-          checked: "border-purple-600 bg-purple-600",
-          hover: "hover:border-purple-300 hover:bg-purple-50",
+          checked: "border-secondary bg-secondary",
+          hover: "hover:border-secondary/60 hover:bg-secondary/5",
           dot: "bg-white",
-          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20"
+          focus: "focus-visible:ring-2 focus-visible:ring-secondary/20"
         },
         bordered: {
           base: "border-2 border-gray-300 bg-white",
-          checked: "border-purple-600 bg-purple-50",
-          hover: "hover:border-purple-300 hover:bg-purple-25",
-          dot: "bg-purple-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20"
+          checked: "border-secondary bg-secondary/10",
+          hover: "hover:border-secondary/60 hover:bg-secondary/5",
+          dot: "bg-secondary",
+          focus: "focus-visible:ring-2 focus-visible:ring-secondary/20"
         },
         light: {
-          base: "border-2 border-purple-200 bg-purple-50",
-          checked: "border-purple-400 bg-purple-100",
-          hover: "hover:border-purple-300 hover:bg-purple-75",
-          dot: "bg-purple-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20"
+          base: "border-2 border-secondary/30 bg-secondary/10",
+          checked: "border-secondary/60 bg-secondary/20",
+          hover: "hover:border-secondary/50 hover:bg-secondary/15",
+          dot: "bg-secondary",
+          focus: "focus-visible:ring-2 focus-visible:ring-secondary/20"
         },
         ghost: {
           base: "border-2 border-transparent bg-transparent",
-          checked: "border-purple-400 bg-purple-100",
-          hover: "hover:border-purple-200 hover:bg-purple-50",
-          dot: "bg-purple-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20"
+          checked: "border-secondary/50 bg-secondary/15",
+          hover: "hover:border-secondary/30 hover:bg-secondary/10",
+          dot: "bg-secondary",
+          focus: "focus-visible:ring-2 focus-visible:ring-secondary/20"
         },
         flat: {
-          base: "border-0 bg-purple-100",
-          checked: "bg-purple-200",
-          hover: "hover:bg-purple-150",
-          dot: "bg-purple-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-purple-500/20"
+          base: "border-0 bg-secondary/10",
+          checked: "bg-secondary/20",
+          hover: "hover:bg-secondary/15",
+          dot: "bg-secondary",
+          focus: "focus-visible:ring-2 focus-visible:ring-secondary/20"
         }
       },
       success: {
         solid: {
           base: "border-2 border-gray-300 bg-white",
           checked: "border-green-600 bg-green-600",
-          hover: "hover:border-green-300 hover:bg-green-50",
+          hover: "hover:border-green-400 hover:bg-green-50",
           dot: "bg-white",
           focus: "focus-visible:ring-2 focus-visible:ring-green-500/20"
         },
         bordered: {
           base: "border-2 border-gray-300 bg-white",
           checked: "border-green-600 bg-green-50",
-          hover: "hover:border-green-300 hover:bg-green-25",
+          hover: "hover:border-green-400 hover:bg-green-25",
           dot: "bg-green-600",
           focus: "focus-visible:ring-2 focus-visible:ring-green-500/20"
         },
@@ -228,38 +225,38 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(({
       warning: {
         solid: {
           base: "border-2 border-gray-300 bg-white",
-          checked: "border-amber-500 bg-amber-500",
-          hover: "hover:border-amber-300 hover:bg-amber-50",
+          checked: "border-yellow-500 bg-yellow-500",
+          hover: "hover:border-yellow-400 hover:bg-yellow-50",
           dot: "bg-white",
-          focus: "focus-visible:ring-2 focus-visible:ring-amber-500/20"
+          focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20"
         },
         bordered: {
           base: "border-2 border-gray-300 bg-white",
-          checked: "border-amber-500 bg-amber-50",
-          hover: "hover:border-amber-300 hover:bg-amber-25",
-          dot: "bg-amber-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-amber-500/20"
+          checked: "border-yellow-500 bg-yellow-50",
+          hover: "hover:border-yellow-400 hover:bg-yellow-25",
+          dot: "bg-yellow-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20"
         },
         light: {
-          base: "border-2 border-amber-200 bg-amber-50",
-          checked: "border-amber-400 bg-amber-100",
-          hover: "hover:border-amber-300 hover:bg-amber-75",
-          dot: "bg-amber-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-amber-500/20"
+          base: "border-2 border-yellow-200 bg-yellow-50",
+          checked: "border-yellow-400 bg-yellow-100",
+          hover: "hover:border-yellow-300 hover:bg-yellow-75",
+          dot: "bg-yellow-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20"
         },
         ghost: {
           base: "border-2 border-transparent bg-transparent",
-          checked: "border-amber-400 bg-amber-100",
-          hover: "hover:border-amber-200 hover:bg-amber-50",
-          dot: "bg-amber-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-amber-500/20"
+          checked: "border-yellow-400 bg-yellow-100",
+          hover: "hover:border-yellow-200 hover:bg-yellow-50",
+          dot: "bg-yellow-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20"
         },
         flat: {
-          base: "border-0 bg-amber-100",
-          checked: "bg-amber-200",
-          hover: "hover:bg-amber-150",
-          dot: "bg-amber-600",
-          focus: "focus-visible:ring-2 focus-visible:ring-amber-500/20"
+          base: "border-0 bg-yellow-100",
+          checked: "bg-yellow-200",
+          hover: "hover:bg-yellow-150",
+          dot: "bg-yellow-600",
+          focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20"
         }
       },
       danger: {
@@ -395,7 +392,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(({
 
           {/* Selection ring for bordered variant */}
           {isChecked && finalVariant === "bordered" && (
-            <div className="absolute inset-1 rounded-full border-2 border-current opacity-50" />
+            <div className="absolute inset-1 rounded-full border border-current opacity-50" />
           )}
         </div>
       </div>
