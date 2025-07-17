@@ -94,17 +94,25 @@ const confirm = ({
 
   // Handle confirm and cancel actions
   const handleConfirm = () => {
-    if (onConfirm) {
-      onConfirm();
+    try {
+      if (onConfirm) {
+        onConfirm();
+      }
+    } finally {
+      // Always cleanup, even if onConfirm throws an error
+      cleanup();
     }
-    cleanup();
   };
 
   const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
+    try {
+      if (onCancel) {
+        onCancel();
+      }
+    } finally {
+      // Always cleanup, even if onCancel throws an error
+      cleanup();
     }
-    cleanup();
   };
 
   // Render the ConfirmDialog
