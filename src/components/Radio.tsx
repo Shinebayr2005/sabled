@@ -132,7 +132,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
         primary: {
           solid: {
             base: "border-2 border-gray-300 bg-white",
-            checked: "border-primary bg-primary/90 shadow-lg shadow-primary/25",
+            checked: "border-primary bg-primary shadow-lg shadow-primary/25",
             hover: "hover:border-primary/70 hover:shadow-sm",
             dot: "bg-white",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
@@ -162,7 +162,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
           },
           flat: {
             base: "border-0 bg-primary/10 shadow-inner",
-            checked: "bg-primary/20 shadow-md shadow-primary/20",
+            checked: "bg-primary/30 shadow-md shadow-primary",
             hover: "hover:bg-primary/15 hover:shadow-sm",
             dot: "bg-primary",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
