@@ -463,12 +463,16 @@ const Message: React.FC<MessageProps> = ({
         
         {closable && (
           <button
+            type="button"
             className={`ml-4 transition-opacity flex-shrink-0 w-6 h-6 flex items-center justify-center rounded focus:outline-none focus:ring-2 focus:ring-current focus:ring-opacity-50 ${
               variant === 'solid' 
                 ? 'text-white/80 hover:text-white hover:bg-white/20' 
                 : 'text-current opacity-60 hover:opacity-100 hover:bg-black/10'
             }`}
-            onClick={handleClose}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClose();
+            }}
             aria-label="Close message"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

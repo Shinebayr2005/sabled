@@ -340,8 +340,8 @@ const message = (config: MessageConfig) => {
         <Message
           {...mergedConfig}
           id={id}
-          onClose={cleanup}
-          onDismiss={() => dismissMessage(id)}
+          onClose={() => dismissMessage(id)}
+          onDismiss={cleanup}
         />
       );
 
