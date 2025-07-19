@@ -102,20 +102,27 @@ const Message: React.FC<MessageProps> = ({
   }, []);
 
   const handleClose = () => {
-    // Start exit animation
-    setIsExiting(true);
-    setVisible(false);
+    if (isExiting) return; // Prevent multiple close calls
     
-    // Delay to allow utility's exit animation to complete
-    setTimeout(() => {
-      onDismiss?.();
-      onClose();
-    }, 300); // Match the animation duration
+    setIsExiting(true);
+    
+    // Clear any running timers immediately
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = undefined;
+    }
+    if (progressTimerRef.current) {
+      cancelAnimationFrame(progressTimerRef.current);
+      progressTimerRef.current = undefined;
+    }
+    
+    // Let utility handle the animation smoothly
+    onClose();
   };
 
   // Auto-dismiss timer with pause/resume capability
   useEffect(() => {
-    if (persistent || duration <= 0) return;
+    if (persistent || duration <= 0 || isExiting) return;
 
     const startTimer = () => {
       startTimeRef.current = Date.now();
@@ -130,12 +137,14 @@ const Message: React.FC<MessageProps> = ({
         setProgress(startProgress);
         
         const updateProgress = () => {
+          if (isExiting) return; // Stop if exiting
+          
           const elapsed = Date.now() - (startTimeRef.current || 0);
           const remaining = Math.max(0, remainingTimeRef.current - elapsed);
           const newProgress = (remaining / duration) * 100;
           setProgress(newProgress);
 
-          if (remaining > 0 && !isPaused) {
+          if (remaining > 0 && !isPaused && !isExiting) {
             progressTimerRef.current = window.requestAnimationFrame(updateProgress);
           }
         };
