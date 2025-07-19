@@ -112,7 +112,15 @@ const enforceMaxCount = (position: string, maxCount: number) => {
         
         if (!isNaN(messageId)) {
           // Add a slight delay between removals for smoother animation
-          setTimeout(() => dismissMessage(messageId), index * 50);
+          setTimeout(() => {
+            // Use the new dismissMessage approach
+            const closeButton = messageElement.querySelector('button[aria-label="Close message"]') as HTMLButtonElement;
+            if (closeButton) {
+              closeButton.click();
+            } else {
+              dismissMessage(messageId); // Fallback
+            }
+          }, index * 50);
         }
       } catch (error) {
         console.warn('Error parsing message ID for removal:', error);
@@ -125,102 +133,19 @@ const dismissMessage = (id: number) => {
   const messageData = activeMessages.get(id);
   if (!messageData) return;
 
-  const { root, wrapper } = messageData;
-
-  // Get the container and position to determine animation direction
+  const { wrapper } = messageData;
   const container = wrapper.parentElement;
-  const containerId = container?.id || '';
-  const position = containerId.replace('message-container-', '');
-
-  // Simplified and ultra-smooth exit animation
-  const messageElement = wrapper.querySelector('[data-message-element]') as HTMLElement;
-  if (messageElement) {
-    // Position-specific exit animations with consistent timing
-    let exitTransform = '';
-    switch (position) {
-      case 'top-left':
-      case 'bottom-left':
-        exitTransform = 'translateX(-100%) scale(0.95)';
-        break;
-      case 'top-right':
-      case 'bottom-right':
-        exitTransform = 'translateX(100%) scale(0.95)';
-        break;
-      case 'top':
-        exitTransform = 'translateY(-100%) scale(0.95)';
-        break;
-      case 'bottom':
-        exitTransform = 'translateY(100%) scale(0.95)';
-        break;
-      default:
-        exitTransform = 'translateX(100%) scale(0.95)';
-    }
-    
-    // Apply smooth exit animation
-    messageElement.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-    messageElement.style.transform = exitTransform;
-    messageElement.style.opacity = '0';
-  }
-
-  // Capture positions for reflow before DOM changes
-  const siblings = Array.from(container?.children || []) as HTMLElement[];
-  const messagePositions = new Map();
   
-  siblings.forEach((sibling) => {
-    if (sibling !== wrapper) {
-      const rect = sibling.getBoundingClientRect();
-      messagePositions.set(sibling, { top: rect.top, left: rect.left });
-    }
-  });
+  if (!container) return;
 
-  // Smooth wrapper collapse
-  wrapper.style.height = wrapper.offsetHeight + 'px';
-  wrapper.style.overflow = 'hidden';
-  wrapper.style.transition = 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-  
-  // Start collapse animation
-  requestAnimationFrame(() => {
-    wrapper.style.height = '0px';
-    wrapper.style.marginBottom = '0px';
-    
-    // Animate remaining messages to new positions
-    setTimeout(() => {
-      siblings.forEach((sibling) => {
-        if (sibling !== wrapper && messagePositions.has(sibling)) {
-          const siblingMessage = sibling.querySelector('[data-message-element]') as HTMLElement;
-          if (siblingMessage) {
-            const oldPosition = messagePositions.get(sibling);
-            const newRect = sibling.getBoundingClientRect();
-            
-            const deltaY = oldPosition.top - newRect.top;
-            const deltaX = oldPosition.left - newRect.left;
-            
-            // Only animate if there's movement
-            if (Math.abs(deltaY) > 1 || Math.abs(deltaX) > 1) {
-              siblingMessage.style.transform = `translateX(${deltaX}px) translateY(${deltaY}px)`;
-              siblingMessage.style.transition = 'none';
-              
-              // Force reflow then animate
-              siblingMessage.offsetHeight;
-              
-              siblingMessage.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-              siblingMessage.style.transform = 'translateX(0) translateY(0)';
-              
-              // Clean up
-              setTimeout(() => {
-                siblingMessage.style.transition = '';
-                siblingMessage.style.transform = '';
-              }, 400);
-            }
-          }
-        }
-      });
-    }, 50);
-  });
-
-  // Clean up after animation completes
-  setTimeout(() => {
+  // Find the close button and trigger its click to use the component's own dismiss logic
+  const closeButton = wrapper.querySelector('button[aria-label="Close message"]') as HTMLButtonElement;
+  if (closeButton) {
+    closeButton.click();
+  } else {
+    // Fallback: directly remove if no close button found
     try {
+      const { root } = messageData;
       root.unmount();
       if (wrapper.parentNode) {
         wrapper.parentNode.removeChild(wrapper);
@@ -229,7 +154,7 @@ const dismissMessage = (id: number) => {
     } catch (error) {
       console.warn('Error cleaning up message:', error);
     }
-  }, 400);
+  }
 };
 
 const processMessageQueue = () => {
@@ -328,20 +253,124 @@ const message = (config: MessageConfig) => {
 
       const root = ReactDOM.createRoot(wrapper);
 
-      const cleanup = () => {
-        mergedConfig.onClose?.();
+      // Clean dismissMessage function with proper cleanup
+      const dismissMessage = () => {
+        // Get the container and position to determine animation direction
+        const position = container.id.replace('message-container-', '');
+
+        // Simplified and ultra-smooth exit animation
+        const messageElement = wrapper.querySelector('[data-message-element]') as HTMLElement;
+        if (messageElement) {
+          // Position-specific exit animations with consistent timing
+          let exitTransform = '';
+          switch (position) {
+            case 'top-left':
+            case 'bottom-left':
+              exitTransform = 'translateX(-100%) scale(0.95)';
+              break;
+            case 'top-right':
+            case 'bottom-right':
+              exitTransform = 'translateX(100%) scale(0.95)';
+              break;
+            case 'top':
+              exitTransform = 'translateY(-100%) scale(0.95)';
+              break;
+            case 'bottom':
+              exitTransform = 'translateY(100%) scale(0.95)';
+              break;
+            default:
+              exitTransform = 'translateX(100%) scale(0.95)';
+          }
+          
+          // Apply smooth exit animation
+          messageElement.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+          messageElement.style.transform = exitTransform;
+          messageElement.style.opacity = '0';
+        }
+
+        // Capture positions for reflow before DOM changes
+        const siblings = Array.from(container?.children || []) as HTMLElement[];
+        const messagePositions = new Map();
+        
+        siblings.forEach((sibling) => {
+          if (sibling !== wrapper) {
+            const rect = sibling.getBoundingClientRect();
+            messagePositions.set(sibling, { top: rect.top, left: rect.left });
+          }
+        });
+
+        // Smooth wrapper collapse
+        wrapper.style.height = wrapper.offsetHeight + 'px';
+        wrapper.style.overflow = 'hidden';
+        wrapper.style.transition = 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        // Start collapse animation
+        requestAnimationFrame(() => {
+          wrapper.style.height = '0px';
+          wrapper.style.marginBottom = '0px';
+          
+          // Animate remaining messages to new positions
+          setTimeout(() => {
+            siblings.forEach((sibling) => {
+              if (sibling !== wrapper && messagePositions.has(sibling)) {
+                const siblingMessage = sibling.querySelector('[data-message-element]') as HTMLElement;
+                if (siblingMessage) {
+                  const oldPosition = messagePositions.get(sibling);
+                  const newRect = sibling.getBoundingClientRect();
+                  
+                  const deltaY = oldPosition.top - newRect.top;
+                  const deltaX = oldPosition.left - newRect.left;
+                  
+                  // Only animate if there's movement
+                  if (Math.abs(deltaY) > 1 || Math.abs(deltaX) > 1) {
+                    siblingMessage.style.transform = `translateX(${deltaX}px) translateY(${deltaY}px)`;
+                    siblingMessage.style.transition = 'none';
+                    
+                    // Force reflow then animate
+                    siblingMessage.offsetHeight;
+                    
+                    siblingMessage.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    siblingMessage.style.transform = 'translateX(0) translateY(0)';
+                    
+                    // Clean up
+                    setTimeout(() => {
+                      siblingMessage.style.transition = '';
+                      siblingMessage.style.transform = '';
+                    }, 400);
+                  }
+                }
+              }
+            });
+          }, 50);
+        });
+
+        // Clean up after animation completes
+        setTimeout(() => {
+          try {
+            // Clean unmount of React component
+            root.unmount();
+            // Clean DOM removal
+            if (wrapper.parentNode) {
+              wrapper.parentNode.removeChild(wrapper);
+            }
+            // Remove from tracking
+            activeMessages.delete(id);
+            // Call user's onClose callback
+            mergedConfig.onClose?.();
+          } catch (error) {
+            console.warn('Error cleaning up message:', error);
+          }
+        }, 400);
       };
 
-      // Let the component handle its own auto-dismiss timing
-      // The utility only handles cleanup when the component calls onDismiss
+      // Track the message
       activeMessages.set(id, { root, wrapper });
 
       root.render(
         <Message
           {...mergedConfig}
           id={id}
-          onClose={() => dismissMessage(id)}
-          onDismiss={cleanup}
+          onClose={dismissMessage} // Direct dismissMessage call for immediate cleanup
         />
       );
 
@@ -437,10 +466,17 @@ const messageAPI = Object.assign(message, {
       if (container) {
         Array.from(container.children).forEach(child => {
           try {
-            const idStr = (child as HTMLElement).id.replace('message-', '');
-            const id = parseInt(idStr, 10);
-            if (!isNaN(id)) {
-              dismissMessage(id);
+            // Use the component's own close button for consistent behavior
+            const closeButton = child.querySelector('button[aria-label="Close message"]') as HTMLButtonElement;
+            if (closeButton) {
+              closeButton.click();
+            } else {
+              // Fallback to manual dismissal
+              const idStr = (child as HTMLElement).id.replace('message-', '');
+              const id = parseInt(idStr, 10);
+              if (!isNaN(id)) {
+                dismissMessage(id);
+              }
             }
           } catch (error) {
             console.warn('Error dismissing message:', error);
@@ -479,9 +515,16 @@ const messageAPI = Object.assign(message, {
       const container = document.getElementById(`message-container-${position}`);
       if (container) {
         Array.from(container.children).forEach(child => {
-          const id = parseInt((child as HTMLElement).id.replace('message-', ''), 10);
-          if (!isNaN(id)) {
-            dismissMessage(id);
+          // Use the component's own close button for consistent behavior
+          const closeButton = child.querySelector('button[aria-label="Close message"]') as HTMLButtonElement;
+          if (closeButton) {
+            closeButton.click();
+          } else {
+            // Fallback to manual dismissal
+            const id = parseInt((child as HTMLElement).id.replace('message-', ''), 10);
+            if (!isNaN(id)) {
+              dismissMessage(id);
+            }
           }
         });
       }
