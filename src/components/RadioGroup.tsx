@@ -9,7 +9,14 @@ type RadioGroupColor =
   | "success"
   | "warning"
   | "danger";
-type RadioGroupVariant = "solid" | "bordered" | "light" | "ghost" | "flat";
+type RadioGroupVariant =
+  | "solid"
+  | "bordered"
+  | "light"
+  | "ghost"
+  | "flat"
+  | "soft"
+  | "outline-filled";
 
 interface RadioGroupContextType {
   value?: string;
@@ -106,6 +113,8 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
     light: "gap-2",
     ghost: "gap-2",
     flat: "gap-2",
+    soft: "gap-2",
+    "outline-filled": "gap-2",
   };
 
   // Focus ring classes matching Button component
