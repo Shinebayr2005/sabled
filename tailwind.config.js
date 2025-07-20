@@ -78,6 +78,31 @@ export default {
     "border-b-[7px]",
     // Common utility classes
     "drop-shadow-md",
+    // Radio component modern styling
+    "scale-[1.02]",
+    "scale-[1.01]",
+    "scale-[0.98]",
+    "scale-[0.96]",
+    "backdrop-blur-sm",
+    "border-[1.5px]",
+    "from-primary",
+    "to-blue-600",
+    "from-cyan-500",
+    "to-cyan-700",
+    "from-green-500",
+    "to-green-700",
+    "from-yellow-500",
+    "to-yellow-700",
+    "from-red-500",
+    "to-red-700",
+    // Ring utilities for radio focus states
+    "ring-offset-2",
+    "ring-primary",
+    "ring-cyan-500",
+    "ring-green-500",
+    "ring-yellow-500",
+    "ring-red-500",
+    "ring-gray-500",
   ],
   theme: {
     extend: {
