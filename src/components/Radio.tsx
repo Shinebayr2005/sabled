@@ -91,39 +91,44 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
     const getColorClasses = () => {
       const baseColor = finalInvalid ? "danger" : finalColor;
 
+      // Helper functions for consistent styling
+      const getRing = (color: string) => `focus-visible:ring-2 focus-visible:ring-${color}-500/20`;
+      const getHoverBorder = (color: string, opacity = "60") => `hover:border-${color}-500/${opacity}`;
+      const getShadow = (color: string) => `shadow-lg shadow-${color}-500/25`;
+
       const colorVariants = {
         default: {
           solid: {
             base: "border-2 border-gray-300 bg-white",
-            checked: "border-gray-900 bg-gray-900",
+            checked: "border-gray-900 bg-gray-900 shadow-lg shadow-gray-500/25",
             hover: "hover:border-gray-400 hover:shadow-sm",
             dot: "bg-white",
             focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20",
           },
           bordered: {
             base: "border-2 border-gray-300 bg-white",
-            checked: "border-gray-700 bg-white ring-2 ring-gray-200",
-            hover: "hover:border-gray-400 hover:ring-1 hover:ring-gray-200",
+            checked: "border-gray-700 bg-white ring-2 ring-gray-300/50",
+            hover: "hover:border-gray-500 hover:ring-1 hover:ring-gray-200",
             dot: "bg-gray-700",
             focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20",
           },
           light: {
-            base: "border-2 border-gray-200 bg-gray-50",
-            checked: "border-gray-300 bg-gray-100 shadow-inner",
-            hover: "hover:border-gray-250 hover:bg-gray-75",
-            dot: "bg-gray-800",
+            base: "border-2 border-gray-300/40 bg-gray-50/50",
+            checked: "border-gray-500 bg-gray-100 shadow-inner ring-1 ring-gray-300/30",
+            hover: "hover:border-gray-400 hover:bg-gray-75",
+            dot: "bg-gray-700",
             focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20",
           },
           ghost: {
-            base: "border-2 border-gray-200 bg-gray-50/50",
-            checked: "border-gray-300 bg-gray-100 shadow-sm border-none",
-            hover: "hover:border-gray-250 hover:bg-gray-75",
+            base: "border-0 bg-gray-50/30",
+            checked: "border-0 bg-gray-100 shadow-sm ring-2 ring-gray-300/40",
+            hover: "hover:bg-gray-75",
             dot: "bg-gray-700",
-            focus: "focus-visible:ring-0",
+            focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20",
           },
           flat: {
             base: "border-0 bg-gray-100 shadow-inner",
-            checked: "bg-gray-200 shadow-md",
+            checked: "bg-gray-200 shadow-md ring-2 ring-gray-400/30",
             hover: "hover:bg-gray-150 hover:shadow-sm",
             dot: "bg-gray-700",
             focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20",
@@ -138,31 +143,29 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
           },
           bordered: {
-            base: "border-2 border-gray-300 bg-white",
+            base: "border-2 border-primary/40 bg-white",
             checked: "border-primary bg-white ring-2 ring-primary/30",
-            hover: "hover:border-primary/80 hover:ring-1 hover:ring-primary/20",
+            hover: "hover:border-primary/60 hover:ring-1 hover:ring-primary/20",
             dot: "bg-primary",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
           },
           light: {
-            base: "border-2 border-primary/30 bg-primary/5",
-            checked:
-              "border-primary/50 bg-primary/15 shadow-inner shadow-primary/20",
+            base: "border-2 border-primary/20 bg-primary/5",
+            checked: "border-primary bg-primary/15 shadow-inner ring-1 ring-primary/30",
             hover: "hover:border-primary/40 hover:bg-primary/10",
             dot: "bg-primary",
-            focus: "focus-visible:ring-0 focus-visible:ring-primary/20",
+            focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
           },
           ghost: {
-            base: "border-2 border-primary/20 bg-primary/5",
-            checked:
-              "border-primary/30 bg-primary/10 shadow-sm shadow-primary/10 border-none",
-            hover: "hover:border-primary/25 hover:bg-primary/7",
+            base: "border-0 bg-primary/5",
+            checked: "border-0 bg-primary/15 shadow-sm ring-2 ring-primary/30",
+            hover: "hover:bg-primary/8",
             dot: "bg-primary",
-            focus: "focus-visible:ring-2 focus-visible:!ring-primary/20",
+            focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
           },
           flat: {
             base: "border-0 bg-primary/10 shadow-inner",
-            checked: "bg-primary/30 shadow-md shadow-primary",
+            checked: "bg-primary/40 shadow-md ring-2 ring-primary/30",
             hover: "hover:bg-primary/15 hover:shadow-sm",
             dot: "bg-primary",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
@@ -171,39 +174,35 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
         secondary: {
           solid: {
             base: "border-2 border-gray-300 bg-white",
-            checked:
-              "border-secondary bg-secondary shadow-lg shadow-secondary/25",
+            checked: "border-secondary bg-secondary shadow-lg shadow-secondary/25",
             hover: "hover:border-secondary/70 hover:shadow-sm",
             dot: "bg-white",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
           },
           bordered: {
-            base: "border-2 border-gray-300 bg-white",
+            base: "border-2 border-secondary/40 bg-white",
             checked: "border-secondary bg-white ring-2 ring-secondary/30",
-            hover:
-              "hover:border-secondary/80 hover:ring-1 hover:ring-secondary/20",
+            hover: "hover:border-secondary/60 hover:ring-1 hover:ring-secondary/20",
             dot: "bg-secondary",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
           },
           light: {
-            base: "border-2 border-secondary/30 bg-secondary/5",
-            checked:
-              "border-secondary/50 bg-secondary/15 shadow-inner shadow-secondary/20",
+            base: "border-2 border-secondary/20 bg-secondary/5",
+            checked: "border-secondary bg-secondary/15 shadow-inner ring-1 ring-secondary/30",
             hover: "hover:border-secondary/40 hover:bg-secondary/10",
             dot: "bg-secondary",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
           },
           ghost: {
-            base: "border-2 border-secondary/20 bg-secondary/5",
-            checked:
-              "border-secondary/30 bg-secondary/10 shadow-sm shadow-secondary/10",
-            hover: "hover:border-secondary/25 hover:bg-secondary/7",
+            base: "border-0 bg-secondary/5",
+            checked: "border-0 bg-secondary/15 shadow-sm ring-2 ring-secondary/30",
+            hover: "hover:bg-secondary/8",
             dot: "bg-secondary",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
           },
           flat: {
             base: "border-0 bg-secondary/10 shadow-inner",
-            checked: "bg-secondary/20 shadow-md shadow-secondary/20",
+            checked: "bg-secondary/40 shadow-md ring-2 ring-secondary/30",
             hover: "hover:bg-secondary/15 hover:shadow-sm",
             dot: "bg-secondary",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
@@ -212,38 +211,35 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
         success: {
           solid: {
             base: "border-2 border-gray-300 bg-white",
-            checked:
-              "border-green-600 bg-green-600 shadow-lg shadow-green-500/25",
+            checked: "border-green-600 bg-green-600 shadow-lg shadow-green-500/25",
             hover: "hover:border-green-500 hover:shadow-sm",
             dot: "bg-white",
             focus: "focus-visible:ring-2 focus-visible:ring-green-500/20",
           },
           bordered: {
-            base: "border-2 border-gray-300 bg-white",
-            checked: "border-green-600 bg-white ring-2 ring-green-200",
-            hover: "hover:border-green-500 hover:ring-1 hover:ring-green-100",
+            base: "border-2 border-green-300/40 bg-white",
+            checked: "border-green-600 bg-white ring-2 ring-green-300/50",
+            hover: "hover:border-green-500 hover:ring-1 hover:ring-green-200",
             dot: "bg-green-600",
             focus: "focus-visible:ring-2 focus-visible:ring-green-500/20",
           },
           light: {
-            base: "border-2 border-green-200 bg-green-50",
-            checked:
-              "border-green-300 bg-green-100 shadow-inner shadow-green-200/50",
-            hover: "hover:border-green-250 hover:bg-green-75",
+            base: "border-2 border-green-200/60 bg-green-50/50",
+            checked: "border-green-500 bg-green-100 shadow-inner ring-1 ring-green-300/40",
+            hover: "hover:border-green-300 hover:bg-green-75",
             dot: "bg-green-700",
             focus: "focus-visible:ring-2 focus-visible:ring-green-500/20",
           },
           ghost: {
-            base: "border-2 border-green-200 bg-green-50/50",
-            checked:
-              "border-green-300 bg-green-100 shadow-sm shadow-green-200/30",
-            hover: "hover:border-green-250 hover:bg-green-75",
+            base: "border-0 bg-green-50/30",
+            checked: "border-0 bg-green-100 shadow-sm ring-2 ring-green-300/40",
+            hover: "hover:bg-green-75",
             dot: "bg-green-600",
             focus: "focus-visible:ring-2 focus-visible:ring-green-500/20",
           },
           flat: {
             base: "border-0 bg-green-100 shadow-inner",
-            checked: "bg-green-200 shadow-md shadow-green-300/30",
+            checked: "bg-green-200/80 shadow-md ring-2 ring-green-400/30",
             hover: "hover:bg-green-150 hover:shadow-sm",
             dot: "bg-green-600",
             focus: "focus-visible:ring-2 focus-visible:ring-green-500/20",
@@ -252,38 +248,35 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
         warning: {
           solid: {
             base: "border-2 border-gray-300 bg-white",
-            checked:
-              "border-yellow-500 bg-yellow-500 shadow-lg shadow-yellow-400/25",
+            checked: "border-yellow-500 bg-yellow-500 shadow-lg shadow-yellow-400/25",
             hover: "hover:border-yellow-400 hover:shadow-sm",
             dot: "bg-white",
             focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20",
           },
           bordered: {
-            base: "border-2 border-gray-300 bg-white",
-            checked: "border-yellow-500 bg-white ring-2 ring-yellow-200",
-            hover: "hover:border-yellow-400 hover:ring-1 hover:ring-yellow-100",
+            base: "border-2 border-yellow-300/40 bg-white",
+            checked: "border-yellow-500 bg-white ring-2 ring-yellow-300/50",
+            hover: "hover:border-yellow-400 hover:ring-1 hover:ring-yellow-200",
             dot: "bg-yellow-600",
             focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20",
           },
           light: {
-            base: "border-2 border-yellow-200 bg-yellow-50",
-            checked:
-              "border-yellow-300 bg-yellow-100 shadow-inner shadow-yellow-200/50",
-            hover: "hover:border-yellow-250 hover:bg-yellow-75",
-            dot: "bg-yellow-800",
+            base: "border-2 border-yellow-200/60 bg-yellow-50/50",
+            checked: "border-yellow-500 bg-yellow-100 shadow-inner ring-1 ring-yellow-300/40",
+            hover: "hover:border-yellow-300 hover:bg-yellow-75",
+            dot: "bg-yellow-700",
             focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20",
           },
           ghost: {
-            base: "border-2 border-yellow-200 bg-yellow-50/50",
-            checked:
-              "border-yellow-300 bg-yellow-100 shadow-sm shadow-yellow-200/30",
-            hover: "hover:border-yellow-250 hover:bg-yellow-75",
+            base: "border-0 bg-yellow-50/30",
+            checked: "border-0 bg-yellow-100 shadow-sm ring-2 ring-yellow-300/40",
+            hover: "hover:bg-yellow-75",
             dot: "bg-yellow-600",
             focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20",
           },
           flat: {
             base: "border-0 bg-yellow-100 shadow-inner",
-            checked: "bg-yellow-200 shadow-md shadow-yellow-300/30",
+            checked: "bg-yellow-200/80 shadow-md ring-2 ring-yellow-400/30",
             hover: "hover:bg-yellow-150 hover:shadow-sm",
             dot: "bg-yellow-600",
             focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20",
@@ -298,29 +291,29 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             focus: "focus-visible:ring-2 focus-visible:ring-red-500/20",
           },
           bordered: {
-            base: "border-2 border-gray-300 bg-white",
-            checked: "border-red-600 bg-white ring-2 ring-red-200",
-            hover: "hover:border-red-500 hover:ring-1 hover:ring-red-100",
+            base: "border-2 border-red-300/40 bg-white",
+            checked: "border-red-600 bg-white ring-2 ring-red-300/50",
+            hover: "hover:border-red-500 hover:ring-1 hover:ring-red-200",
             dot: "bg-red-600",
             focus: "focus-visible:ring-2 focus-visible:ring-red-500/20",
           },
           light: {
-            base: "border-2 border-red-200 bg-red-50",
-            checked: "border-red-300 bg-red-100 shadow-inner shadow-red-200/50",
-            hover: "hover:border-red-250 hover:bg-red-75",
+            base: "border-2 border-red-200/60 bg-red-50/50",
+            checked: "border-red-500 bg-red-100 shadow-inner ring-1 ring-red-300/40",
+            hover: "hover:border-red-300 hover:bg-red-75",
             dot: "bg-red-700",
             focus: "focus-visible:ring-2 focus-visible:ring-red-500/20",
           },
           ghost: {
-            base: "border-2 border-red-200 bg-red-50/50",
-            checked: "border-red-300 bg-red-100 shadow-sm shadow-red-200/30",
-            hover: "hover:border-red-250 hover:bg-red-75",
+            base: "border-0 bg-red-50/30",
+            checked: "border-0 bg-red-100 shadow-sm ring-2 ring-red-300/40",
+            hover: "hover:bg-red-75",
             dot: "bg-red-600",
             focus: "focus-visible:ring-2 focus-visible:ring-red-500/20",
           },
           flat: {
             base: "border-0 bg-red-100 shadow-inner",
-            checked: "bg-red-200 shadow-md shadow-red-300/30",
+            checked: "bg-red-200/80 shadow-md ring-2 ring-red-400/30",
             hover: "hover:bg-red-150 hover:shadow-sm",
             dot: "bg-red-600",
             focus: "focus-visible:ring-2 focus-visible:ring-red-500/20",
