@@ -150,7 +150,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
               "border-primary/50 bg-primary/15 shadow-inner shadow-primary/20",
             hover: "hover:border-primary/40 hover:bg-primary/10",
             dot: "bg-primary",
-            focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
+            focus: "focus-visible:ring-0 focus-visible:ring-primary/20",
           },
           ghost: {
             base: "border-2 border-primary/20 bg-primary/5",
