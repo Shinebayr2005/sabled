@@ -109,10 +109,10 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
 
   const variantSpacing = {
     solid: "gap-3",
-    bordered: "gap-3",
+    bordered: "gap-4", // More spacing for better visual separation
     light: "gap-2",
-    ghost: "gap-2",
-    flat: "gap-2",
+    ghost: "gap-3", // Slightly more spacing for ghost variant
+    flat: "gap-3", // Better spacing for flat variant
     soft: "gap-2",
     "outline-filled": "gap-2",
   };
