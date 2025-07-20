@@ -9,7 +9,7 @@ type RadioColor =
   | "success"
   | "warning"
   | "danger";
-type RadioVariant = "solid" | "bordered" | "light" | "ghost" | "flat";
+type RadioVariant = "solid" | "bordered" | "light" | "ghost" | "flat" | "soft" | "outline-filled";
 
 interface RadioProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "type"> {
@@ -133,6 +133,20 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             dot: "bg-gray-700",
             focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20",
           },
+          soft: {
+            base: "border border-gray-200/60 bg-gray-100/40 backdrop-blur-sm",
+            checked: "bg-gray-500/10 border-gray-500 ring-2 ring-gray-400/30 glow-gray",
+            hover: "hover:bg-gray-500/5 hover:border-gray-400/40",
+            dot: "bg-gray-600",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500/30",
+          },
+          "outline-filled": {
+            base: "border-[1.5px] border-gray-400 bg-transparent",
+            checked: "bg-gray-600 text-white ring-2 ring-offset-2 ring-gray-400/40 border-gray-600",
+            hover: "hover:bg-gray-100/10 hover:border-gray-500",
+            dot: "bg-white",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500/30",
+          },
         },
         primary: {
           solid: {
@@ -169,6 +183,20 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             hover: "hover:bg-primary/15 hover:shadow-sm",
             dot: "bg-primary",
             focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
+          },
+          soft: {
+            base: "border border-primary/20 bg-primary/5 backdrop-blur-sm",
+            checked: "bg-primary/10 border-primary ring-2 ring-primary/30 shadow-primary/20 shadow-lg",
+            hover: "hover:bg-primary/5 hover:border-primary/20",
+            dot: "bg-primary",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary/30",
+          },
+          "outline-filled": {
+            base: "border-[1.5px] border-primary bg-transparent",
+            checked: "bg-primary text-white ring-2 ring-offset-2 ring-primary/40 border-primary",
+            hover: "hover:bg-primary/10 hover:border-primary",
+            dot: "bg-white",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary/30",
           },
         },
         secondary: {
@@ -207,6 +235,20 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             dot: "bg-secondary",
             focus: "focus-visible:ring-2 focus-visible:ring-secondary/20",
           },
+          soft: {
+            base: "border border-secondary/20 bg-secondary/5 backdrop-blur-sm",
+            checked: "bg-secondary/10 border-secondary ring-2 ring-secondary/30 shadow-secondary/20 shadow-lg",
+            hover: "hover:bg-secondary/5 hover:border-secondary/20",
+            dot: "bg-secondary",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary/30",
+          },
+          "outline-filled": {
+            base: "border-[1.5px] border-secondary bg-transparent",
+            checked: "bg-secondary text-white ring-2 ring-offset-2 ring-secondary/40 border-secondary",
+            hover: "hover:bg-secondary/10 hover:border-secondary",
+            dot: "bg-white",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary/30",
+          },
         },
         success: {
           solid: {
@@ -243,6 +285,20 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             hover: "hover:bg-green-150 hover:shadow-sm",
             dot: "bg-green-600",
             focus: "focus-visible:ring-2 focus-visible:ring-green-500/20",
+          },
+          soft: {
+            base: "border border-green-200/60 bg-green-50/40 backdrop-blur-sm",
+            checked: "bg-green-500/10 border-green-500 ring-2 ring-green-400/30 shadow-green-500/20 shadow-lg",
+            hover: "hover:bg-green-500/5 hover:border-green-300/40",
+            dot: "bg-green-600",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-500/30",
+          },
+          "outline-filled": {
+            base: "border-[1.5px] border-green-500 bg-transparent",
+            checked: "bg-green-600 text-white ring-2 ring-offset-2 ring-green-400/40 border-green-600",
+            hover: "hover:bg-green-100/10 hover:border-green-600",
+            dot: "bg-white",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-500/30",
           },
         },
         warning: {
@@ -281,6 +337,20 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             dot: "bg-yellow-600",
             focus: "focus-visible:ring-2 focus-visible:ring-yellow-500/20",
           },
+          soft: {
+            base: "border border-yellow-200/60 bg-yellow-50/40 backdrop-blur-sm",
+            checked: "bg-yellow-500/10 border-yellow-500 ring-2 ring-yellow-400/30 shadow-yellow-500/20 shadow-lg",
+            hover: "hover:bg-yellow-500/5 hover:border-yellow-300/40",
+            dot: "bg-yellow-600",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-yellow-500/30",
+          },
+          "outline-filled": {
+            base: "border-[1.5px] border-yellow-500 bg-transparent",
+            checked: "bg-yellow-500 text-white ring-2 ring-offset-2 ring-yellow-400/40 border-yellow-500",
+            hover: "hover:bg-yellow-100/10 hover:border-yellow-600",
+            dot: "bg-white",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-yellow-500/30",
+          },
         },
         danger: {
           solid: {
@@ -317,6 +387,20 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
             hover: "hover:bg-red-150 hover:shadow-sm",
             dot: "bg-red-600",
             focus: "focus-visible:ring-2 focus-visible:ring-red-500/20",
+          },
+          soft: {
+            base: "border border-red-200/60 bg-red-50/40 backdrop-blur-sm",
+            checked: "bg-red-500/10 border-red-500 ring-2 ring-red-400/30 shadow-red-500/20 shadow-lg",
+            hover: "hover:bg-red-500/5 hover:border-red-300/40",
+            dot: "bg-red-600",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500/30",
+          },
+          "outline-filled": {
+            base: "border-[1.5px] border-red-500 bg-transparent",
+            checked: "bg-red-600 text-white ring-2 ring-offset-2 ring-red-400/40 border-red-600",
+            hover: "hover:bg-red-100/10 hover:border-red-600",
+            dot: "bg-white",
+            focus: "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500/30",
           },
         },
       };
@@ -378,7 +462,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
               rounded-full
               flex items-center justify-center
               relative overflow-hidden
-              transition-all duration-200 ease-in-out
+              transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
               transform-gpu
               ${isChecked ? "scale-105" : "scale-100"}
               ${!finalDisabled ? "hover:scale-105 active:scale-95" : ""}
@@ -401,7 +485,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
                 ${sizeClasses.dot}
                 ${colorClasses.dot}
                 rounded-full
-                transition-all duration-200 ease-in-out
+                transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
                 transform-gpu
                 ${isChecked ? "scale-100 opacity-100" : "scale-0 opacity-0"}
               `}
@@ -419,7 +503,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
                 cursor-pointer
                 ${finalDisabled ? "opacity-50 cursor-not-allowed" : ""}
                 ${finalInvalid ? "text-red-600" : "text-gray-900"}
-                transition-colors duration-200
+                transition-colors duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
                 block 
                 select-none
                 leading-tight
