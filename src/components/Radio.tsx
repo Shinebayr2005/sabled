@@ -116,10 +116,10 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
           },
           ghost: {
             base: "border-2 border-gray-200 bg-gray-50/50",
-            checked: "border-gray-300 bg-gray-100 shadow-sm",
+            checked: "border-gray-300 bg-gray-100 shadow-sm border-none",
             hover: "hover:border-gray-250 hover:bg-gray-75",
             dot: "bg-gray-700",
-            focus: "focus-visible:ring-2 focus-visible:ring-gray-500/20",
+            focus: "focus-visible:ring-0",
           },
           flat: {
             base: "border-0 bg-gray-100 shadow-inner",
@@ -155,10 +155,10 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
           ghost: {
             base: "border-2 border-primary/20 bg-primary/5",
             checked:
-              "border-primary/30 bg-primary/10 shadow-sm shadow-primary/10",
+              "border-primary/30 bg-primary/10 shadow-sm shadow-primary/10 border-none",
             hover: "hover:border-primary/25 hover:bg-primary/7",
             dot: "bg-primary",
-            focus: "focus-visible:ring-2 focus-visible:ring-primary/20",
+            focus: "focus-visible:ring-2 focus-visible:!ring-primary/20",
           },
           flat: {
             base: "border-0 bg-primary/10 shadow-inner",
